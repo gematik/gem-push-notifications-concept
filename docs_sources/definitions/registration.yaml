@@ -1,0 +1,56 @@
+type: object
+$ref: pusher.yaml
+example: {
+  "lang": "en",
+  "kind": "http",
+  "app_display_name": "Mat Rix",
+  "device_display_name": "iPhone 9",
+  "app_id": "com.example.app.ios",
+  "pushkey": "APA91bHPRgkF3JUikC4ENAHEeMrd41Zxv3hVZjC9KtT8OvPVGJ-hQMRKRrZuJAEcl7B338qju59zJMjw2DELjzEvxwYv7hH5Ynpc1ODQ0aT4U4OFEeco8ohsN5PjL1iC2dNtk2BAokeMCg2ZXKqpc8FXKmhX94kIxQ",
+  "data": {
+    "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+  },
+  "append": false
+}
+properties:
+  data:
+    type: object
+    description: |-
+      Required if `kind` is not `null`. A dictionary of information
+      for the pusher implementation itself.
+
+      If `kind` is `http`, this MUST contain `url` which is the URL
+      to use for sending notifications. Clients MAY use this object
+      to pass custom data to their push gateway. Servers MUST forward
+      the entire content including `format` and any custom keys but excluding `url`
+      when calling [`/push/v1/notify`](/push-gateway-api/#postpushv1notify).
+    title: PusherData
+    properties:
+      url:
+        type: string
+        format: uri
+        description: |-
+          Required if `kind` is `http`. The URL to use for sending
+          notifications. MUST be an HTTPS URL with a path of
+          `/push/v1/notify`.
+        example: https://push-gateway.location.here/push/v1/notify
+      format:
+        type: string
+        description: |-
+          The format to send notifications in to Push Gateways if the
+          `kind` is `http`. The details about what fields the
+          homeserver should send to the push gateway are defined in the
+          [Push Gateway Specification](/push-gateway-api/). Currently the only format
+          available is 'event_id_only'.
+  append:
+    type: boolean
+    description: |-
+      If true, the FD should add another pusher with the
+      given pushkey and App ID in addition to any others with
+      different user IDs. Otherwise, the homeserver must remove any
+      other pushers with the same App ID and pushkey for different
+      users. The default is `false`.
+required:
+  - kind
+                - app_id
+                - pushkey

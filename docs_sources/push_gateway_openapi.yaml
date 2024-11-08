@@ -1,0 +1,161 @@
+# Copyright 2024 Gematik GmbH
+#
+# Based on the OpenAPI specification of the Matrix Client-Server API https://github.com/matrix-org/matrix-spec
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+openapi: 3.1.0
+info:
+  title: Push Gateway API
+  description: API for interacting with the Push Gateway
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:8080
+    description: Local server
+paths:
+  /push/v1/notify:
+    post:
+      operationId: push_v1_notify
+      summary: Push data to the gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushData'
+      responses:
+        '200':
+          description: Successfully pushed data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid data format"
+      security: 
+        -  mtls: []
+      tags:
+        - Push Gateway
+components:
+  securitySchemes:
+    mtls:
+      description: |-
+        Mutual TLS authentication. The client must present a certificate signed by the
+        server's CA. The server will verify the client's certificate and reject the
+        connection if it is invalid.
+      type: mutualTLS
+  schemas:
+    PushData:
+      type: object
+      properties:
+        notification:
+          type: object
+          title: Notification
+          description: Information about the push notification
+          required:
+            - devices
+          properties:
+            ephemeral:
+              type: string
+              description: "base64_of_ephemeral_public_key"
+            ciphertext:
+              type: string
+              description: "base64_of_ciphertext"
+            mac:
+              type: string
+              description: "base64_of_mac"
+            prio:
+              type: string
+              enum:
+                - high
+                - low
+              description: |-
+                The priority of the notification. If omitted, `high` is
+                assumed. This may be used by push gateways to deliver less
+                time-sensitive notifications in a way that will preserve
+                battery power on mobile devices.
+            counts:
+              type: object
+              title: Counts
+              description: |-
+                This is a dictionary of the current number of unacknowledged
+                communications for the recipient user. Counts whose value is
+                zero should be omitted.
+              properties:
+                unread:
+                  type: integer
+                  description: |-
+                    The number of unread messages a user has across all of the
+                    rooms they are a member of.
+                missed_calls:
+                  type: integer
+                  description: |-
+                    The number of unacknowledged missed calls a user has
+                    across all rooms of which they are a member.
+            devices:
+              type: array
+              title: Devices
+              description: This is an array of devices that the notification should be sent
+                to.
+              items:
+                type: object
+                title: Device
+                properties:
+                  app_id:
+                    type: string
+                    description: The `app_id` given when the pusher was created.
+                  pushkey:
+                    type: string
+                    description: The `pushkey` given when the pusher was created.
+                  pushkey_ts:
+                    type: integer
+                    format: int64
+                    description: |-
+                      The unix timestamp (in seconds) when the
+                      pushkey was last updated.
+                  data:
+                    type: object
+                    title: PusherData
+                    description: |-
+                      A dictionary of additional pusher-specific data. This
+                      is the `data` dictionary passed in at
+                      [pusher creation](/client-server-api/#post_matrixclientv3pushersset)
+                      minus the `url` key.
+                    properties:
+                      format:
+                        type: string
+                        description: |-
+                          The format to use for sending notifications.
+                  tweaks:
+                    type: object
+                    title: Tweaks
+                    description: |-
+                      A dictionary of customisations made to the way this
+                      notification is to be presented. These are added by push rules.
+                required:
+                  - app_id
+                  - pushkey

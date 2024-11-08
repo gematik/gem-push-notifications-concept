@@ -1,0 +1,32 @@
+@startuml push_overview_authentication
+!theme gematik from ../puml
+
+skinparam nodesep 100
+
+cloud "Apple/Google" {
+    component "Push Provider" as PushProvider
+}
+
+package "App Developer" {
+    component "Push Gateway" as PushGateway
+    component MobileDevice
+}
+
+PushGateway -left-> PushProvider : "Provider\nspezifisch"
+
+MobileDevice <-up.> PushProvider
+' MobileDevice "PushToken" <- PushProvider
+
+PushGateway -[hidden]-- MobileDevice
+
+component Fachdienst
+
+Fachdienst <--> MobileDevice : "Fachdienst\nspezifische\nAuthentisierung"
+Fachdienst <-> PushGateway : "\tmTLS"
+
+' component Fachdienst2
+' Fachdienst -[hidden]-- Fachdienst2
+' Fachdienst2 <-- MobileDevice : Register
+' Fachdienst2 -> PushGateway : Send Push
+
+@enduml

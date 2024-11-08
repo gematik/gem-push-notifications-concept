@@ -1,0 +1,130 @@
+# Copyright 2024 Gematik GmbH
+#
+# Based on the OpenAPI specification of the Matrix Client-Server API https://github.com/matrix-org/matrix-spec
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+openapi: 3.1.0
+info:
+  title: Client-FD Push API
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /pushers:
+    get:
+      summary: Gets the current pushers for the authenticated user
+      description: Gets all currently active pushers for the authenticated user.
+      operationId: getPushers
+      responses:
+        "200":
+          description: The pushers for this user.
+          content:
+            application/json:
+              schema:
+                $ref: definitions/pusher_get.yaml#/schema
+              examples:
+                response:
+                  $ref: definitions/pusher_get.yaml#/examples/response
+        "400":
+          description: The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: definitions/error.yaml
+              examples:
+                response:
+                  value: {
+                    "error": "Invalid parameter",
+                    "errcode": "M_INVALID_PARAM"
+                  }
+      tags:
+        - Fachdienst
+      security: 
+        -  bearerAuth: []
+  /pushers/set:
+    post:
+      summary: Modify a pusher for this user on the homeserver.
+      description: |-
+        This endpoint allows the creation, modification and deletion of [pushers](/client-server-api/#push-notifications)
+        for this user ID. The behaviour of this endpoint varies depending on the
+        values in the JSON body.
+
+        If `kind` is not `null`, the pusher with this `app_id` and `pushkey`
+        for this user is updated, or it is created if it doesn't exist. If
+        `kind` is `null`, the pusher with this `app_id` and `pushkey` for this
+        user is deleted.
+      operationId: postPusher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: definitions/pusher_post_put_delete.yaml#/schema
+            examples:
+              registration:
+                $ref: definitions/pusher_post_put_delete.yaml#/examples/registration
+              deletion:
+                $ref: definitions/pusher_post_put_delete.yaml#/examples/deletion
+        description: The pusher information.
+        required: true
+      responses:
+        "200":
+          description: The pusher was set.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: An empty object.
+              examples:
+                response:
+                  value: {}
+        "400":
+          description: One or more of the pusher values were invalid.
+          content:
+            application/json:
+              schema:
+                $ref: definitions/error.yaml
+              examples:
+                response:
+                  value: {
+                    "error": "Missing parameters: lang, data",
+                    "errcode": "M_MISSING_PARAM"
+                  }
+        "429":
+          description: This request was rate-limited.
+          content:
+            application/json:
+              schema:
+                $ref: definitions/rate_limited.yaml
+      security: 
+        -  bearerAuth: []
+      tags:
+        - Fachdienst
+servers:
+  - url: "{protocol}://{hostname}{basePath}"
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+      hostname:
+        default: localhost:8008
+      basePath:
+        default: /client/v1
+components: 
+  securitySchemes: 
+    bearerAuth: 
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,29 @@
+@startuml erm
+!theme gematik from ../puml
+
+skinparam nodesep 50
+
+entity Konto {}
+
+entity Inhaber {}
+
+entity Pusher {}
+
+entity Vertreter {}
+
+entity Fachdienst {}
+
+entity "Push Gateway" as PushGateway {}
+
+Konto -up- "1  " Inhaber
+Inhaber "1   " -down- "*" Pusher
+Konto -down- Vertreter
+Vertreter -up- "*" Pusher
+
+' Inhaber -left[hidden]- Vertreter
+Konto -right[hidden]- Pusher
+
+Pusher "1" -right- "1" Fachdienst
+Fachdienst "*" -right- "*" PushGateway
+
+@enduml

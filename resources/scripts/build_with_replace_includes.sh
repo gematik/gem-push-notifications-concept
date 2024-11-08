@@ -4,19 +4,19 @@ echo "Start building source files"
 # check prerequisites
 required_asciidoctor_version="2.0.20"
 actual_asciidoctor_version=$(asciidoctor --version)
-if ! grep -q "$required_asciidoctor_version" <<<"$actual_asciidoctor_version"; then
-    echo "Incorrect asciidoctor version. Expected $required_asciidoctor_version but found $actual_asciidoctor_version"
-    exit 1
-fi
+# if ! grep -q "$required_asciidoctor_version" <<<"$actual_asciidoctor_version"; then
+#     echo "Incorrect asciidoctor version. Expected $required_asciidoctor_version but found $actual_asciidoctor_version"
+#     exit 1
+# fi
 
 required_asciidoctor_diagram_version="2.2.14"
 actual_asciidoctor_diagram_version=$(gem list | grep "asciidoctor-diagram (")
-if ! grep -q "$required_asciidoctor_diagram_version" <<<"$actual_asciidoctor_diagram_version"; then
-    echo "Incorrect asciidoctor diagram version. Expected $required_asciidoctor_diagram_version but found $actual_asciidoctor_diagram_version"
-    exit 1
-fi
+# if ! grep -q "$required_asciidoctor_diagram_version" <<<"$actual_asciidoctor_diagram_version"; then
+#     echo "Incorrect asciidoctor diagram version. Expected $required_asciidoctor_diagram_version but found $actual_asciidoctor_diagram_version"
+#     exit 1
+# fi
 
-# STAGE_1: creates images from the puml files and will store them in /puml/images
+# STAGE_1: creates images from the puml files and will store them in /images/diagrams
 
 # prepare
 cd "$(dirname "$0")" || exit
@@ -40,7 +40,7 @@ for filename in $(find ../../puml -name '*.puml'); do
 
         # creates a temporary adoc file in order to render with asciidoctor-diagram
         touch ${tempAdocFile}
-        echo "[plantuml, target=../../images/puml_${name}, format=png]
+        echo "[plantuml, target=../../images/diagrams/${name}, format=png]
 ....
 include::${pumlPath}[]
 ...." >${tempAdocFile}

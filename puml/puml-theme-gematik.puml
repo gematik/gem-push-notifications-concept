@@ -1,0 +1,9 @@
+
+<Style>
+document {
+  Margin 20
+}
+Padding 0
+</Style>
+
+skinparam linetype ortho

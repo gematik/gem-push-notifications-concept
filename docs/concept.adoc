@@ -10,57 +10,237 @@
 :toc: macro
 :toclevels: 3
 :toc-title: Inhaltsverzeichnis
+:figure-caption: Abbildung
+:Status_Draft: https://img.shields.io/badge/Status-Draft-red
+:Status_InReview: https://img.shields.io/badge/Status-In_Review-orange
+:Status_OK: https://img.shields.io/badge/Status-OK-green
 
 toc::[]
 
+image:{Status_Draft}[]
+image:{Status_InReview}[]
+image:{Status_OK}[]
+
+
 == Konzept
-=== Architektur
+
+Versicherte können sich über das mobile FdV mittels Push-Notifications über Ereignisse in Fachdiensten (z.B. ePA-Aktensystem, E-Rezept-Fachdienst, Dienste der Kassen) informieren lassen. Der Versicherte kann im FdV aus den möglichen Ereignissen diejenigen auswählen, für die er benachrichtigt werden möchte. Standardmäßig werden keine Push-Notifications gesendet. Das Konzept sieht vor, dass der Versicherte Push-Notifications für verschiedene Fachdienste abonnieren kann. Die Push-Notifications werden verschlüsselt übermittelt und können nur von der ePA-FdV-Instanz entschlüsselt werden, für die sie bestimmt sind.
+
+=== Architektur image:{Status_InReview}[]
+
 An der Umsetzung des Notification Managements sind folgende Komponenten und Services beteiligt:
 
-image:services-landscape.png[width=50%]
+[#push_overview]
+.Systemüberblick
+image::diagrams/push_overview.png[width=50%]
 
-•	Push Notification Service: Der Service im Fachdienst zur Verwaltung der Push-Notifications. Der Service erstellt Push- Notifications für abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Der Push Notification Service bietet Schnittstellen für Versicherte/Vertreter zur Registrierung und Konfiguration von Pushern. Ein Pusher bezieht sich auf eine ePA-FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push- Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für beliebig viele Endgeräte Pusher im Fachdienst hinterlegen. Beim ePA-Aktensystem kann ein Vertreter beliebig viele Pusher für das Konto des Versicherten hinterlegen.
+==== Fachdienst image:{Status_InReview}[]
 
-image:kontos.png[width=50%]
+Der anwendungsspezifische Fachdienst verwalten die Push-Notifications für den jeweiligen Anwendungsfall. Der Fachdienst erstellt Push-Notifications für abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für Versicherte zur Registrierung und Konfiguration von Pushern. Ein Pusher bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für beliebig viele Endgeräte Pusher im Fachdienst hinterlegen.
 
-•	Push Gateway: Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden. Das Push Gateway leitet die Informationen der Push- Notification an den Push Provider.  Das Push Gateway wird vom Hersteller des ePA-FdV bereitgestellt. Am Push Gateway kann es weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.
-•	Push Provider: Der Push Provider ist ein Service des Herstellers des mobilen Betriebssystems. Der Push Provider sendet Notifications an App-Instanzen auf Endgeräten der Nutzer.
-•	ePA-FdV-Instanz: Die ePA-FdV-Instanz ist ein auf einem mobilen Endgerät installiertes ePA-FdV.  Push- Notifications werden für eine ePA-FdV-Instanz registriert und an diese ePA-FdV-Instanz gesendet.  Die ePA-FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen) für die jeweils Push Notifications vom Versicherten ausgewählt werden können.
+==== Push Gateway image:{Status_InReview}[]
+
+Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden. Das Push Gateway leitet die Informationen der Push- Notification an den Push Provider weiter. Es wird vom Hersteller des FdV bereitgestellt, und es kann weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.
+
+==== Push Provider image:{Status_InReview}[]
+
+Der Push Provider ist ein Service des Herstellers des mobilen Betriebssystems (z.B. Google, Apple). Der Push Provider sendet Notifications an App-Instanzen auf Endgeräten der Nutzer.
+
+==== FdV Instanz image:{Status_InReview}[]
+
+Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push Notifications ausgewählen kann. Die FdV-Instanz wird auch als Pusher bezeichnet.
+
+=== Authentisierung image:{Status_InReview}[]
+
+[#push_overview_authentication]
+.Authentisierung der beteiligten Komponenten
+image::diagrams/push_overview_authentication.png[width=50%]
 
 Die Verbindungen zwischen Push Gateway und Aktensystem sind beidseitig authentisiert und verschlüsselt.
 
-=== Registrierung einer ePA-FdV-Instanz
-Damit eine ePA-FdV-Instanz Push-Notifications empfangen kann, muss diese zunächst beim Push-Provider sowie im Aktensystem registriert werden.
+Die Verbindungen zwischen Push Gateway und die Fachdienste sind beidseitig authentisiert und verschlüsselt.
+Die andere sind Fachdienst oder Push-Provider spezifisch.
 
-image:push-notification-registration.png[width=50%]
+=== Verschlüsselung des Benachrichtigungsinhaltes image:{Status_Draft}[]
 
-1.	Die ePA-FdV-Instanz registriert sich am Push Provider und erhält ein App Token, welches die ePA-FdV-Instanz eindeutig identifiziert.
-2.	In der ePA-FdV-Instanz wird ein asymmetrisches Schlüsselpaar (push_pubK, push_privK) generiert und im Endgerät sicher gespeichert.
-3.	Der Nutzer meldet sich am Fachdienst (z.B. Aktensystem) an und registriert die ePA-FdV-Instanz am Push Notification Service als einen Pusher. Teil der Registrierungsdaten sind das App Token, die app_id, die Adresse des Push Gateways sowie der öffentliche Schlüssel push_pubK. Die app_id und die Adresse des Push Gateways sind im ePA-FdV durch den Hersteller hinterlegt worden. Möchte der Versicherte Push Notifications von mehreren Fachdiensten erhalten, wird die ePA-FdV-Instanz in jedem dieser Fachdienste als Pusher registriert.
+Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder veränderten werden kann.
+Wenn sich eine E-Rezept-FdV-Installation beim E-Rezept-Fachdienst für Benachrichtigungen registriert (vgl. Abschnitt 4.6.1), erzeugt die App ein initiales gemeinsames Geheimnis (`initial-shared-secret` (`ISS`)) und überträgt dieses kryptographisch gesichert an den E-Rezept-Fachdienst.
+Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Notification Service mit verschlüsselten Benachrichtigungsinhalt über den Notification Provider an die E-Rezept-FdV-Installation übermittelt.
+Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüssel kryptographisch ausgeschlossen ist.
+Der Notification Service erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem E-Rezept-FdV bei der Registrierung. Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per `HKDF(ISS, info="<Jahr>-<Monat>")` zwei Werte abgeleitet:
 
-=== Versenden von Push-Notifications
-Die folgende Abbildung veranschaulicht den Ablauf, wenn ein Ereignis in einem Konto des ePA-Aktensystems eintritt, für welches Push-Benachrichtigungen gesendet werden sollen (z.B. wenn ein Nutzer ein neues Dokument einstellt):
+  - Ein Geheimnis für den Monat und Jahr des Zeitstempels (`shared-secret-Jahr-Monat`)
+  - ein AES/GCM-Schlüssel für den Monat und Jahr des Zeitstempels (`AES/GCM-Schlüssel-Jahr-Monat`).
 
-image:push-notification-send.png[width=50%]
+Diese beiden Werte werden im Notification Service sicher gespeichert und das ISS wird im Notification Service gelöscht.
 
-1.	Der Push Notification Service des Aktensystems führt folgende Schritte durch
-    a.	Generieren einer eindeutigen EventID
-    b.	Erzeugen des Nachrichteninhalts = („ePA“, Kontonummer, EventDetails). Die EventDetails sind spezifisch für das Event. Da das ePA-FdV Push-Benachrichtigungen von mehreren Anwendungen erhalten kann, signalisiert der konstante Wert „ePA“ dem ePA-FdV in Schritt 6, dass es sich um eine Push-Benachrichtigung bzgl. der Anwendung ePA handelt. Die Kontonummer wird aufgenommen, da auch Vertreter Push-Notifications für das Konto der zu vertretenden Versicherten erhalten können und sie in der Push-Notification erkennen können müssen, auf welches Konto sich die Benachrichtigung bezieht.  Dem Nachrichteninhalt wird zur Verschleierung der Länge der Nachricht ein Zufallswert ergänzt (Encoding).
-    c.	Das Paar (EventID, Nachrichteninhalt) wird verschlüsselt im Aktensystem persistiert.
-2.	Für jeden im Aktenkonto registrierten Pusher p, der für das Ereignis abonniert ist, wird eine Push-Benachrichtigung Norification_p mit folgenden Inhalten erzeugt:
-    a.	content = Nachrichteninhalt aus 1b verschlüsselt mit dem push_pubK des Pushers p.
-    b.	devices = (app_id, App Token)
-    c.	event_id = EventID
-3.	Für jeden Pusher p wird die Push-Benachrichtigung Notification_p an das Push Gateways des Pushers p übermittelt.
-4.	Das Push Gateway übermittelt die Push-Benachrichtigung Notification_p an den Push Provider.
-5.	Der Push-Provider sendet die Notification an die zum App Token gehörende ePA-FdV-Instanz.
-6.	Die ePA-FdV-Instanz entschlüsselt den Nachrichteninhalt mit dem privaten Schlüssel push_privK und zeigt dem Nutzer den Nachrichteninhalt geeignet an.
-7.	Bei Bedarf kann sich der Nutzer am Aktenkonto anmelden, um sich z.B. ein eingestelltes Dokument anzusehen.
+==== Beispiel für einen Austausch im Oktober 2023: image:{Status_InReview}[]
 
-== Zugriff auf Push-Notifications im Aktensystem
-Die Nachrichteninhalte der Push-Benachrichtigungen werden im Aktensystem verschlüsselt gespeichert (vgl. Schritt 1c im Abschnitt „Versenden von Push-Notifications“). Dies erfolgt aus mehreren Gründen:
-•	Es ist nicht garantiert, dass jede Push-Notification an der ePA-FdV-Instanz ankommt.
-•	Der Nutzer soll die Möglichkeit haben, Push-Notifications auch noch lesen zu können, wenn sie in der ePA-FdV-Instanz gelöscht wurden.
-•	Der Nutzer soll die Möglichkeit haben, Push-Notifications auch von Endgeräten zu lesen, die nicht für Push-Notifications registriert wurden (z.B. Desktop FdV).
-Die Verschlüsselung im Aktensystem erfolgt mit einem aktenindividuellen Schlüssel, der nur über eine VAU zugreifbar ist.
-Die Benachrichtigungen werden nach 3 Monaten automatisch im Aktensystem gelöscht.
+Das ISS sei zufällig erzeugt gleich (hexdump) `f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2`. Dann ergibt `HKDF(ISS, info="2023-10", L=64) = (hexdump) 185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`. Die ersten 32 Byte (256 Bit) sind das `shared-secret-2023-10` gleich (hexdump) `185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b` und die letzten 32 Byte sind der `AES/GCM-Schlüssel-2023-10` ist gleich (hexdump) `3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`.
+Soll im Oktober 2023 eine Benachrichtigung kryptographisch gesichert werden, um sie an das E-Rezept-FdV zu versenden, dann wird der Schlüssel `AES/GCM-Key-2023-10` dafür verwendet. Soll im November 2023 eine Benachrichtigung gesichert werden, so muss per `HKDF(shared-secret-2023-10, info="2023-11")` wieder ein Geheimnis -- diesmal für November 2023 -- und ein neuer AES/GCM-Schlüssel abgeleitet werden. `shared-secret-2023-11 = (hexdump) 0c8662d90b04818afb317406fe7fcfcf8d103cd9bc6ad7847890d28620e85ec3`, `AES/GCM-Schlüssel-2023-11 = (hexdump) 39aa5dacd538f53f4b956d84c9b8f2e26933274d160b9fd1a263a27681c6331b`
+Alle `shared-secret-Jahr-Monat` und alle AES/GCM-Schlüssel-Jahr-Monat, die älter sind als zwei Monate werden, sowohl im Notification Service als auch im E-Rezept-FdV gelöscht, jedoch niemals das jüngste noch verfügbare (auch wenn es älter als zwei Monate ist).  Der fachliche Hintergrund von "zwei Monaten" ist, dass sichergestellt sein muss, dass falls der E-Rezept-FD die Benachrichtigung Sekunden vor Monatsende erstellt, und diese im E-Rezept-FdV erst nach einigen Sekunden dann im Folgemonat empfangen werden, die Entschlüsselung im E-Rezept-FdV immer noch möglich sein muss.
+Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für `2023-12` erzeugt werden und darauf basierend anschließend die Ableitung für `2024-01`. Anschließend werden die Ableitungs- und Schlüsseldaten für `2023-11`` gelöscht. Die Schlüsseldaten für `2024-01` werden für die kryptographische Sicherung verwendet.
+
+Somit erreicht man das Ziel, dass bei Kompromittierung eines `AES/GCM-Jahr-Monat-Schlüssels` nicht mehr Benachrichtigungen entschlüsselt werden können, die älter als zwei Monate sind.
+
+
+=== Registrierung einer ePA-FdV-Instanz image:{Status_InReview}[]
+
+Damit eine FdV-Instanz Push-Notifications empfangen kann, muss diese zunächst beim Push-Provider sowie in den gewünschten Fachdiensten registriert werden.
+
+.Registrierung einer FdV-Instanz für Push-Notifications im Fachdienst image:{Status_InReview}[]
+image::diagrams/registration.png[width=50%]
+
+
+1. Die FdV-Instanz registriert sich beim Push Provider und erhält ein push_token, das die FdV-Instanz eindeutig identifiziert.
+2. Die FdV-Instanz erzeugt ein initial_shared_secret und speichert den Zeitpunkt (<Jahr>-<Monat>) zu welchem dieses erzeugt wurde als time_iss_created
+3. Der Nutzer meldet sich beim Fachdienst (z.B. Aktensystem) an und registriert die FdV-Instanz als Pusher. Teil der Registrierungsdaten sind: {
+    - das push_token,
+    - die app_id,
+    - die Art des Pushers (normalerweise "http"),
+    - die Adresse des Push Gateways
+    - das initial_shared_secret
+    - time_iss_created +
+     +
+Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. Die app_id und die Adresse des Push Gateways wurden vom Hersteller im FdV hinterlegt.
+4. Die FdV-Instanz und der Fachdienst erzeugen den ersten Schlüssel aus dem initial_shared_secret und dem time_iss_created. Anschließend löschen sie das initial_shared_secret.
+
+Möchte der Versicherte Push Notifications von mehreren Fachdiensten erhalten, wird die FdV-Instanz in jedem dieser Fachdienste als Pusher registriert.
+
+[code,json]
+.Registrierung einer FdV-Instanz für Push-Notifications im Push-Provider
+----
+      {
+        "lang": "en",
+        "kind": "http",
+        "app_display_name": "Mat Rix",
+        "device_display_name": "iPhone 9",
+        "app_id": "com.example.app.ios",
+        "pushkey": "<APNS/GCM TOKEN>",
+        "data": {
+          "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+        },
+        "append": false
+      }
+----
+
+=== Deregistrierung einer FdV-Instanz image:{Status_Draft}[]
+
+Der gleiche Endpunkt wird sowohl zur Deregistrierung als auch zur Registrierung bei einer FdV-Instanz verwendet. Bei der Deregistrierung werden nur das push_token, die app_id und die Art des Pushers benötigt. Die Art des Pushers muss dann null sein, damit der Fachdienst weiß, dass der Pusher gelöscht werden soll.
+
+=== Liste aktuelle Pushers enthalten image:{Status_Draft}[]
+
+Die FdV-Instanz kann eine Liste aller registrierten Pusher durch eine GET Operation auf dem bestimmten Endpunkt des Fachdienstes erhalten. Die Details dazu sind auf der OpenAPI-Seite beschrieben.
+
+=== Versenden von Push-Notifications image:{Status_Draft}[]
+
+Die folgende Abbildung veranschaulicht den Ablauf, wenn ein Ereignis in einem Fachdienst eintritt, für welches Push-Benachrichtigungen gesendet werden sollen (z.B. wenn ein Nutzer ein neues Dokument in einem Konto des ePA-Aktensystems einstellt):
+
+[#send_push]
+.Push-Notification-Versand
+image::diagrams/send_push.png[width=50%]
+
+== Beispiele image:{Status_Draft}[]
+
+=== Event-Trigger
+
+Beispiel für ein Event-Trigger in ePA:
+
+[source,json]
+----
+{
+    "trigger": "T001"
+}
+----
+
+=== Apple Push
+
+==== Push Gateway
+
+Endpoint: http://localhost:8080/push/v1/notify
+
+===== IN
+
+[,json]
+.Push Gateway payload received
+----
+"notification": {
+    "month": "2024-11",
+    "ciphertext": "asdfdfjksfjklsdljkdsf==",
+    "mac": "string",
+    "prio": "high",
+    "counts": {},
+    "devices": [
+        {
+            "app_id": "string",
+            "pushkey": "string",
+            "pushkey_ts": 0,
+            "data": {
+            "format": "string"
+            },
+            "tweaks": {
+                "badge": 0
+            }
+        }
+    ]
+}
+----
+
+===== OUT
+
+[,json]
+.Push Gateway payload send to Push Provider
+----
+Payload:
+{
+    type: alert,
+    mutable-content: true,
+    payload: {
+        ciphertext: notification.ciphertext,
+        month: notification.month,
+        sound: "default",
+        category: "message",
+        data: {
+            message: "Hallo Welt"
+        }
+    }
+}
+----
+
+[,pseudo]
+.Push Gateway pseudo code
+----
+if tweaks.badge > 0 then
+    payload.payload.badge = tweaks.badge
+end if
+----
+
+
+
+Extension:
+
+[,swift]
+.Swift Pseudo Code
+----
+func didReceive(
+    _ request: UNNotificationRequest,
+    withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+) {
+  // Retrieve the push notification payload
+    let payload = request.content.userInfo
+
+    // Decrypt the ciphertext
+    let ciphertext = payload["ciphertext"]
+    let plaintext = decrypt(ciphertext)
+
+    // Update the notification content
+    let content = request.content.mutableCopy() as! UNMutableNotificationContent
+    let title = LocalizedString("notification_title_\(event_id)")
+    let body = LocalizedString("notification_body_\(event_id)")
+    content.title = title
+    content.body = body
+
+    // Call the completion handler with the updated notification content
+    contentHandler(content)
+}
+----

@@ -1,0 +1,24 @@
+@startuml registration
+!theme gematik from ../puml
+
+actor "FdV" as App
+entity "Fachdienst" as Fachdienst
+entity "Push Gateway" as NotificationService
+entity "Apple/Google" as NotificationProvider
+
+group Registration
+    activate App
+    App -> NotificationProvider : get_push_token
+    activate NotificationProvider
+    NotificationProvider -->> App : push_token
+    deactivate NotificationProvider
+    App -> App : create iss
+    App -> Fachdienst : **POST** //pushers/set//
+    activate Fachdienst
+    Fachdienst -> Fachdienst : store information
+    Fachdienst -->> App : status
+    deactivate Fachdienst
+end
+deactivate App
+
+@enduml

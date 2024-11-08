@@ -1,0 +1,339 @@
+|===
+| Nr. | Aktion | Beschreibung | Channel | MVP | technische ID
+
+| 1
+| Dokument eingestellt
+| Dokument eingestellt durch LEI oder Vertreter
+| Dokumente
+| ja
+| [technische ID]
+
+| 2
+| Dokument gelesen
+| Dokument gelesen durch LEI oder Vertreter
+| Dokumente
+| nein
+| [technische ID]
+
+| 3
+| Dokument gelöscht
+| Dokument gelöscht durch LEI oder Vertreter
+| Dokumente
+| nein
+| [technische ID]
+
+| 4
+| Dokument aktualisiert
+| Dokument aktualisiert durch LEI oder Vertreter
+| Dokumente
+| ja
+| [technische ID]
+
+| 5
+| Metadaten geändert
+| Metadaten geändert durch LEI oder Vertreter
+| Dokumente
+| [MVP-Info]
+| [technische ID]
+
+| 6
+| Verschreibungsdaten einstellen
+| Verschreibungsdaten einstellen (E-Rezept-Fachdienst)
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 7
+| Verschreibungsdaten stornieren
+| Verschreibungsdaten stornieren (E-Rezept-Fachdienst)
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 8
+| Dispensierinformationen einstellen
+| Dispensierinformationen einstellen (E-Rezept-Fachdienst)
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 9
+| Dispensierung stornieren
+| Dispensierung stornieren (E-Rezept-Fachdienst)
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 10
+| Dispensierinformationen einstellen (Clientsysteme)
+| Dispensierinformationen einstellen (Clientsysteme)
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 11
+| Dispensierung stornieren (Clientsysteme)
+| Dispensierung stornieren (Clientsysteme)
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 12
+| Medikationsliste abrufen
+| Medikationsliste abrufen durch Vertreter oder PVS
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 13
+| AMTS-rZI Allergien und Intoleranzen hinzufügen
+| AMTS-rZI Allergien und Intoleranzen hinzufügen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 14
+| AMTS-rZI Allergien und Intoleranzen aktualisieren
+| AMTS-rZI Allergien und Intoleranzen aktualisieren
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 15
+| AMTS-rZI Beobachtungen hinzufügen
+| AMTS-rZI Beobachtungen hinzufügen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 16
+| AMTS-rZI Beobachtung kommentieren
+| AMTS-rZI Beobachtung kommentieren
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 17
+| AMTS-rZI Beobachtung invalidieren
+| AMTS-rZI Beobachtung invalidieren
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 18
+| Medikament hinzufügen
+| Medikament hinzufügen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 19
+| Eingegebenes Medikament invalidieren
+| Eingegebenes Medikament invalidieren
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 20
+| Medikamentzusatzinformationen hinzufügen
+| Medikamentzusatzinformationen hinzufügen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 21
+| Medikamentzusatzinformationen aktualisieren
+| Medikamentzusatzinformationen aktualisieren
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 22
+| Medikament ersetzen
+| Medikament ersetzen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 23
+| Medikationsplanungsdaten mit Verschreibungsdaten verlinken
+| Medikationsplanungsdaten mit Verschreibungsdaten verlinken
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 24
+| Verlinkung zwischen Medikationsplanungsdaten und Verschreibungsdaten aufheben
+| Verlinkung zwischen Medikationsplanungsdaten und Verschreibungsdaten aufheben
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 25
+| Medikationsplan abrufen
+| Medikationsplan abrufen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 26
+| Medikationsplan verwalten
+| Medikationsplan verwalten
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 27
+| Übergreifenden Hinweis für Medikationsplan hinzufügen
+| Übergreifenden Hinweis für Medikationsplan hinzufügen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 28
+| Übergreifende Hinweise für Medikationsplan entfernen
+| Übergreifende Hinweise für Medikationsplan entfernen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 29
+| Medikationsplanhistorie abrufen
+| Medikationsplanhistorie abrufen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 30
+| Verifizieren des aktuell gültigen Medikationsplans
+| Verifizieren des aktuell gültigen Medikationsplans
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 31
+| Befugnis durch Vertreter erteilt
+| Push Notification geht an alle, bis auf den Auslösenden selbst
+| Vertreter
+| ja
+| [technische ID]
+
+| 32
+| Befugnis durch Vertreter gelöscht
+| Befugnis durch Vertreter gelöscht - zur Diskussion, der Nutzer will keine Push für selbst durchgeführte Operationen
+| Vertreter
+| ja
+| [technische ID]
+
+| 33
+| Befugnis in der ärzlichen Versorgung erteilt
+| Befugnis in der ärzlichen Versorgung erteilt
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 34
+| Widerspruch erteilt durch Vertreter oder Ombudstelle
+| Widerspruch erteilt durch Vertreter oder Ombudstelle
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 35
+| Widerspruch zurückgenommen durch Vertreter oder Ombudstelle
+| Widerspruch zurückgenommen durch Vertreter oder Ombudstelle
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 36
+| Einschränkung der Verwendung von Daten geändert
+| Einschränkung der Verwendung von Daten auf bestimmte Sekundärnutzungszwecke geändert
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 37
+| Widerspruch gegen die Nutzung der ePA durch eine spezifische LEI erteilt
+| Widerspruch gegen die Nutzung der ePA durch eine spezifische LEI erteilt durch Vertreter oder Ombudstelle
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 38
+| Widerspruch gegen die Nutzung der ePA durch eine spezifische LEI zurückgenommen
+| Widerspruch gegen die Nutzung der ePA durch eine spezifische LEI zurückgenommen durch Vertreter oder Ombudstelle
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 39
+| Widerspruch gegen die Nutzung dgMP durch eine spezifische LEI erteilt
+| Widerspruch gegen die Nutzung dgMP durch eine spezifische LEI erteilt
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 40
+| Widerspruch gegen die Nutzung dgMP durch eine spezifische LEI zurückgenommen
+| Widerspruch gegen die Nutzung dgMP durch eine spezifische LEI zurückgenommen
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 41
+| Dokument verborgen
+| Dokument verborgen durch Vertreter
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 42
+| Verborgenes Dokument wieder sichtbar
+| Verborgenes Dokument durch Vertreter wieder sichtbar
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 43
+| Kategorie verborgen
+| Kategorie verborgen durch Vertreter
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 44
+| Kategorie wieder sichtbar
+| Kategorie durch Vertreter wieder sichtbar
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 45
+| Ordner verborgen
+| Ordner verborgen durch Vertreter
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 46
+| Ordner wieder sichtbar
+| Ordner durch Vertreter wieder sichtbar
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 47
+| Loginversuch gescheitert
+| Loginversuch gescheitert
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+
+| 48
+| Protokolldaten abgerufen
+| Protokolldaten abgerufen durch Vertreter oder Ombudstelle
+| [Channel-Info]
+| [MVP-Info]
+| [technische ID]
+|===

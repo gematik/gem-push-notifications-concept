@@ -19,7 +19,10 @@
 				"MITRE-Health.vscode-language-fsh",
 				"mohsen1.prettify-json",
 				"DotJoshJohnson.xml",
-				"asciidoctor.asciidoctor-vscode"
+				"asciidoctor.asciidoctor-vscode",
+				"jebbs.plantuml",
+				// "42crunch.vscode-openapi", missing openapi 3.1.x support
+				"redocly.openapi-vs-code"
 			]
 		}
 	},
