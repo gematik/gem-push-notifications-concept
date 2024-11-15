@@ -51,7 +51,7 @@
             <img src="images/gematik_logo.png" alt="Gematik Logo">
         </div>
     </div>
-    <iframe id="content" name="content" src="" frameborder="0"></iframe>
+    <iframe id="content" name="content" src="concept/index.html" frameborder="0"></iframe>
 
     <script>
         function loadPage(element) {
@@ -59,6 +59,50 @@
             links.forEach(link => link.classList.remove('active'));
             element.classList.add('active');
         }
+
+        window.addEventListener('load', function() {
+            if (window.location.hash && window.location.hash.length > 2) {
+                var hash = window.location.hash.substring(2).replace('%23', '#');
+                document.getElementById('content').src = hash;
+                var links = document.querySelectorAll('#menu a');
+                links.forEach(link => {
+                    if (hash.startsWith(link.getAttribute('href'))) {
+                    link.classList.add('active');
+                    } else {
+                    link.classList.remove('active');
+                    }
+                });
+            }
+        });
+
+        document.getElementById('content').addEventListener('load', function() {
+            this.contentWindow.addEventListener('hashchange', function() {
+                console.log("hashchange" + this.location.pathname + this.location.hash);
+
+                let path = this.location.pathname + this.location.hash
+                // escape # from path
+                path = path.replace('#', '%23');
+
+                if (window.location.hash.substring(1) != path) {
+                    window.location.replace("#" + path);
+                }
+            });
+        });
+
+        window.addEventListener('hashchange', function() {
+            if (window.location.hash && window.location.hash.length > 2) {
+                var hash = window.location.hash.substring(2).replace('%23', '#');
+                document.getElementById('content').src = hash;
+                var links = document.querySelectorAll('#menu a');
+                links.forEach(link => {
+                    if (hash.startsWith(link.getAttribute('href'))) {
+                    link.classList.add('active');
+                    } else {
+                    link.classList.remove('active');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
