@@ -62,7 +62,7 @@
 
         window.addEventListener('load', function() {
             if (window.location.hash && window.location.hash.length > 2) {
-                var hash = window.location.hash.substring(2).replace('%23', '#');
+                var hash = window.location.hash.substring(1).replace('%23', '#');
                 document.getElementById('content').src = hash;
                 var links = document.querySelectorAll('#menu a');
                 links.forEach(link => {
@@ -82,6 +82,9 @@
                 let path = this.location.pathname + this.location.hash
                 // escape # from path
                 path = path.replace('#', '%23');
+                rootPath = window.location.pathname;
+                rootPath = rootPath.replace('index.html', '');
+                path = path.replace(rootPath, '');
 
                 if (window.location.hash.substring(1) != path) {
                     window.location.replace("#" + path);
@@ -90,8 +93,8 @@
         });
 
         window.addEventListener('hashchange', function() {
-            if (window.location.hash && window.location.hash.length > 2) {
-                var hash = window.location.hash.substring(2).replace('%23', '#');
+            if (window.location.hash && window.location.hash.length > 1) {
+                var hash = window.location.hash.substring(1).replace('%23', '#');
                 document.getElementById('content').src = hash;
                 var links = document.querySelectorAll('#menu a');
                 links.forEach(link => {

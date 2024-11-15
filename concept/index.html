@@ -463,11 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_registrierung_einer_epa_fdv_instanz">Registrierung einer ePA-FdV-Instanz <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></a></li>
 <li><a href="#_deregistrierung_einer_fdv_instanz">Deregistrierung einer FdV-Instanz <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a></li>
 <li><a href="#_liste_aktuelle_pushers_enthalten">Liste aktuelle Pushers enthalten <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a></li>
-<li><a href="#_versenden_von_push_notifications">Versenden von Push-Notifications <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a>
-<ul class="sectlevel3">
-<li><a href="#_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht  <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a></li>
-</ul>
-</li>
+<li><a href="#_versenden_von_push_notifications">Versenden von Push-Notifications <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a></li>
 </ul>
 </li>
 <li><a href="#_beispiele">Beispiele <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a>
@@ -739,71 +735,6 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 </li>
 </ol>
 </div>
-<div class="sect3">
-<h4 id="_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht  <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h4>
-<div class="sect4">
-<h5 id="_apple">Apple</h5>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP-Header</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Wert</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Beschreibung</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:method</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>POST</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:path</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/3/device/<strong>&lt;device_token&gt;</strong></code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">authorization</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong>&lt;provider_token&gt;</strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Required for token-based authentication</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">apns-push-type</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alert</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">apns-id</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">apns-expiration</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">apns-priority</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">apns-topic</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">apns-collapse-id</p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -924,7 +855,7 @@ end if</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-15 11:21:38 +0100
+Last updated 2024-11-15 11:34:56 +0100
 </div>
 </div>
 </body>
