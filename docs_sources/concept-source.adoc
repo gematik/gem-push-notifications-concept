@@ -50,21 +50,28 @@ Die andere sind Fachdienst oder Push-Provider spezifisch.
 === Verschlüsselung des Benachrichtigungsinhaltes image:{Status_Draft}[]
 
 Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder veränderten werden kann.
+
 Wenn sich eine E-Rezept-FdV-Installation beim E-Rezept-Fachdienst für Benachrichtigungen registriert (vgl. Abschnitt 4.6.1), erzeugt die App ein initiales gemeinsames Geheimnis (`initial-shared-secret` (`ISS`)) und überträgt dieses kryptographisch gesichert an den E-Rezept-Fachdienst.
+
 Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Notification Service mit verschlüsselten Benachrichtigungsinhalt über den Notification Provider an die E-Rezept-FdV-Installation übermittelt.
+
 Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüssel kryptographisch ausgeschlossen ist.
+
 Der Notification Service erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem E-Rezept-FdV bei der Registrierung. Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per `HKDF(ISS, info="<Jahr>-<Monat>")` zwei Werte abgeleitet:
 
-  - Ein Geheimnis für den Monat und Jahr des Zeitstempels (`shared-secret-Jahr-Monat`)
-  - ein AES/GCM-Schlüssel für den Monat und Jahr des Zeitstempels (`AES/GCM-Schlüssel-Jahr-Monat`).
+1. Ein Geheimnis für den Monat und Jahr des Zeitstempels (`shared-secret-Jahr-Monat`)
+2. ein AES/GCM-Schlüssel für den Monat und Jahr des Zeitstempels (`AES/GCM-Schlüssel-Jahr-Monat`).
 
 Diese beiden Werte werden im Notification Service sicher gespeichert und das ISS wird im Notification Service gelöscht.
 
 ==== Beispiel für einen Austausch im Oktober 2023: image:{Status_InReview}[]
 
 Das ISS sei zufällig erzeugt gleich (hexdump) `f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2`. Dann ergibt `HKDF(ISS, info="2023-10", L=64) = (hexdump) 185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`. Die ersten 32 Byte (256 Bit) sind das `shared-secret-2023-10` gleich (hexdump) `185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b` und die letzten 32 Byte sind der `AES/GCM-Schlüssel-2023-10` ist gleich (hexdump) `3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`.
+
 Soll im Oktober 2023 eine Benachrichtigung kryptographisch gesichert werden, um sie an das E-Rezept-FdV zu versenden, dann wird der Schlüssel `AES/GCM-Key-2023-10` dafür verwendet. Soll im November 2023 eine Benachrichtigung gesichert werden, so muss per `HKDF(shared-secret-2023-10, info="2023-11")` wieder ein Geheimnis -- diesmal für November 2023 -- und ein neuer AES/GCM-Schlüssel abgeleitet werden. `shared-secret-2023-11 = (hexdump) 0c8662d90b04818afb317406fe7fcfcf8d103cd9bc6ad7847890d28620e85ec3`, `AES/GCM-Schlüssel-2023-11 = (hexdump) 39aa5dacd538f53f4b956d84c9b8f2e26933274d160b9fd1a263a27681c6331b`
+
 Alle `shared-secret-Jahr-Monat` und alle AES/GCM-Schlüssel-Jahr-Monat, die älter sind als zwei Monate werden, sowohl im Notification Service als auch im E-Rezept-FdV gelöscht, jedoch niemals das jüngste noch verfügbare (auch wenn es älter als zwei Monate ist).  Der fachliche Hintergrund von "zwei Monaten" ist, dass sichergestellt sein muss, dass falls der E-Rezept-FD die Benachrichtigung Sekunden vor Monatsende erstellt, und diese im E-Rezept-FdV erst nach einigen Sekunden dann im Folgemonat empfangen werden, die Entschlüsselung im E-Rezept-FdV immer noch möglich sein muss.
+
 Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für `2023-12` erzeugt werden und darauf basierend anschließend die Ableitung für `2024-01`. Anschließend werden die Ableitungs- und Schlüsseldaten für `2023-11`` gelöscht. Die Schlüsseldaten für `2024-01` werden für die kryptographische Sicherung verwendet.
 
 Somit erreicht man das Ziel, dass bei Kompromittierung eines `AES/GCM-Jahr-Monat-Schlüssels` nicht mehr Benachrichtigungen entschlüsselt werden können, die älter als zwei Monate sind.
@@ -114,6 +121,19 @@ Die folgende Abbildung veranschaulicht den Ablauf, wenn ein Ereignis in einem Fa
 [#send_push]
 .Push-Notification-Versand
 image::diagrams/send_push.png[width=50%]
+
+1. Der Fachdienst führt folgende Schritte durch
+    a. Erzeugen des Nachrichteninhalts für dieses spezifisches Ereignis. Die Strukturierung ist fachdienstspezifisch.
+    b. Erzeugen eines neuen gültigen Schlüssels, wenn kein gültiger vorhanden ist.
+2. Für jeden registrierten Pusher `p`, der für das Ereignis abonniert ist, wird eine Push-Benachrichtigung `Notification_p` mit mindestens folgenden Inhalten erzeugt (Die möglichen Felder und deren Beschreibungen sind auf der OpenAPI-Seite zu finden):
+    a. `ciphertext` = Nachrichteninhalt aus 1b, verschlüsselt mit dem aktuell gültigen Schlüssel.
+    b. `time_message_encrypted` = Zeitpunkt der Verschlüsselung des Nachrichteinhaltes.
+    c. `devices` = (mindestens: app_id, push_token)
+3. Für jeden Pusher p wird die Push-Benachrichtigung `Notification_p` an das Push Gateways des Pushers `p` übermittelt.
+4. Das Push Gateway übermittelt die Push-Benachrichtigung `Notification_p` an den Push Provider.
+5. Der Push-Provider sendet die Notification an die zur `push_token` gehörende FdV-Instanz.
+6. Die FdV-Instanz entschlüsselt den Nachrichteninhalt mit dem aktuell gültigen Schlüssel (erzeugt ihn, wenn er nicht schon vorhanden ist) und zeigt dem Nutzer den Nachrichteninhalt entsprechend an.
+7. Bei Bedarf kann sich der Nutzer anmelden, um sich beispielsweise ein eingestelltes Dokument anzusehen.
 
 == Beispiele image:{Status_Draft}[]
 
