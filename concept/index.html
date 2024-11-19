@@ -523,7 +523,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect3">
 <h4 id="_fdv_instanz">FdV Instanz <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></h4>
 <div class="paragraph">
-<p>Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push Notifications ausgewählen kann. Die FdV-Instanz wird auch als Pusher bezeichnet.</p>
+<p>Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push Notifications auswählen kann.</p>
 </div>
 </div>
 </div>
@@ -536,11 +536,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="title">Abbildung 2. Authentisierung der beteiligten Komponenten</div>
 </div>
 <div class="paragraph">
-<p>Die Verbindungen zwischen Push Gateway und Aktensystem sind beidseitig authentisiert und verschlüsselt.</p>
+<p>Die Verbindungen zwischen Push Gateway und den Fachdiensten sind beidseitig authentisiert und verschlüsselt.</p>
 </div>
 <div class="paragraph">
-<p>Die Verbindungen zwischen Push Gateway und die Fachdienste sind beidseitig authentisiert und verschlüsselt.
-Die andere sind Fachdienst oder Push-Provider spezifisch.</p>
+<p>Die Verbindungen zwischen Push Gateway und den Fachdiensten sind beidseitig authentisiert und verschlüsselt.
+Die anderen sind Fachdienst oder Push-Provider spezifisch.</p>
 </div>
 </div>
 <div class="sect2">
@@ -549,16 +549,16 @@ Die andere sind Fachdienst oder Push-Provider spezifisch.</p>
 <p>Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder veränderten werden kann.</p>
 </div>
 <div class="paragraph">
-<p>Wenn sich eine E-Rezept-FdV-Installation beim E-Rezept-Fachdienst für Benachrichtigungen registriert (vgl. Abschnitt 4.6.1), erzeugt die App ein initiales gemeinsames Geheimnis (<code>initial-shared-secret</code> (<code>ISS</code>)) und überträgt dieses kryptographisch gesichert an den E-Rezept-Fachdienst.</p>
+<p>Wenn sich eine FdV-Installation beim Fachdienst für Benachrichtigungen registriert, erzeugt die App ein initiales gemeinsames Geheimnis (<code>initial-shared-secret</code> (<code>ISS</code>)) und überträgt dieses kryptographisch gesichert an den Fachdienst.</p>
 </div>
 <div class="paragraph">
-<p>Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Notification Service mit verschlüsselten Benachrichtigungsinhalt über den Notification Provider an die E-Rezept-FdV-Installation übermittelt.</p>
+<p>Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Installation übermittelt.</p>
 </div>
 <div class="paragraph">
 <p>Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüssel kryptographisch ausgeschlossen ist.</p>
 </div>
 <div class="paragraph">
-<p>Der Notification Service erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem E-Rezept-FdV bei der Registrierung. Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per <code>HKDF(ISS, info="&lt;Jahr&gt;-&lt;Monat&gt;")</code> zwei Werte abgeleitet:</p>
+<p>Der Fachdienst erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem FdV bei der Registrierung. Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per <code>HKDF(ISS, info="&lt;Jahr&gt;-&lt;Monat&gt;")</code> zwei Werte abgeleitet:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -571,7 +571,7 @@ Die andere sind Fachdienst oder Push-Provider spezifisch.</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>Diese beiden Werte werden im Notification Service sicher gespeichert und das ISS wird im Notification Service gelöscht.</p>
+<p>Diese beiden Werte werden im Fachdienst sicher gespeichert und das ISS wird im Fachdienst gelöscht.</p>
 </div>
 <div class="sect3">
 <h4 id="_beispiel_für_einen_austausch_im_oktober_2023">Beispiel für einen Austausch im Oktober 2023: <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></h4>
@@ -588,7 +588,7 @@ Die andere sind Fachdienst oder Push-Provider spezifisch.</p>
 <p>Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für <code>2023-12</code> erzeugt werden und darauf basierend anschließend die Ableitung für <code>2024-01</code>. Anschließend werden die Ableitungs- und Schlüsseldaten für <code>2023-11`</code> gelöscht. Die Schlüsseldaten für <code>2024-01</code> werden für die kryptographische Sicherung verwendet.</p>
 </div>
 <div class="paragraph">
-<p>Somit erreicht man das Ziel, dass bei Kompromittierung eines <code>AES/GCM-Jahr-Monat-Schlüssels</code> nicht mehr Benachrichtigungen entschlüsselt werden können, die älter als zwei Monate sind.</p>
+<p>Somit erreicht man das Ziel, dass bei Kompromittierung eines <code>AES/GCM-Jahr-Monat-Schlüssels</code> nur die Benachrichtigungen der letzten zwei Monate entschlüsselt werden können.</p>
 </div>
 </div>
 </div>
@@ -612,7 +612,7 @@ Die andere sind Fachdienst oder Push-Provider spezifisch.</p>
 <p>Die FdV-Instanz erzeugt ein initial_shared_secret und speichert den Zeitpunkt (&lt;Jahr&gt;-&lt;Monat&gt;) zu welchem dieses erzeugt wurde als time_iss_created</p>
 </li>
 <li>
-<p>Der Nutzer meldet sich beim Fachdienst (z.B. Aktensystem) an und registriert die FdV-Instanz als Pusher. Teil der Registrierungsdaten sind: {</p>
+<p>Der Nutzer meldet sich beim Fachdienst (z.B. Aktensystem) an und registriert einen Pusher. Teil der Registrierungsdaten sind: {</p>
 <div class="ulist">
 <ul>
 <li>
@@ -644,7 +644,7 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 </ol>
 </div>
 <div class="paragraph">
-<p>Möchte der Versicherte Push Notifications von mehreren Fachdiensten erhalten, wird die FdV-Instanz in jedem dieser Fachdienste als Pusher registriert.</p>
+<p>Möchte der Versicherte Push Notifications von mehreren Fachdiensten erhalten, wird durch die FdV-Instanz in jedem dieser Fachdienste ein Pusher registriert.</p>
 </div>
 <div class="listingblock">
 <div class="title">Registrierung einer FdV-Instanz für Push-Notifications im Push-Provider</div>
@@ -694,7 +694,7 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 <div class="olist loweralpha">
 <ol class="loweralpha">
 <li>
-<p>Erzeugen des Nachrichteninhalts für dieses spezifisches Ereignis. Die Strukturierung ist fachdienstspezifisch.</p>
+<p>Erzeugen des Nachrichteninhalts für dieses spezifische Ereignis. Die Strukturierung ist fachdienstspezifisch.</p>
 </li>
 <li>
 <p>Erzeugen eines neuen gültigen Schlüssels, wenn kein gültiger vorhanden ist.</p>
@@ -855,7 +855,7 @@ end if</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-15 11:34:56 +0100
+Last updated 2024-11-19 12:56:21 +0100
 </div>
 </div>
 </body>
