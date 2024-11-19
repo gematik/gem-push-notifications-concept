@@ -8,12 +8,12 @@ entity "Apple/Google" as NotificationProvider
 
 group Registration
     activate App
-    App -> NotificationProvider : get_push_token
+    App -> NotificationProvider : get_pushkey
     activate NotificationProvider
-    NotificationProvider -->> App : push_token
+    NotificationProvider -->> App : pushkey
     deactivate NotificationProvider
     App -> App : create iss
-    App -> Fachdienst : **POST** //pushers/set//
+    App -> Fachdienst : **POST** //pushers/v1/set//
     activate Fachdienst
     Fachdienst -> Fachdienst : store information
     Fachdienst -->> App : status

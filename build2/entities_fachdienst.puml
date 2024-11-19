@@ -1,0 +1,10 @@
+@startuml entities_fachdienst
+!theme gematik from ../puml
+
+skinparam nodesep 150
+
+cloud "TI" {
+    component Fachdienst
+}
+
+@enduml

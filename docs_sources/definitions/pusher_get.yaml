@@ -31,8 +31,9 @@ schema:
             description: |-
               The kind of pusher to configure. `"http"` makes a pusher that
               sends HTTP pokes. `null` deletes the pusher.
-            type: string
-            nullable: true
+            oneOf:
+              - type: string
+              - type: "null"
           app_id:
             type: string
             description: |-
