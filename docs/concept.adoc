@@ -65,6 +65,7 @@ Die anderen sind Fachdienst oder Push-Provider spezifisch.
 
 Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder veränderten werden kann.
 
+
 Wenn sich eine FdV-Installation beim Fachdienst für Benachrichtigungen registriert, erzeugt die App ein initiales gemeinsames Geheimnis (`initial-shared-secret` (`ISS`)) und überträgt dieses kryptographisch gesichert an den Fachdienst.
 
 Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Installation übermittelt.
@@ -159,6 +160,17 @@ image::diagrams/send_push.png[width=50%]
 5. Der Push-Provider sendet die Notification an die zur `push_token` gehörende FdV-Instanz.
 6. Die FdV-Instanz entschlüsselt den Nachrichteninhalt mit dem aktuell gültigen Schlüssel (erzeugt ihn, wenn er nicht schon vorhanden ist) und zeigt dem Nutzer den Nachrichteninhalt entsprechend an.
 7. Bei Bedarf kann sich der Nutzer anmelden, um sich beispielsweise ein eingestelltes Dokument anzusehen.
+
+=== Themen für produktspezifische Implementierungen
+
+Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der produktspezifischen Implementierung abhängen:
+
+1. Lokalisierung: Die genaue Implementierung der Lokalisierung ist stark abhängig vom Payload und damit vom spezifischen Anwendungsfall.
+2. Channels: Die Anforderungen und Implementierung von Channels sind anwendungsfallspezifisch und können je nach Produkt variieren.
+3. Payload: Die genaue Struktur und der Inhalt der Nutzdaten können je nach Anwendungsfall und Produktfunktionalität unterschiedlich sein.
+4. Implementierung des Push Gateways: Die technische Umsetzung des Push-Mechanismus kann von der gewählten Infrastruktur und den spezifischen Anforderungen des Produkts abhängen. Die Technologie entwickelt sich schnell weiter, was auch die Kommunikation zwischen Push Gateway und Push Providers beeinflusst. +
+
+Für Hinweise zur Implementierung dieser Themen verweisen wir auf die produktspezifischen Spezifikationen und Implementierungsleitfäden.
 
 == Beispiele image:{Status_Draft}[]
 
