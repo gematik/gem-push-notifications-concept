@@ -1,0 +1,76 @@
+= Optionale Features image:gematik_logo.png[width=150, float="right"]
+include::./config-source.adoc[]
+
+toc::[]
+
+== Trigger-Verwaltung (Channels)
+=== Beschreibung
+Der Nutzer des FdVs kann konfigurieren, welche Push Notifications er auf diesem Gerät erhalten möchte. Jedem Trigger im Fachdienst, der eine Push Notification sendet, ist eine event_id zugeordnet. Es kann vorkommen, dass mehrere Trigger die gleiche event_id haben. Ein Beispiel hierfür ist, wenn die gleiche Notification von zwei verschiedenen Stellen ausgelöst werden kann. In diesem Fall können beide Trigger die gleiche event_id haben.
+
+Die Liste der event_ids ist als GET Aufruf verfügbar. Das FdV kann die Liste der event_ids in Channels abbilden, um sie für den Nutzer übersichtlicher zu gestalten. Es kann auch vorkommen, dass das FdV nicht alle event_ids abbildet und sie somit dem Nutzer nicht zur Verfügung stellt. Dann werden die Trigger für diese event_ids nicht ausgelöst.
+
+Der Fachdienst hat drei Endpunkte:
+
+GET /channels/v1 - Ruft eine Liste von event_ids ab.
+GET /channels/v1/{push_token} - Ruft eine Liste von event_ids ab und zeigt die aktuelle Auswahl des Nutzers auf diesem Gerät für jede event_id.
+POST /channels/v1/{push_token} - Sendet eine aktualisierte Liste an den Fachdienst, die die Auswahl des Nutzers für dieses Gerät enthält.
+
+Die Auswahl des Nutzers hat drei Optionen:
+
+Enabled
+Disabled
+NotSet
+
+NotSet funktioniert für den Trigger wie Disabled, da es nicht Enabled ist, kann aber im FdV anders dargestellt werden.
+
+=== Beispiel
+Es gibt drei verschiedene Arten von Push Notifications:
+
+Dokument erstellen
+Dokument lesen
+Dokument löschen
+
+Dafür gibt es drei verschiedene event_ids (sie können auch numerisch sein):
+
+document.create
+document.read
+document.delete
+
+Wenn das FdV einen Aufruf der Operation GET /channels/v1/{push_token} durchführt, wird eine Liste mit den drei event_ids zurückgegeben. Diese werden dann im FdV angezeigt, damit der Nutzer entscheiden kann, welche er erhalten möchte. Beim ersten Mal haben alle den Status NotSet, da der Nutzer sich noch nicht entscheiden hat. Der Nutzer kann dann seine Auswahl treffen, und beim Speichern führt das FdV einen Aufruf der Operation POST /channels/v1/{push_token} durch und sendet die neue Liste an den Fachdienst. 
+
+Die Liste kann so aussehen:
+[cols="1,1"]
+|===
+|event_id|Status
+
+|document.create
+|Enabled
+
+|document.read
+|Disabled
+
+|document.delete
+|Enabled
+|===
+
+Oder als JSON:
+[%collapsible]
+====
+[source]
+--
+[
+  {
+    "event_id": "document.create",
+    "Status": "Enabled"
+  },
+  {
+    "event_id": "document.read",
+    "Status": "Disabled"
+  },
+  {
+    "event_id": "document.delete",
+    "Status": "Enabled"
+  }
+]
+--
+====

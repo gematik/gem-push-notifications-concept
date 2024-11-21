@@ -148,6 +148,8 @@ Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark vo
 
 Für Hinweise zur Implementierung dieser Themen verweisen wir auf die produktspezifischen Spezifikationen und Implementierungsleitfäden.
 
+Optionale Features können xref:../docs/optional-features.adoc[hier] gefunden werden. 
+
 == Beispiele image:{Status_Draft}[]
 
 === Event-Trigger
