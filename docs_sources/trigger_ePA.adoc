@@ -1,5 +1,5 @@
 |===
-| Nr. | Aktion | Beschreibung | Channel | MVP | technische ID
+| Nr. | Aktion | Beschreibung | Channel | MVP | technische ID | Anmerkung
 
 | 1
 | Dokument eingestellt
@@ -7,6 +7,7 @@
 | Dokumente
 | ja
 | [technische ID]
+|  
 
 | 2
 | Dokument gelesen
@@ -14,6 +15,7 @@
 | Dokumente
 | nein
 | [technische ID]
+|  
 
 | 3
 | Dokument gelöscht
@@ -21,6 +23,7 @@
 | Dokumente
 | nein
 | [technische ID]
+|  
 
 | 4
 | Dokument aktualisiert
@@ -28,6 +31,7 @@
 | Dokumente
 | ja
 | [technische ID]
+|  
 
 | 5
 | Metadaten geändert
@@ -35,6 +39,7 @@
 | Dokumente
 | nein
 | [technische ID]
+|  
 
 | 6
 | Verschreibungsdaten einstellen
@@ -42,6 +47,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 7
 | Verschreibungsdaten stornieren
@@ -49,6 +55,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 8
 | Dispensierinformationen einstellen
@@ -56,6 +63,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 9
 | Dispensierung stornieren
@@ -63,6 +71,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 10
 | Dispensierinformationen einstellen (Clientsysteme)
@@ -70,6 +79,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 11
 | Dispensierung stornieren (Clientsysteme)
@@ -77,6 +87,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 12
 | Medikationsliste abrufen
@@ -84,6 +95,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 13
 | AMTS-rZI Allergien und Intoleranzen hinzufügen
@@ -91,6 +103,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 14
 | AMTS-rZI Allergien und Intoleranzen aktualisieren
@@ -98,6 +111,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 15
 | AMTS-rZI Beobachtungen hinzufügen
@@ -105,6 +119,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 16
 | AMTS-rZI Beobachtung kommentieren
@@ -112,6 +127,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 17
 | AMTS-rZI Beobachtung invalidieren
@@ -119,6 +135,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 18
 | Medikament hinzufügen
@@ -126,6 +143,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 19
 | Eingegebenes Medikament invalidieren
@@ -133,6 +151,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 20
 | Medikamentzusatzinformationen hinzufügen
@@ -140,6 +159,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 21
 | Medikamentzusatzinformationen aktualisieren
@@ -147,6 +167,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 22
 | Medikament ersetzen
@@ -154,6 +175,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 23
 | Medikationsplanungsdaten mit Verschreibungsdaten verlinken
@@ -161,6 +183,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 24
 | Verlinkung zwischen Medikationsplanungsdaten und Verschreibungsdaten aufheben
@@ -168,6 +191,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 25
 | Medikationsplan abrufen
@@ -175,6 +199,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 26
 | Medikationsplan verwalten
@@ -182,6 +207,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 27
 | Übergreifenden Hinweis für Medikationsplan hinzufügen
@@ -189,6 +215,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 28
 | Übergreifende Hinweise für Medikationsplan entfernen
@@ -196,6 +223,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 29
 | Medikationsplanhistorie abrufen
@@ -203,6 +231,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 30
 | Verifizieren des aktuell gültigen Medikationsplans
@@ -210,6 +239,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 31
 | Befugnis durch Vertreter erteilt
@@ -217,6 +247,7 @@
 | Vertreter
 | ja
 | [technische ID]
+|  
 
 | 32
 | Befugnis durch Vertreter gelöscht
@@ -224,6 +255,7 @@
 | Vertreter
 | ja
 | [technische ID]
+|  
 
 | 33
 | Befugnis in der ärzlichen Versorgung erteilt
@@ -231,6 +263,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 34
 | Widerspruch erteilt durch Vertreter oder Ombudstelle
@@ -238,6 +271,7 @@
 | [Channel-Info]
 | [MVP-Info]
 | [technische ID]
+| email an Versicherten
 
 | 35
 | Widerspruch zurückgenommen durch Vertreter oder Ombudstelle
@@ -245,6 +279,7 @@
 | [Channel-Info]
 | [MVP-Info]
 | [technische ID]
+| email an Versicherten
 
 | 36
 | Einschränkung der Verwendung von Daten geändert
@@ -252,6 +287,7 @@
 | [Channel-Info]
 | [MVP-Info]
 | [technische ID]
+| email an Versicherten
 
 | 37
 | Widerspruch gegen die Nutzung der ePA durch eine spezifische LEI erteilt
@@ -259,6 +295,7 @@
 | [Channel-Info]
 | [MVP-Info]
 | [technische ID]
+| email an Versicherten
 
 | 38
 | Widerspruch gegen die Nutzung der ePA durch eine spezifische LEI zurückgenommen
@@ -266,6 +303,7 @@
 | [Channel-Info]
 | [MVP-Info]
 | [technische ID]
+| email an Versicherten
 
 | 39
 | Widerspruch gegen die Nutzung dgMP durch eine spezifische LEI erteilt
@@ -273,6 +311,7 @@
 | [Channel-Info]
 | [MVP-Info]
 | [technische ID]
+| email an Versicherten
 
 | 40
 | Widerspruch gegen die Nutzung dgMP durch eine spezifische LEI zurückgenommen
@@ -280,6 +319,7 @@
 | [Channel-Info]
 | [MVP-Info]
 | [technische ID]
+| email an Versicherten
 
 | 41
 | Dokument verborgen
@@ -287,6 +327,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 42
 | Verborgenes Dokument wieder sichtbar
@@ -294,6 +335,7 @@
 | [Channel-Info]
 | ja
 | [technische ID]
+|  
 
 | 43
 | Kategorie verborgen
@@ -301,6 +343,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 44
 | Kategorie wieder sichtbar
@@ -308,6 +351,7 @@
 | [Channel-Info]
 | ja
 | [technische ID]
+|  
 
 | 45
 | Ordner verborgen
@@ -315,6 +359,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 46
 | Ordner wieder sichtbar
@@ -322,6 +367,7 @@
 | [Channel-Info]
 | ja
 | [technische ID]
+|  
 
 | 47
 | Loginversuch gescheitert
@@ -329,6 +375,7 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 
 | 48
 | Protokolldaten abgerufen
@@ -336,4 +383,5 @@
 | [Channel-Info]
 | nein
 | [technische ID]
+|  
 |===
