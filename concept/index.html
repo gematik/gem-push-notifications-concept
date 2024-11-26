@@ -463,11 +463,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_registrierung_einer_epa_fdv_instanz">Registrierung einer ePA-FdV-Instanz <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></a></li>
 <li><a href="#_deregistrierung_einer_fdv_instanz">Deregistrierung einer FdV-Instanz <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a></li>
 <li><a href="#_liste_aktuelle_pushers_enthalten">Liste aktuelle Pushers enthalten <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a></li>
-<li><a href="#_versenden_von_push_notifications">Versenden von Push-Notifications <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a></li>
+<li><a href="#_versenden_von_push_notifications">Versenden von Push-Notifications <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a>
+<ul class="sectlevel3">
+<li><a href="#_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a></li>
+</ul>
+</li>
+<li><a href="#_themen_für_produktspezifische_implementierungen">Themen für produktspezifische Implementierungen</a></li>
 </ul>
 </li>
 <li><a href="#_beispiele">Beispiele <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></a>
 <ul class="sectlevel2">
+<li><a href="#_device_registrierung">Device Registrierung</a></li>
 <li><a href="#_event_trigger">Event-Trigger</a></li>
 <li><a href="#_apple_push">Apple Push</a>
 <ul class="sectlevel3">
@@ -489,7 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_konzept">Konzept</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Versicherte können sich über das mobile FdV mittels Push-Notifications über Ereignisse in Fachdiensten (z.B. ePA-Aktensystem, E-Rezept-Fachdienst, Dienste der Kassen) informieren lassen. Der Versicherte kann im FdV aus den möglichen Ereignissen diejenigen auswählen, für die er benachrichtigt werden möchte. Standardmäßig werden keine Push-Notifications gesendet. Das Konzept sieht vor, dass der Versicherte Push-Notifications für verschiedene Fachdienste abonnieren kann. Die Push-Notifications werden verschlüsselt übermittelt und können nur von der ePA-FdV-Instanz entschlüsselt werden, für die sie bestimmt sind.</p>
+<p>Versicherte können sich über das mobile FdV mittels Push-Notifications über Ereignisse in Fachdiensten (z.B. ePA-Aktensystem, E-Rezept-Fachdienst, Dienste der Kassen) informieren lassen. Der Versicherte kann im FdV aus den möglichen Ereignissen (zum Beispiel in Form von Channels) diejenigen auswählen, für die er benachrichtigt werden möchte. Standardmäßig werden keine Push-Notifications gesendet.</p>
 </div>
 <div class="sect2">
 <h3 id="_architektur">Architektur <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></h3>
@@ -498,20 +504,33 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="push_overview" class="imageblock">
 <div class="content">
-<img src="../images/diagrams/push_overview.png" alt="push overview" width="50%">
+<img src="../images/diagrams/push_overview.png" alt="push overview" width="100%">
 </div>
 <div class="title">Abbildung 1. Systemüberblick</div>
+</div>
+<div class="paragraph">
+<p>Der Zweck dieses Konzepts besteht darin, eine flexible und sichere Push Infrastruktur bereitzustellen, die es ermöglicht, dass verschiedene Fachdienste Push-Notifications an eine mobile Anwendung senden können.
+Durch die Implementierung eines zentralen Push Gateways pro Frontend wird eine einheitliche Schnittstelle geschaffen, die als Fassade für die plattformspezifischen APIs von Anbietern wie Google und Apple fungiert. Dies erlaubt es mehreren Backends, gleichzeitig Push-Benachrichtigungen für eine fremde App bereitzustellen, ohne dass jedes Backend individuell mit den plattformspezifischen APIs interagieren muss. Ein wesentlicher Vorteil dieses Ansatzes ist die erhöhte Sicherheit: Die sensiblen Zugangsdaten und Schlüssel, die für die Nutzung der plattformspezifischen Push-APIs erforderlich sind, verbleiben beim Push Gateway und müssen nicht mit den einzelnen Fachdiensten geteilt werden. Dadurch wird das Risiko eines unbefugten Zugriffs auf diese Geheimnisse minimiert und die Integrität der Kommunikation gewährleistet. Als Vorbild dient die Push Implementierung wie sie im Matrix Protokoll beschrieben ist.</p>
+</div>
+<div id="push_encrypted_channel" class="imageblock">
+<div class="content">
+<img src="../images/secret_channel.drawio.svg" alt="secret channel.drawio" width="100%">
+</div>
+<div class="title">Abbildung 2. Veschlüsselter Kanal zwischen Fachdienst und FdV</div>
+</div>
+<div class="paragraph">
+<p>Um zusätzliche Sicherheit zu gewährleisten kann eine Push-Nachricht zwischen dem Fachdienst und dem FdV verschlüsselt werden. Weder Push Gateway noch Push Provider besitzen die Information um eine Entschlüsselung vorzunehmen. Die Entscheidung ob eine Push-Nachricht verschlüsselt werden muss oder unverschlüsselt bleiben kann wird durch die Spezifikation des jeweiligen Fachdienstes vorgenommen. Bisher wird davon ausgegangen, dass eine Verschlüsselung für ePA und E-Rezept notwending sein wird, diese jedoch bei TIM optional ist.</p>
 </div>
 <div class="sect3">
 <h4 id="_fachdienst">Fachdienst <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></h4>
 <div class="paragraph">
-<p>Der anwendungsspezifische Fachdienst verwalten die Push-Notifications für den jeweiligen Anwendungsfall. Der Fachdienst erstellt Push-Notifications für abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für Versicherte zur Registrierung und Konfiguration von Pushern. Ein Pusher bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für beliebig viele Endgeräte Pusher im Fachdienst hinterlegen.</p>
+<p>Der anwendungsspezifische Fachdienst verwaltet die Push-Notifications für den jeweiligen Anwendungsfall. Der Fachdienst erstellt Push-Notifications für abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für Versicherte zur Registrierung und Konfiguration von <code>Pusher</code>n. Ein <code>Pusher</code> bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für mehrere Endgeräte <code>Pusher</code> im Fachdienst hinterlegen.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_push_gateway">Push Gateway <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></h4>
 <div class="paragraph">
-<p>Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden. Das Push Gateway leitet die Informationen der Push- Notification an den Push Provider weiter. Es wird vom Hersteller des FdV bereitgestellt, und es kann weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.</p>
+<p>Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden. Das Push Gateway leitet die Informationen der Push-Notification an den Push Provider weiter. Es wird vom Hersteller des FdV bereitgestellt, und es kann weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.</p>
 </div>
 </div>
 <div class="sect3">
@@ -523,7 +542,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect3">
 <h4 id="_fdv_instanz">FdV Instanz <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></h4>
 <div class="paragraph">
-<p>Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push Notifications auswählen kann.</p>
+<p>Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push-Notifications auswählen kann.</p>
 </div>
 </div>
 </div>
@@ -531,12 +550,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_authentisierung">Authentisierung <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></h3>
 <div id="push_overview_authentication" class="imageblock">
 <div class="content">
-<img src="../images/diagrams/push_overview_authentication.png" alt="push overview authentication" width="50%">
+<img src="../images/diagrams/push_overview_authentication.png" alt="push overview authentication" width="100%">
 </div>
-<div class="title">Abbildung 2. Authentisierung der beteiligten Komponenten</div>
-</div>
-<div class="paragraph">
-<p>Die Verbindungen zwischen Push Gateway und den Fachdiensten sind beidseitig authentisiert und verschlüsselt.</p>
+<div class="title">Abbildung 3. Authentisierung der beteiligten Komponenten</div>
 </div>
 <div class="paragraph">
 <p>Die Verbindungen zwischen Push Gateway und den Fachdiensten sind beidseitig authentisiert und verschlüsselt.
@@ -546,16 +562,16 @@ Die anderen sind Fachdienst oder Push-Provider spezifisch.</p>
 <div class="sect2">
 <h3 id="_verschlüsselung_des_benachrichtigungsinhaltes">Verschlüsselung des Benachrichtigungsinhaltes <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></h3>
 <div class="paragraph">
-<p>Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder veränderten werden kann.</p>
+<p>Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder verändert werden kann.</p>
 </div>
 <div class="paragraph">
-<p>Wenn sich eine FdV-Installation beim Fachdienst für Benachrichtigungen registriert, erzeugt die App ein initiales gemeinsames Geheimnis (<code>initial-shared-secret</code> (<code>ISS</code>)) und überträgt dieses kryptographisch gesichert an den Fachdienst.</p>
+<p>Wenn sich eine FdV-Instanz beim Fachdienst für Benachrichtigungen registriert, erzeugt die App ein initiales gemeinsames Geheimnis (<code>initial-shared-secret</code> (<code>ISS</code>)) und überträgt dieses kryptographisch gesichert an den Fachdienst.</p>
 </div>
 <div class="paragraph">
-<p>Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Installation übermittelt.</p>
+<p>Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Instanz übermittelt.</p>
 </div>
 <div class="paragraph">
-<p>Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüssel kryptographisch ausgeschlossen ist.</p>
+<p>Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüsseln kryptographisch ausgeschlossen ist.</p>
 </div>
 <div class="paragraph">
 <p>Der Fachdienst erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem FdV bei der Registrierung. Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per <code>HKDF(ISS, info="&lt;Jahr&gt;-&lt;Monat&gt;")</code> zwei Werte abgeleitet:</p>
@@ -585,7 +601,7 @@ Die anderen sind Fachdienst oder Push-Provider spezifisch.</p>
 <p>Alle <code>shared-secret-Jahr-Monat</code> und alle AES/GCM-Schlüssel-Jahr-Monat, die älter sind als zwei Monate werden, sowohl im Notification Service als auch im E-Rezept-FdV gelöscht, jedoch niemals das jüngste noch verfügbare (auch wenn es älter als zwei Monate ist).  Der fachliche Hintergrund von "zwei Monaten" ist, dass sichergestellt sein muss, dass falls der E-Rezept-FD die Benachrichtigung Sekunden vor Monatsende erstellt, und diese im E-Rezept-FdV erst nach einigen Sekunden dann im Folgemonat empfangen werden, die Entschlüsselung im E-Rezept-FdV immer noch möglich sein muss.</p>
 </div>
 <div class="paragraph">
-<p>Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für <code>2023-12</code> erzeugt werden und darauf basierend anschließend die Ableitung für <code>2024-01</code>. Anschließend werden die Ableitungs- und Schlüsseldaten für <code>2023-11`</code> gelöscht. Die Schlüsseldaten für <code>2024-01</code> werden für die kryptographische Sicherung verwendet.</p>
+<p>Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für <code>2023-12</code> erzeugt werden und darauf basierend anschließend die Ableitung für <code>2024-01</code>. Anschließend werden die Ableitungs- und Schlüsseldaten für <code>2023-11</code> gelöscht. Die Schlüsseldaten für <code>2024-01</code> werden für die kryptographische Sicherung verwendet.</p>
 </div>
 <div class="paragraph">
 <p>Somit erreicht man das Ziel, dass bei Kompromittierung eines <code>AES/GCM-Jahr-Monat-Schlüssels</code> nur die Benachrichtigungen der letzten zwei Monate entschlüsselt werden können.</p>
@@ -599,47 +615,47 @@ Die anderen sind Fachdienst oder Push-Provider spezifisch.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../images/diagrams/registration.png" alt="registration" width="50%">
+<img src="../images/diagrams/registration.png" alt="registration" width="100%">
 </div>
-<div class="title">Abbildung 3. Registrierung einer FdV-Instanz für Push-Notifications im Fachdienst <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></div>
+<div class="title">Abbildung 4. Registrierung einer FdV-Instanz für Push-Notifications im Fachdienst <span class="image"><img src="https://img.shields.io/badge/Status-In_Review-orange" alt="Status In Review orange"></span></div>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Die FdV-Instanz registriert sich beim Push Provider und erhält ein push_token, das die FdV-Instanz eindeutig identifiziert.</p>
+<p>Die FdV-Instanz registriert sich beim Push Provider und erhält ein pushkey, das die FdV-Instanz eindeutig identifiziert.</p>
 </li>
 <li>
-<p>Die FdV-Instanz erzeugt ein initial_shared_secret und speichert den Zeitpunkt (&lt;Jahr&gt;-&lt;Monat&gt;) zu welchem dieses erzeugt wurde als time_iss_created</p>
+<p>Die FdV-Instanz erzeugt ein <code>initial_shared_secret</code> und speichert den Zeitpunkt (&lt;Jahr&gt;-&lt;Monat&gt;) zu welchem dieses erzeugt wurde als <code>time_iss_created</code></p>
 </li>
 <li>
-<p>Der Nutzer meldet sich beim Fachdienst (z.B. Aktensystem) an und registriert einen Pusher. Teil der Registrierungsdaten sind: {</p>
+<p>Der Nutzer meldet sich beim Fachdienst (z.B. Aktensystem) an und registriert einen Pusher. Teil der Registrierungsdaten sind:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>das push_token,</p>
+<p>der <code>pushkey</code>,</p>
 </li>
 <li>
-<p>die app_id,</p>
+<p>die <code>app_id</code>,</p>
 </li>
 <li>
-<p>die Art des Pushers (normalerweise "http"),</p>
+<p>die Art des <code>Pushers</code> (<code>kind</code>, hier immer <code>"http"</code>),</p>
 </li>
 <li>
-<p>die Adresse des Push Gateways</p>
+<p>die Adresse des Push Gateways (<code>data.url</code>)</p>
 </li>
 <li>
-<p>das initial_shared_secret</p>
+<p>das <code>initial_shared_secret</code></p>
 </li>
 <li>
-<p>time_iss_created<br>
+<p><code>time_iss_created</code><br>
     <br>
-Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. Die app_id und die Adresse des Push Gateways wurden vom Hersteller im FdV hinterlegt.</p>
+Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. Die <code>app_id</code> und die Adresse des Push Gateways wurden vom Hersteller im FdV hinterlegt.</p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>Die FdV-Instanz und der Fachdienst erzeugen den ersten Schlüssel aus dem initial_shared_secret und dem time_iss_created. Anschließend löschen sie das initial_shared_secret.</p>
+<p>Die FdV-Instanz und der Fachdienst erzeugen den ersten Schlüssel aus dem <code>initial_shared_secret</code> und dem <code>time_iss_created</code>. Anschließend löschen sie das <code>initial_shared_secret</code>.</p>
 </li>
 </ol>
 </div>
@@ -667,13 +683,13 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 <div class="sect2">
 <h3 id="_deregistrierung_einer_fdv_instanz">Deregistrierung einer FdV-Instanz <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></h3>
 <div class="paragraph">
-<p>Der gleiche Endpunkt wird sowohl zur Deregistrierung als auch zur Registrierung bei einer FdV-Instanz verwendet. Bei der Deregistrierung werden nur das push_token, die app_id und die Art des Pushers benötigt. Die Art des Pushers muss dann null sein, damit der Fachdienst weiß, dass der Pusher gelöscht werden soll.</p>
+<p>Der gleiche Endpunkt wird sowohl zur Deregistrierung als auch zur Registrierung bei einer FdV-Instanz verwendet. Bei der Deregistrierung werden nur das <code>pushkey</code>, die <code>app_id</code> und <code>kind</code> (die Art des Pushers benötigt). Die Art des Pushers muss dann null sein, damit der Fachdienst weiß, dass der Pusher gelöscht werden soll.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_liste_aktuelle_pushers_enthalten">Liste aktuelle Pushers enthalten <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></h3>
 <div class="paragraph">
-<p>Die FdV-Instanz kann eine Liste aller registrierten Pusher durch eine GET Operation auf dem bestimmten Endpunkt des Fachdienstes erhalten. Die Details dazu sind auf der OpenAPI-Seite beschrieben.</p>
+<p>Die FdV-Instanz kann eine Liste aller registrierten Pusher des Nutzers durch eine GET Operation auf dem bestimmten Endpunkt des Fachdienstes erhalten. Die Details dazu sind auf der OpenAPI-Seite beschrieben.</p>
 </div>
 </div>
 <div class="sect2">
@@ -683,9 +699,9 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 </div>
 <div id="send_push" class="imageblock">
 <div class="content">
-<img src="../images/diagrams/send_push.png" alt="send push" width="50%">
+<img src="../images/diagrams/send_push.png" alt="send push" width="100%">
 </div>
-<div class="title">Abbildung 4. Push-Notification-Versand</div>
+<div class="title">Abbildung 5. Push-Notification-Versand</div>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -707,7 +723,7 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 <div class="olist loweralpha">
 <ol class="loweralpha">
 <li>
-<p><code>ciphertext</code> = Nachrichteninhalt aus 1b, verschlüsselt mit dem aktuell gültigen Schlüssel.</p>
+<p><code>ciphertext</code> = Nachrichteninhalt aus 1a, <code>Base64(IV || Chiffrat || Authentication Tag)</code>  verschlüsselt mit dem aktuell gültigen Schlüssel.</p>
 </li>
 <li>
 <p><code>time_message_encrypted</code> = Zeitpunkt der Verschlüsselung des Nachrichteinhaltes.</p>
@@ -735,6 +751,102 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 </li>
 </ol>
 </div>
+<div class="sect3">
+<h4 id="_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h4>
+<div class="sect4">
+<h5 id="_apple">Apple</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP-Header</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wert</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Beschreibung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:method</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>POST</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/3/device/<strong>&lt;pushkey&gt;</strong></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">authorization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong>&lt;provider_token&gt;</strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Required for token-based authentication</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-push-type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alert</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-id</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-expiration</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-priority</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;prio != high ? 5 : 10&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-topic</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-collapse-id</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_themen_für_produktspezifische_implementierungen">Themen für produktspezifische Implementierungen</h3>
+<div class="paragraph">
+<p>Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der produktspezifischen Implementierung abhängen:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Lokalisierung: Die genaue Implementierung der Lokalisierung ist stark abhängig vom Payload und damit vom spezifischen Anwendungsfall.</p>
+</li>
+<li>
+<p>Channels: Die Anforderungen und Implementierung von Channels sind anwendungsfallspezifisch und können je nach Produkt variieren.</p>
+</li>
+<li>
+<p>Payload: Die genaue Struktur und der Inhalt der Nutzdaten können je nach Anwendungsfall und Produktfunktionalität unterschiedlich sein.</p>
+</li>
+<li>
+<p>Implementierung des Push Gateways: Die technische Umsetzung des Push-Mechanismus kann von der gewählten Infrastruktur und den spezifischen Anforderungen des Produkts abhängen. Die Technologie entwickelt sich schnell weiter, was auch die Kommunikation zwischen Push Gateway und Push Providers beeinflusst.</p>
+</li>
+<li>
+<p>Berechtigung: Die Berechtigungen für die verschiedenen Endpunkte sind anwendungsfallspezifisch und können je nach Produkt variieren.<br></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Für Hinweise zur Implementierung dieser Themen verweisen wir auf die produktspezifischen Spezifikationen und Implementierungsleitfäden.</p>
+</div>
+<div class="paragraph">
+<p>Optionale Features können <a href="../docs/optional-features.html">hier</a> gefunden werden.</p>
+</div>
 </div>
 </div>
 </div>
@@ -742,14 +854,104 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 <h2 id="_beispiele">Beispiele <span class="image"><img src="https://img.shields.io/badge/Status-Draft-red" alt="Status Draft red"></span></h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_device_registrierung">Device Registrierung</h3>
+<div class="listingblock">
+<div class="title">Variante 1, Platform via <code>app_id</code></div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "lang": "en",
+    "kind": "http",
+    "app_display_name": "Mat Rix",
+    "device_display_name": "iPhone 9",
+    "app_id": "com.example.app.ios",
+    "pushkey": "&lt;APNS/GCM TOKEN&gt;",
+    "data": {
+        "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+    },
+    "append": false
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Variante 2, Platform via <code>data</code></div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "lang": "en",
+    "kind": "http",
+    "app_display_name": "Mat Rix",
+    "device_display_name": "iPhone 9",
+    "app_id": "com.example.app",
+    "pushkey": "&lt;APNS/GCM TOKEN&gt;",
+    "data": {
+        "url": "https://push-gateway.location.here/_matrix/push/v1/notify",
+        "platform": "ios"
+    },
+    "append": false
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Variante 2, Platform via <code>url</code></div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "lang": "en",
+    "kind": "http",
+    "app_display_name": "Mat Rix",
+    "device_display_name": "iPhone 9",
+    "app_id": "com.example.app",
+    "pushkey": "&lt;APNS/GCM TOKEN&gt;",
+    "data": {
+        "url": "https://push-gateway.location.here/ios/_matrix/push/v1/notify"
+    },
+    "append": false
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_event_trigger">Event-Trigger</h3>
 <div class="paragraph">
 <p>Beispiel für ein Event-Trigger in ePA:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-    "trigger": "T001"
+<pre class="highlight"><code class="language-pseudo" data-lang="pseudo">function trigger001() {
+    user = getUser()
+    devices = getDevices(user)
+    channel = getChannel(trigger001)
+
+    for device in devices {
+        if device.channels[channel].isSubscribed {
+            notification = createNotification(trigger001, device)
+            sendNotification(notification, channel)
+        }
+    }
+}
+
+function createNotification(trigger, device) {
+    month = date.now().month // "2024-11"
+    encryptionKey = getEncryptionKey(device, month)
+
+    payload = {
+        event: "trigger001"
+    }
+
+    iv = random(32)
+    (cipher, authTag) = aesEncrypt(payload)
+
+    ciphertext = Base64(iv + cipher + authTag)
+
+    return {
+        month: month,
+        ciphertext: ciphertext,
+        devices: [
+            app_id: device.app_id,
+            pushkey: device.pushkey,
+            pushkey_ts: device.pushkey_ts,
+            data: device.data,
+            tweaks: {}
+        ]
+    }
 }</code></pre>
 </div>
 </div>
@@ -763,25 +965,62 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 </div>
 <div class="sect4">
 <h5 id="_in">IN</h5>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP-Header</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wert</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Beschreibung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:method</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>POST</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:path</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/3/device/<strong>&lt;pushkey&gt;</strong></code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">authorization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong>&lt;provider_token&gt;</strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Required for token-based authentication</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-push-type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alert</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">apns-priority</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;prio != high ? 5 : 10&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
 <div class="listingblock">
 <div class="title">Push Gateway payload received</div>
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">"notification": {
     "month": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
-    "mac": "string",
     "prio": "high",
     "counts": {},
     "devices": [
         {
-            "app_id": "string",
-            "pushkey": "string",
+            "app_id": "de.gematikkk.app.ios",
+            "pushkey": "abcd-efghi-jklm-nopq",
             "pushkey_ts": 0,
             "data": {
-            "format": "string"
+                "format": "string"
             },
             "tweaks": {
-                "badge": 0
             }
         }
     ]
@@ -796,25 +1035,19 @@ Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. D
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">Payload:
 {
-    type: alert,
-    mutable-content: true,
-    payload: {
-        ciphertext: notification.ciphertext,
-        month: notification.month,
-        sound: "default",
-        category: "message",
-        data: {
-            message: "Hallo Welt"
-        }
+    "aps": {
+        "mutable-content": true
     }
+    "ciphertext": notification.ciphertext,
+    "month": notification.month
 }</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Push Gateway pseudo code</div>
 <div class="content">
-<pre class="highlight"><code class="language-pseudo" data-lang="pseudo">if tweaks.badge &gt; 0 then
-    payload.payload.badge = tweaks.badge
+<pre class="highlight"><code class="language-pseudo" data-lang="pseudo">if notification.counts.badge then
+    payload.aps.badge = notification.counts.badge
 end if</code></pre>
 </div>
 </div>
@@ -847,6 +1080,9 @@ end if</code></pre>
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Sync: 22.11.2024 14:56</p>
+</div>
 </div>
 </div>
 </div>
@@ -855,7 +1091,7 @@ end if</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-19 12:56:21 +0100
+Last updated 2024-11-26 13:39:49 +0100
 </div>
 </div>
 </body>
