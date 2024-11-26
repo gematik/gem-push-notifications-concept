@@ -103,6 +103,23 @@ schema:
             homeserver should send to the push gateway are defined in the
             [Push Gateway Specification](/push-gateway-api/). Currently the only format
             available is 'event_id_only'.
+    encryption:
+      type: object
+      description: |-
+        This object contains information on how to encrypt the notifications for the pusher. This property may be `required` depending on what service it is called on.
+      properties:
+        method:
+          type: string
+          description: |-
+            The encryption method to use. As currently only AES/GCM with a key generated using HKDF is supported, this value is static and should be 'aes-hmac-sha2'.
+        initial_key_period:
+          type: string
+          description: |-
+            A string in the format "yyyy-MM" that specifies the first period the cypher key is generated for.
+        iss:
+          type: string
+          description: |-
+            A string containing the hex representation of the 256 bit initial shared secret.
     append:
       type: boolean
       description: |-

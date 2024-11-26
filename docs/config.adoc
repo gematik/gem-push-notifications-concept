@@ -14,3 +14,4 @@
 :Status_Draft: https://img.shields.io/badge/Status-Draft-red
 :Status_InReview: https://img.shields.io/badge/Status-In_Review-orange
 :Status_OK: https://img.shields.io/badge/Status-OK-green
+:Status_ReadyForComments: https://img.shields.io/badge/Status-Please_Comment-green
