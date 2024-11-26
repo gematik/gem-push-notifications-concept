@@ -22,7 +22,8 @@
 				"asciidoctor.asciidoctor-vscode",
 				"jebbs.plantuml",
 				// "42crunch.vscode-openapi", missing openapi 3.1.x support
-				"redocly.openapi-vs-code"
+				"redocly.openapi-vs-code",
+				"hediet.vscode-drawio"
 			]
 		}
 	},

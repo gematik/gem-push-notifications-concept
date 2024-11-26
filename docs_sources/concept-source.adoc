@@ -10,7 +10,7 @@ image:{Status_OK}[]
 
 == Konzept
 
-Versicherte können sich über das mobile FdV mittels Push-Notifications über Ereignisse in Fachdiensten (z.B. ePA-Aktensystem, E-Rezept-Fachdienst, Dienste der Kassen) informieren lassen. Der Versicherte kann im FdV aus den möglichen Ereignissen diejenigen auswählen, für die er benachrichtigt werden möchte. Standardmäßig werden keine Push-Notifications gesendet. Das Konzept sieht vor, dass der Versicherte Push-Notifications für verschiedene Fachdienste abonnieren kann. Die Push-Notifications werden verschlüsselt übermittelt und können nur von der ePA-FdV-Instanz entschlüsselt werden, für die sie bestimmt sind.
+Versicherte können sich über das mobile FdV mittels Push-Notifications über Ereignisse in Fachdiensten (z.B. ePA-Aktensystem, E-Rezept-Fachdienst, Dienste der Kassen) informieren lassen. Der Versicherte kann im FdV aus den möglichen Ereignissen (zum Beispiel in Form von Channels) diejenigen auswählen, für die er benachrichtigt werden möchte. Standardmäßig werden keine Push-Notifications gesendet.
 
 === Architektur image:{Status_InReview}[]
 
@@ -18,15 +18,24 @@ An der Umsetzung des Notification Managements sind folgende Komponenten und Serv
 
 [#push_overview]
 .Systemüberblick
-image::diagrams/push_overview.png[width=50%]
+image::diagrams/push_overview.png[width=100%]
+
+Der Zweck dieses Konzepts besteht darin, eine flexible und sichere Push Infrastruktur bereitzustellen, die es ermöglicht, dass verschiedene Fachdienste Push-Notifications an eine mobile Anwendung senden können.
+Durch die Implementierung eines zentralen Push Gateways pro Frontend wird eine einheitliche Schnittstelle geschaffen, die als Fassade für die plattformspezifischen APIs von Anbietern wie Google und Apple fungiert. Dies erlaubt es mehreren Backends, gleichzeitig Push-Benachrichtigungen für eine fremde App bereitzustellen, ohne dass jedes Backend individuell mit den plattformspezifischen APIs interagieren muss. Ein wesentlicher Vorteil dieses Ansatzes ist die erhöhte Sicherheit: Die sensiblen Zugangsdaten und Schlüssel, die für die Nutzung der plattformspezifischen Push-APIs erforderlich sind, verbleiben beim Push Gateway und müssen nicht mit den einzelnen Fachdiensten geteilt werden. Dadurch wird das Risiko eines unbefugten Zugriffs auf diese Geheimnisse minimiert und die Integrität der Kommunikation gewährleistet. Als Vorbild dient die Push Implementierung wie sie im Matrix Protokoll beschrieben ist.
+
+[#push_encrypted_channel]
+.Veschlüsselter Kanal zwischen Fachdienst und FdV
+image::secret_channel.drawio.svg[width=100%]
+
+Um zusätzliche Sicherheit zu gewährleisten kann eine Push-Nachricht zwischen dem Fachdienst und dem FdV verschlüsselt werden. Weder Push Gateway noch Push Provider besitzen die Information um eine Entschlüsselung vorzunehmen. Die Entscheidung ob eine Push-Nachricht verschlüsselt werden muss oder unverschlüsselt bleiben kann wird durch die Spezifikation des jeweiligen Fachdienstes vorgenommen. Bisher wird davon ausgegangen, dass eine Verschlüsselung für ePA und E-Rezept notwending sein wird, diese jedoch bei TIM optional ist.
 
 ==== Fachdienst image:{Status_InReview}[]
 
-Der anwendungsspezifische Fachdienst verwalten die Push-Notifications für den jeweiligen Anwendungsfall. Der Fachdienst erstellt Push-Notifications für abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für Versicherte zur Registrierung und Konfiguration von Pushern. Ein Pusher bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für beliebig viele Endgeräte Pusher im Fachdienst hinterlegen. 
+Der anwendungsspezifische Fachdienst verwaltet die Push-Notifications für den jeweiligen Anwendungsfall. Der Fachdienst erstellt Push-Notifications für abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für Versicherte zur Registrierung und Konfiguration von ``Pusher``n. Ein `Pusher` bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für mehrere Endgeräte `Pusher` im Fachdienst hinterlegen.
 
 ==== Push Gateway image:{Status_InReview}[]
 
-Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden. Das Push Gateway leitet die Informationen der Push- Notification an den Push Provider weiter. Es wird vom Hersteller des FdV bereitgestellt, und es kann weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.
+Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden. Das Push Gateway leitet die Informationen der Push-Notification an den Push Provider weiter. Es wird vom Hersteller des FdV bereitgestellt, und es kann weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.
 
 ==== Push Provider image:{Status_InReview}[]
 
@@ -34,29 +43,26 @@ Der Push Provider ist ein Service des Herstellers des mobilen Betriebssystems (z
 
 ==== FdV Instanz image:{Status_InReview}[]
 
-Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push Notifications auswählen kann. 
+Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push-Notifications auswählen kann.
 
 === Authentisierung image:{Status_InReview}[]
 
 [#push_overview_authentication]
 .Authentisierung der beteiligten Komponenten
-image::diagrams/push_overview_authentication.png[width=50%]
+image::diagrams/push_overview_authentication.png[width=100%]
 
-Die Verbindungen zwischen Push Gateway und den Fachdiensten sind beidseitig authentisiert und verschlüsselt.
-
-Die Verbindungen zwischen Push Gateway und den Fachdiensten sind beidseitig authentisiert und verschlüsselt.
+Die Verbindungen zwischen Push Gateway und den Fachdiensten sind beidseitig authentisiert und verschlüsselt. 
 Die anderen sind Fachdienst oder Push-Provider spezifisch.
 
 === Verschlüsselung des Benachrichtigungsinhaltes image:{Status_Draft}[]
 
-Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder veränderten werden kann.
+Der Benachrichtigungsinhalt einer jeden Benachrichtigung wird mittels eines Authenticated-Encryption-Verfahrens verschlüsselt (AES/GCM), sodass der Inhalt der Benachrichtigung nicht von Dritten eingesehen oder verändert werden kann.
 
+Wenn sich eine FdV-Instanz beim Fachdienst für Benachrichtigungen registriert, erzeugt die App ein initiales gemeinsames Geheimnis (`initial-shared-secret` (`ISS`)) und überträgt dieses kryptographisch gesichert an den Fachdienst.
 
-Wenn sich eine FdV-Installation beim Fachdienst für Benachrichtigungen registriert, erzeugt die App ein initiales gemeinsames Geheimnis (`initial-shared-secret` (`ISS`)) und überträgt dieses kryptographisch gesichert an den Fachdienst.
+Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Instanz übermittelt.
 
-Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Installation übermittelt.
-
-Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüssel kryptographisch ausgeschlossen ist.
+Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüsseln kryptographisch ausgeschlossen ist.
 
 Der Fachdienst erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem FdV bei der Registrierung. Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per `HKDF(ISS, info="<Jahr>-<Monat>")` zwei Werte abgeleitet:
 
@@ -73,7 +79,7 @@ Soll im Oktober 2023 eine Benachrichtigung kryptographisch gesichert werden, um 
 
 Alle `shared-secret-Jahr-Monat` und alle AES/GCM-Schlüssel-Jahr-Monat, die älter sind als zwei Monate werden, sowohl im Notification Service als auch im E-Rezept-FdV gelöscht, jedoch niemals das jüngste noch verfügbare (auch wenn es älter als zwei Monate ist).  Der fachliche Hintergrund von "zwei Monaten" ist, dass sichergestellt sein muss, dass falls der E-Rezept-FD die Benachrichtigung Sekunden vor Monatsende erstellt, und diese im E-Rezept-FdV erst nach einigen Sekunden dann im Folgemonat empfangen werden, die Entschlüsselung im E-Rezept-FdV immer noch möglich sein muss.
 
-Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für `2023-12` erzeugt werden und darauf basierend anschließend die Ableitung für `2024-01`. Anschließend werden die Ableitungs- und Schlüsseldaten für `2023-11`` gelöscht. Die Schlüsseldaten für `2024-01` werden für die kryptographische Sicherung verwendet.
+Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für `2023-12` erzeugt werden und darauf basierend anschließend die Ableitung für `2024-01`. Anschließend werden die Ableitungs- und Schlüsseldaten für `2023-11` gelöscht. Die Schlüsseldaten für `2024-01` werden für die kryptographische Sicherung verwendet.
 
 Somit erreicht man das Ziel, dass bei Kompromittierung eines `AES/GCM-Jahr-Monat-Schlüssels` nur die Benachrichtigungen der letzten zwei Monate entschlüsselt werden können.
 
@@ -83,21 +89,21 @@ Somit erreicht man das Ziel, dass bei Kompromittierung eines `AES/GCM-Jahr-Monat
 Damit eine FdV-Instanz Push-Notifications empfangen kann, muss diese zunächst beim Push-Provider sowie in den gewünschten Fachdiensten registriert werden.
 
 .Registrierung einer FdV-Instanz für Push-Notifications im Fachdienst image:{Status_InReview}[]
-image::diagrams/registration.png[width=50%]
+image::diagrams/registration.png[width=100%]
 
 
-1. Die FdV-Instanz registriert sich beim Push Provider und erhält ein push_token, das die FdV-Instanz eindeutig identifiziert.
-2. Die FdV-Instanz erzeugt ein initial_shared_secret und speichert den Zeitpunkt (<Jahr>-<Monat>) zu welchem dieses erzeugt wurde als time_iss_created
-3. Der Nutzer meldet sich beim Fachdienst (z.B. Aktensystem) an und registriert einen Pusher. Teil der Registrierungsdaten sind: {
-    - das push_token,
-    - die app_id,
-    - die Art des Pushers (normalerweise "http"),
-    - die Adresse des Push Gateways
-    - das initial_shared_secret
-    - time_iss_created +
+1. Die FdV-Instanz registriert sich beim Push Provider und erhält ein pushkey, das die FdV-Instanz eindeutig identifiziert.
+2. Die FdV-Instanz erzeugt ein `initial_shared_secret` und speichert den Zeitpunkt (<Jahr>-<Monat>) zu welchem dieses erzeugt wurde als `time_iss_created`
+3. Der Nutzer meldet sich beim Fachdienst (z.B. Aktensystem) an und registriert einen Pusher. Teil der Registrierungsdaten sind:
+    - der `pushkey`,
+    - die `app_id`,
+    - die Art des `Pushers` (`kind`, hier immer `"http"`),
+    - die Adresse des Push Gateways (`data.url`)
+    - das `initial_shared_secret`
+    - `time_iss_created` +
      +
-Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. Die app_id und die Adresse des Push Gateways wurden vom Hersteller im FdV hinterlegt.  
-4. Die FdV-Instanz und der Fachdienst erzeugen den ersten Schlüssel aus dem initial_shared_secret und dem time_iss_created. Anschließend löschen sie das initial_shared_secret.
+Die genauen Felder und Erklärungen dazu sind auf der OpenAPI-Seite zu finden. Die `app_id` und die Adresse des Push Gateways wurden vom Hersteller im FdV hinterlegt.
+4. Die FdV-Instanz und der Fachdienst erzeugen den ersten Schlüssel aus dem `initial_shared_secret` und dem ``time_iss_created``. Anschließend löschen sie das ``initial_shared_secret``.
 
 Möchte der Versicherte Push Notifications von mehreren Fachdiensten erhalten, wird durch die FdV-Instanz in jedem dieser Fachdienste ein Pusher registriert.
 
@@ -109,11 +115,11 @@ include::./definitions/pusher_post_put_delete.yaml[tags=example_registration]
 
 === Deregistrierung einer FdV-Instanz image:{Status_Draft}[]
 
-Der gleiche Endpunkt wird sowohl zur Deregistrierung als auch zur Registrierung bei einer FdV-Instanz verwendet. Bei der Deregistrierung werden nur das push_token, die app_id und die Art des Pushers benötigt. Die Art des Pushers muss dann null sein, damit der Fachdienst weiß, dass der Pusher gelöscht werden soll.
+Der gleiche Endpunkt wird sowohl zur Deregistrierung als auch zur Registrierung bei einer FdV-Instanz verwendet. Bei der Deregistrierung werden nur das `pushkey`, die `app_id` und `kind` (die Art des Pushers benötigt). Die Art des Pushers muss dann null sein, damit der Fachdienst weiß, dass der Pusher gelöscht werden soll.
 
 === Liste aktuelle Pushers enthalten image:{Status_Draft}[]
 
-Die FdV-Instanz kann eine Liste aller registrierten Pusher durch eine GET Operation auf dem bestimmten Endpunkt des Fachdienstes erhalten. Die Details dazu sind auf der OpenAPI-Seite beschrieben.
+Die FdV-Instanz kann eine Liste aller registrierten Pusher des Nutzers durch eine GET Operation auf dem bestimmten Endpunkt des Fachdienstes erhalten. Die Details dazu sind auf der OpenAPI-Seite beschrieben.
 
 === Versenden von Push-Notifications image:{Status_Draft}[]
 
@@ -121,13 +127,13 @@ Die folgende Abbildung veranschaulicht den Ablauf, wenn ein Ereignis in einem Fa
 
 [#send_push]
 .Push-Notification-Versand
-image::diagrams/send_push.png[width=50%]
+image::diagrams/send_push.png[width=100%]
 
 1. Der Fachdienst führt folgende Schritte durch
     a. Erzeugen des Nachrichteninhalts für dieses spezifische Ereignis. Die Strukturierung ist fachdienstspezifisch.
     b. Erzeugen eines neuen gültigen Schlüssels, wenn kein gültiger vorhanden ist.
 2. Für jeden registrierten Pusher `p`, der für das Ereignis abonniert ist, wird eine Push-Benachrichtigung `Notification_p` mit mindestens folgenden Inhalten erzeugt (Die möglichen Felder und deren Beschreibungen sind auf der OpenAPI-Seite zu finden):
-    a. `ciphertext` = Nachrichteninhalt aus 1b, verschlüsselt mit dem aktuell gültigen Schlüssel.
+    a. `ciphertext` = Nachrichteninhalt aus 1a, `Base64(IV || Chiffrat || Authentication Tag)`  verschlüsselt mit dem aktuell gültigen Schlüssel.
     b. `time_message_encrypted` = Zeitpunkt der Verschlüsselung des Nachrichteinhaltes.
     c. `devices` = (mindestens: app_id, push_token)
 3. Für jeden Pusher p wird die Push-Benachrichtigung `Notification_p` an das Push Gateways des Pushers `p` übermittelt.
@@ -135,6 +141,50 @@ image::diagrams/send_push.png[width=50%]
 5. Der Push-Provider sendet die Notification an die zur `push_token` gehörende FdV-Instanz.
 6. Die FdV-Instanz entschlüsselt den Nachrichteninhalt mit dem aktuell gültigen Schlüssel (erzeugt ihn, wenn er nicht schon vorhanden ist) und zeigt dem Nutzer den Nachrichteninhalt entsprechend an.
 7. Bei Bedarf kann sich der Nutzer anmelden, um sich beispielsweise ein eingestelltes Dokument anzusehen.
+
+==== Versenden aus Push Gateway Sicht image:{Status_WIP}[]
+
+===== Apple
+
+// Tabelle mit den HTTP-Header-Informationen
+
+|===
+| HTTP-Header | Wert | Beschreibung
+| `:method` | `POST` |
+| `:path` | `/3/device/*<pushkey>*` |
+| authorization | `*<provider_token>*` | Required for token-based authentication
+| apns-push-type | `alert` |
+| apns-id |  |
+| apns-expiration |  |
+| apns-priority | `<prio != high ? 5 : 10>` |
+| apns-topic | |
+| apns-collapse-id | |
+|===
+
+// Payload
+// [cols="1"]
+// |===
+// | Key
+// | alert
+// | badge
+// | sound
+// | sound
+// | thread-id
+// | category
+// | content-available
+// | mutable-content
+// | target-content-id
+// | interruption-level
+// | relevance-score
+// | filter-criteria
+// | stale-date
+// | content-state
+// | timestamp
+// | event
+// | dismissal-date
+// | attributes-type
+// | attributes
+// |===
 
 === Themen für produktspezifische Implementierungen
 
@@ -152,14 +202,103 @@ Optionale Features können xref:../docs/optional-features.adoc[hier] gefunden we
 
 == Beispiele image:{Status_Draft}[]
 
+=== Device Registrierung
+
+[,json]
+.Variante 1, Platform via `app_id`
+----
+{
+    "lang": "en",
+    "kind": "http",
+    "app_display_name": "Mat Rix",
+    "device_display_name": "iPhone 9",
+    "app_id": "com.example.app.ios",
+    "pushkey": "<APNS/GCM TOKEN>",
+    "data": {
+        "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+    },
+    "append": false
+}
+----
+
+[,json]
+.Variante 2, Platform via `data`
+----
+{
+    "lang": "en",
+    "kind": "http",
+    "app_display_name": "Mat Rix",
+    "device_display_name": "iPhone 9",
+    "app_id": "com.example.app",
+    "pushkey": "<APNS/GCM TOKEN>",
+    "data": {
+        "url": "https://push-gateway.location.here/_matrix/push/v1/notify",
+        "platform": "ios"
+    },
+    "append": false
+}
+----
+
+[,json]
+.Variante 2, Platform via `url`
+----
+{
+    "lang": "en",
+    "kind": "http",
+    "app_display_name": "Mat Rix",
+    "device_display_name": "iPhone 9",
+    "app_id": "com.example.app",
+    "pushkey": "<APNS/GCM TOKEN>",
+    "data": {
+        "url": "https://push-gateway.location.here/ios/_matrix/push/v1/notify"
+    },
+    "append": false
+}
+----
+
 === Event-Trigger
 
 Beispiel für ein Event-Trigger in ePA:
 
-[source,json]
+[source,pseudo]
 ----
-{
-    "trigger": "T001"
+function trigger001() {
+    user = getUser()
+    devices = getDevices(user)
+    channel = getChannel(trigger001)
+
+    for device in devices {
+        if device.channels[channel].isSubscribed {
+            notification = createNotification(trigger001, device)
+            sendNotification(notification, channel)
+        }
+    }
+}
+
+function createNotification(trigger, device) {
+    month = date.now().month // "2024-11"
+    encryptionKey = getEncryptionKey(device, month)
+
+    payload = {
+        event: "trigger001"
+    }
+
+    iv = random(32)
+    (cipher, authTag) = aesEncrypt(payload)
+    
+    ciphertext = Base64(iv + cipher + authTag)
+
+    return {
+        month: month,
+        ciphertext: ciphertext,
+        devices: [
+            app_id: device.app_id,
+            pushkey: device.pushkey,
+            pushkey_ts: device.pushkey_ts,
+            data: device.data,
+            tweaks: {}
+        ]
+    }
 }
 ----
 
@@ -171,25 +310,32 @@ Endpoint: http://localhost:8080/push/v1/notify
 
 ===== IN
 
+|===
+| HTTP-Header | Wert | Beschreibung
+| `:method` | `POST` |
+| `:path` | `/3/device/*<pushkey>*` |
+| authorization | `*<provider_token>*` | Required for token-based authentication
+| apns-push-type | `alert` |
+| apns-priority | `<prio != high ? 5 : 10>` |
+|===
+
 [,json]
 .Push Gateway payload received
 ----
 "notification": {
     "month": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
-    "mac": "string",
     "prio": "high",
     "counts": {},
     "devices": [
         {
-            "app_id": "string",
-            "pushkey": "string",
+            "app_id": "de.gematikkk.app.ios",
+            "pushkey": "abcd-efghi-jklm-nopq",
             "pushkey_ts": 0,
             "data": {
-            "format": "string"
+                "format": "string"
             },
             "tweaks": {
-                "badge": 0
             }
         }
     ]
@@ -203,25 +349,19 @@ Endpoint: http://localhost:8080/push/v1/notify
 ----
 Payload:
 {
-    type: alert,
-    mutable-content: true,
-    payload: {
-        ciphertext: notification.ciphertext,
-        month: notification.month,
-        sound: "default",
-        category: "message",
-        data: {
-            message: "Hallo Welt"
-        }
+    "aps": {
+        "mutable-content": true
     }
+    "ciphertext": notification.ciphertext,
+    "month": notification.month
 }
 ----
 
 [,pseudo]
 .Push Gateway pseudo code
 ----
-if tweaks.badge > 0 then
-    payload.payload.badge = tweaks.badge
+if notification.counts.badge then
+    payload.aps.badge = notification.counts.badge
 end if
 ----
 
@@ -254,3 +394,5 @@ func didReceive(
     contentHandler(content)
 }
 ----
+
+Sync: 22.11.2024 14:56

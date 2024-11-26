@@ -11,6 +11,7 @@
 :toclevels: 3
 :toc-title: Inhaltsverzeichnis
 :figure-caption: Abbildung
+:Status_WIP: https://img.shields.io/badge/Status-Work_In_Progress-red
 :Status_Draft: https://img.shields.io/badge/Status-Draft-red
 :Status_InReview: https://img.shields.io/badge/Status-In_Review-orange
 :Status_OK: https://img.shields.io/badge/Status-OK-green

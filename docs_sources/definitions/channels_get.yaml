@@ -1,0 +1,33 @@
+examples:
+  response:
+    value: {
+      "channels": [
+        {
+          "name": "channel1",
+          "value": "enabled"
+        },
+        {
+          "name": "channel2",
+          "value": "disabled"
+        }
+      ]
+    }
+schema:
+  type: object
+  properties:
+    channels:
+      type: array
+      title: channels
+      description: An array containing channels
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: The name of the channel
+          value:
+            type: string
+            enum: ["enabled", "disabled", "not_set"] 
+        required:
+          - name
+          - value

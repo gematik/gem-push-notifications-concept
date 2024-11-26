@@ -1,0 +1,34 @@
+@startuml send_push_preview
+!theme gematik from ../puml
+
+actor "FdV" as App
+entity "Fachdienst\n\n" as Fachdienst
+entity "Fachdienst\nNotification\nManagement" as NotificationManagement
+entity "Push Gateway" as NotificationService
+entity "Apple/Google" as NotificationProvider
+
+group SendPush
+    Fachdienst -> Fachdienst : event_trigger
+    activate Fachdienst
+    Fachdienst --> NotificationManagement: fire and forget
+    activate NotificationManagement
+    deactivate Fachdienst
+    NotificationManagement -> NotificationManagement: encrypt_message
+    NotificationManagement -> NotificationService : **POST** //push/v1/notify//
+    activate NotificationService
+    NotificationService -->> NotificationManagement : status
+    deactivate NotificationManagement
+    NotificationService -> NotificationProvider : send_push
+    deactivate NotificationService
+
+    activate NotificationProvider
+    NotificationProvider -> App : push
+    deactivate NotificationProvider
+
+    activate App
+    App -> App : decrypt_notification
+    App -> App : show_notification
+end
+deactivate App
+
+@enduml

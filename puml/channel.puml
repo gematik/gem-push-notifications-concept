@@ -1,0 +1,33 @@
+@startuml channel
+!theme gematik from ../puml
+
+skinparam nodesep 50
+
+entity Konto {
+    kvnr: string
+    name: string
+    ...
+}
+
+entity Channel {
+    id: string
+    name: string
+    status: ["active", "inactive", "unknown"]
+}
+
+entity Pusher {
+    id: string
+    name: string
+    pushtoken: string
+    keys: {
+        month: string
+        key: data
+    \}
+    ...
+}
+
+Konto "1" - "n" Pusher
+
+Pusher "1" - "n" Channel
+
+@enduml
