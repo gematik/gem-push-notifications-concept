@@ -244,23 +244,23 @@
 | 31
 | Befugnis durch Vertreter erteilt
 | Push Notification geht an alle, bis auf den Auslösenden selbst
-| Vertreter
+| Befugnis
 | ja
 | [technische ID]
 |  
 
 | 32
 | Befugnis durch Vertreter gelöscht
-| Befugnis durch Vertreter gelöscht - zur Diskussion, der Nutzer will keine Push für selbst durchgeführte Operationen
-| Vertreter
+| Push Notification geht an alle, bis auf den Auslösenden selbst
+| Befugnis
 | ja
 | [technische ID]
-|  
+| email an Versicherten, wenn Vertreter eigene Befugnis löscht
 
 | 33
 | Befugnis in der ärzlichen Versorgung erteilt
 | Befugnis in der ärzlichen Versorgung erteilt
-| [Channel-Info]
+| Befugnis
 | nein
 | [technische ID]
 |  
@@ -324,7 +324,7 @@
 | 41
 | Dokument verborgen
 | Dokument verborgen durch Vertreter
-| [Channel-Info]
+| Sichtbarkeit
 | nein
 | [technische ID]
 |  
@@ -332,7 +332,7 @@
 | 42
 | Verborgenes Dokument wieder sichtbar
 | Verborgenes Dokument durch Vertreter wieder sichtbar
-| [Channel-Info]
+| Sichtbarkeit
 | ja
 | [technische ID]
 |  
@@ -340,7 +340,7 @@
 | 43
 | Kategorie verborgen
 | Kategorie verborgen durch Vertreter
-| [Channel-Info]
+| Sichtbarkeit
 | nein
 | [technische ID]
 |  
@@ -348,7 +348,7 @@
 | 44
 | Kategorie wieder sichtbar
 | Kategorie durch Vertreter wieder sichtbar
-| [Channel-Info]
+| Sichtbarkeit
 | ja
 | [technische ID]
 |  
@@ -356,7 +356,7 @@
 | 45
 | Ordner verborgen
 | Ordner verborgen durch Vertreter
-| [Channel-Info]
+| Sichtbarkeit
 | nein
 | [technische ID]
 |  
@@ -364,7 +364,7 @@
 | 46
 | Ordner wieder sichtbar
 | Ordner durch Vertreter wieder sichtbar
-| [Channel-Info]
+| Sichtbarkeit
 | ja
 | [technische ID]
 |  
