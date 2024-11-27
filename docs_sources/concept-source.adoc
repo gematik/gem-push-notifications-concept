@@ -305,27 +305,16 @@ function createNotification(trigger, device) {
 }
 ----
 
-=== Apple Push
-
-==== Push Gateway
+=== Push Gateway
 
 Endpoint: http://localhost:8080/push/v1/notify
 
-===== IN
-
-|===
-| HTTP-Header | Wert | Beschreibung
-| `:method` | `POST` |
-| `:path` | `/3/device/*<pushkey>*` |
-| authorization | `*<provider_token>*` | Required for token-based authentication
-| apns-push-type | `alert` |
-| apns-priority | `<prio != high ? 5 : 10>` |
-|===
+==== IN
 
 [,json]
 .Push Gateway payload received
 ----
-"notification": {
+{
     "month": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
     "prio": "high",
@@ -345,7 +334,19 @@ Endpoint: http://localhost:8080/push/v1/notify
 }
 ----
 
-===== OUT
+==== OUT
+
+===== APNS (Apple Push Notification Service)
+
+.HTTP-Header
+|===
+| HTTP-Header | Wert | Beschreibung
+| `:method` | `POST` |
+| `:path` | `/3/device/*<pushkey>*` |
+| authorization | `*<provider_token>*` | Required for token-based authentication
+| apns-push-type | `alert` |
+| apns-priority | `<prio != high ? 5 : 10>` |
+|===
 
 [,json]
 .Push Gateway payload send to Push Provider
@@ -368,9 +369,36 @@ if notification.counts.badge then
 end if
 ----
 
+===== GCM (Google Cloud Messaging)
 
+ - wo kommt prio hin?
+ - wo kommt crypto payload hin
+ - braucht man ein property um auf dem gerät entschlüsseln zu können oder geht das immer?
 
-Extension:
+.HTTP-Header
+|===
+| HTTP-Header | Wert | Beschreibung
+| `:method` | `POST` |
+| `:path` | `TODO /3/device/*<pushkey>*` |
+| authorization | `TODO *<provider_token>*` | Required for token-based authentication
+|===
+
+[,json]
+.Push Gateway payload send to Push Provider
+----
+Payload:
+{
+    "data": {
+       ...
+    }
+    "ciphertext": notification.ciphertext,
+    "month": notification.month
+}
+----
+
+=== Mobile App
+
+==== iOS-Extension:
 
 [,swift]
 .Swift Pseudo Code
@@ -396,6 +424,13 @@ func didReceive(
     // Call the completion handler with the updated notification content
     contentHandler(content)
 }
+----
+
+==== Android-TODO:
+
+[,kotlin]
+----
+mykotlincode
 ----
 
 Sync: 22.11.2024 14:56
