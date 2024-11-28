@@ -1,0 +1,51 @@
+@startuml send_push_multiple_backends
+!theme gematik from ../puml
+
+actor "FdV TK" as App
+actor "FdV HKK" as App2
+entity "Fachdienst TK" as Fachdienst
+entity "Push Gateway TK" as NotificationService
+entity "Fachdienst HKK" as Fachdienst2
+entity "Push Gateway HKK" as NotificationService2
+entity "Apple/Google" as NotificationProvider
+
+group SendPush
+    activate App2
+
+    App2 -> Fachdienst : register_device
+    activate Fachdienst
+    Fachdienst -> App2 : return
+    deactivate Fachdienst
+
+    Fachdienst -> Fachdienst : event_trigger
+    activate Fachdienst
+    Fachdienst -> NotificationService : **POST** //push/v1/notify//
+    activate NotificationService
+    NotificationService -->> NotificationProvider
+    activate NotificationProvider
+    deactivate NotificationService
+    deactivate Fachdienst
+    NotificationProvider -> App2
+    deactivate NotificationProvider
+
+    App2 -> Fachdienst2 : register_device
+    activate Fachdienst2
+    Fachdienst2 -> App2 : return
+    deactivate Fachdienst2
+
+    Fachdienst2 -> Fachdienst2 : event_trigger
+    activate Fachdienst2
+    Fachdienst2 -> NotificationService2 : **POST** //push/v1/notify//
+    activate NotificationService2
+    NotificationService2 -->> NotificationProvider
+    activate NotificationProvider
+    deactivate NotificationService2
+    deactivate Fachdienst2
+    NotificationProvider -> App2
+    deactivate NotificationProvider
+
+
+end
+deactivate App2
+
+@enduml

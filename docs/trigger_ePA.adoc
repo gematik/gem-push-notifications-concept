@@ -1,9 +1,14 @@
+== Festlegungen zum MVP
+1.	Push Notifications können nur an Versicherten des Aktenkontos gesendet werden (Vertreter können keine Push Nachrichten erhalten)
+2.	Push Notifications werden nicht an Akteure der ePA versendet, die das Ereignis ausgelöst haben.
+3.	Ereignisse, die eine Push Notification auslösen:
+
 |===
 | Nr. | Aktion | Beschreibung | Channel | MVP | technische ID | Anmerkung
 
 | 1
 | Dokument eingestellt
-| Dokument eingestellt durch LEI oder Vertreter
+| Dokument eingestellt durch LEI, DiGA, KTR oder Vertreter
 | Dokumente
 | ja
 | [technische ID]
@@ -11,7 +16,7 @@
 
 | 2
 | Dokument gelesen
-| Dokument gelesen durch LEI oder Vertreter
+| Dokument gelesen durch LEI, DiGA, KTR oder Vertreter
 | Dokumente
 | nein
 | [technische ID]
@@ -19,7 +24,7 @@
 
 | 3
 | Dokument gelöscht
-| Dokument gelöscht durch LEI oder Vertreter
+| Dokument gelöscht durch LEI, DiGA, KTR oder Vertreter
 | Dokumente
 | nein
 | [technische ID]
@@ -27,7 +32,7 @@
 
 | 4
 | Dokument aktualisiert
-| Dokument aktualisiert durch LEI oder Vertreter
+| Dokument aktualisiert durch LEI, DiGA, KTR oder Vertreter
 | Dokumente
 | ja
 | [technische ID]
@@ -35,7 +40,7 @@
 
 | 5
 | Metadaten geändert
-| Metadaten geändert durch LEI oder Vertreter
+| Metadaten geändert durch durch LEI, DiGA, KTR oder Vertreter
 | Dokumente
 | nein
 | [technische ID]
@@ -243,24 +248,24 @@
 
 | 31
 | Befugnis durch Vertreter erteilt
-| Push Notification geht an alle, bis auf den Auslösenden selbst
-| Vertreter
+| Vertreter hat eine Befugnis für LEI oder DiGA erteilt
+| Befugnis
 | ja
 | [technische ID]
 |
 
 | 32
 | Befugnis durch Vertreter gelöscht
-| Befugnis durch Vertreter gelöscht - zur Diskussion, der Nutzer will keine Push für selbst durchgeführte Operationen
-| Vertreter
+| Vertreter hat eine Befugnis für LEI oder DiGA gelöscht.
+| Befugnis
 | ja
 | [technische ID]
-|
+| email an Versicherten, wenn Vertreter eigene Befugnis löscht
 
 | 33
 | Befugnis in der ärzlichen Versorgung erteilt
 | Befugnis in der ärzlichen Versorgung erteilt
-| [Channel-Info]
+| Befugnis
 | nein
 | [technische ID]
 |
@@ -324,7 +329,7 @@
 | 41
 | Dokument verborgen
 | Dokument verborgen durch Vertreter
-| [Channel-Info]
+| Sichtbarkeit
 | nein
 | [technische ID]
 |
@@ -332,7 +337,7 @@
 | 42
 | Verborgenes Dokument wieder sichtbar
 | Verborgenes Dokument durch Vertreter wieder sichtbar
-| [Channel-Info]
+| Sichtbarkeit
 | ja
 | [technische ID]
 |
@@ -340,7 +345,7 @@
 | 43
 | Kategorie verborgen
 | Kategorie verborgen durch Vertreter
-| [Channel-Info]
+| Sichtbarkeit
 | nein
 | [technische ID]
 |
@@ -348,7 +353,7 @@
 | 44
 | Kategorie wieder sichtbar
 | Kategorie durch Vertreter wieder sichtbar
-| [Channel-Info]
+| Sichtbarkeit
 | ja
 | [technische ID]
 |
@@ -356,7 +361,7 @@
 | 45
 | Ordner verborgen
 | Ordner verborgen durch Vertreter
-| [Channel-Info]
+| Sichtbarkeit
 | nein
 | [technische ID]
 |
@@ -364,7 +369,7 @@
 | 46
 | Ordner wieder sichtbar
 | Ordner durch Vertreter wieder sichtbar
-| [Channel-Info]
+| Sichtbarkeit
 | ja
 | [technische ID]
 |

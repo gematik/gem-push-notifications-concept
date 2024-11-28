@@ -3,54 +3,51 @@ include::./config-source.adoc[]
 
 toc::[]
 
-== Trigger-Verwaltung (Channels)
-=== Beschreibung
-Der Nutzer des FdVs kann konfigurieren, welche Push Notifications er auf diesem Gerät erhalten möchte. Jedem Trigger im Fachdienst, der eine Push Notification sendet, ist eine event_id zugeordnet. Es kann vorkommen, dass mehrere Trigger die gleiche event_id haben. Ein Beispiel hierfür ist, wenn die gleiche Notification von zwei verschiedenen Stellen ausgelöst werden kann. In diesem Fall können beide Trigger die gleiche event_id haben.
+== Trigger-Verwaltung (Channels) image:{Status_ReadyForComments}[]
 
-Die Liste der event_ids ist als GET Aufruf verfügbar. Das FdV kann die Liste der event_ids in Channels abbilden, um sie für den Nutzer übersichtlicher zu gestalten. Es kann auch vorkommen, dass das FdV nicht alle event_ids abbildet und sie somit dem Nutzer nicht zur Verfügung stellt. Dann werden die Trigger für diese event_ids nicht ausgelöst.
+=== Beschreibung
+
+Der Nutzer des FdVs kann konfigurieren, welche Push Notifications er auf diesem Gerät erhalten möchte. Diese Konfiguration wird mit Hilfe von sogenannten Channels vorgenommen. Jeder Trigger im Fachdienst ist einem Channel zugeordnet. Die Liste der Trigger, Channel und die Zuordnung dieser wird durch das Fachspezifische Konzept vorgegeben. Es ist denktbar, dass mehrere Trigger den gleichen Channel bedienen. Beispiele hierfür wären, wenn die gleiche Notification von zwei verschiedenen Stellen ausgelöst werden kann oder auf Fachlicher Ebene Events gruppiert werden sollen oder müssen.
+
+Die Liste der verfügbaren `channel` ist als `GET` Aufruf verfügbar. Das FdV kann die Liste der `channel` in gruppen abbilden, um sie für den Nutzer übersichtlicher zu gestalten. Es kann auch vorkommen, dass das FdV nicht alle `channel` abbildet und sie somit dem Nutzer nicht zur Verfügung stellt. In diesem Fall würde ein Trigger, dessen `channel`` für einen Nutzer nicht als `aktiv` konfiguriert wurde keine Push-Nachricht auslösen.
 
 Der Fachdienst hat drei Endpunkte:
 
-GET /channels/v1 - Ruft eine Liste von event_ids ab.
-GET /channels/v1/{push_token} - Ruft eine Liste von event_ids ab und zeigt die aktuelle Auswahl des Nutzers auf diesem Gerät für jede event_id.
-POST /channels/v1/{push_token} - Sendet eine aktualisierte Liste an den Fachdienst, die die Auswahl des Nutzers für dieses Gerät enthält.
+ - ``*GET* /channels/v1`` - Ruft die Liste aller verfügbaren `channel` ab.
+ - ``*GET* /channels/v1/{pushkey}`` - Ruft die Liste aller `channel` und deren Konfiguration für das Gerät mit dem Idnetifier `pushkey`.
+ - ``*POST* /channels/v1/{pushkey}`` - Sendet eine Aktualisierung an den Fachdienst um die Konfiguration vorzunehmen.
 
-Die Auswahl des Nutzers hat drei Optionen:
-
-Enabled
-Disabled
-NotSet
-
-NotSet funktioniert für den Trigger wie Disabled, da es nicht Enabled ist, kann aber im FdV anders dargestellt werden.
+Die Auswahl des Nutzers hat drei Optionen `enabled`, `disabled` und `not_set`. `enabled` bedeutet, dass der Nutzer die Push Notification für diesen `channel` aktiviert hat. `disabled` bedeutet, dass der Nutzer die Push Notification für diesen `channel` deaktiviert hat. `not_set` bedeutet, dass für die FdV-Installation  `not_set` wird für den Trigger wie `disabled` behandelt. Der Nutzer kann die Auswahl für jeden `channel` treffen und speichern. Die Auswahl wird dann an den Fachdienst gesendet und dort gespeichert.
 
 === Beispiel
+
 Es gibt drei verschiedene Arten von Push Notifications:
 
 Dokument erstellen
 Dokument lesen
 Dokument löschen
 
-Dafür gibt es drei verschiedene event_ids (sie können auch numerisch sein):
+Dafür gibt es drei verschiedene Trigger (sie können auch numerisch sein):
 
 document.create
 document.read
 document.delete
 
-Wenn das FdV einen Aufruf der Operation GET /channels/v1/{push_token} durchführt, wird eine Liste mit den drei event_ids zurückgegeben. Diese werden dann im FdV angezeigt, damit der Nutzer entscheiden kann, welche er erhalten möchte. Beim ersten Mal haben alle den Status NotSet, da der Nutzer sich noch nicht entscheiden hat. Der Nutzer kann dann seine Auswahl treffen, und beim Speichern führt das FdV einen Aufruf der Operation POST /channels/v1/{push_token} durch und sendet die neue Liste an den Fachdienst. 
+Wenn das FdV einen Aufruf der Operation ``*GET* /channels/v1/{pushkey}`` durchführt, wird eine Liste mit den drei `channel` zurückgegeben. Diese werden dann im FdV angezeigt, damit der Nutzer entscheiden kann, welche er erhalten möchte. Beim ersten Mal haben alle den Status `not_set`, da der Nutzer sich noch nicht entscheiden hat. Der Nutzer kann dann seine Auswahl treffen, und beim Speichern führt das FdV einen Aufruf der Operation ``*POST* /channels/v1/{pushkey}``` durch und sendet die neue Liste an den Fachdienst.
 
 Die Liste kann so aussehen:
 [cols="1,1"]
 |===
 |event_id|Status
 
-|document.create
-|Enabled
+|`document.create`
+|`enabled`
 
-|document.read
-|Disabled
+|`document.read`
+|`disabled`
 
-|document.delete
-|Enabled
+|`document.delete`
+|`enabled`
 |===
 
 Oder als JSON:
@@ -58,19 +55,21 @@ Oder als JSON:
 ====
 [source]
 --
-[
-  {
-    "event_id": "document.create",
-    "Status": "Enabled"
-  },
-  {
-    "event_id": "document.read",
-    "Status": "Disabled"
-  },
-  {
-    "event_id": "document.delete",
-    "Status": "Enabled"
-  }
-]
+{
+  "channel": [
+    {
+      "event_id": "document.create",
+      "status": "enabled"
+    },
+    {
+      "event_id": "document.read",
+      "status": "disabled"
+    },
+    {
+      "event_id": "document.delete",
+      "status": "enabled"
+    }
+  ]
+}
 --
 ====

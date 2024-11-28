@@ -1,14 +1,14 @@
 examples:
   response:
-    value: {
+    status: {
       "channels": [
         {
-          "name": "channel1",
-          "value": "enabled"
+          "id": "channel1"
+          "status": "enabled"
         },
         {
-          "name": "channel2",
-          "value": "disabled"
+          "id": "channel2",
+          "status": "disabled"
         }
       ]
     }
@@ -22,12 +22,12 @@ schema:
       items:
         type: object
         properties:
-          name:
+          id:
             type: string
             description: The name of the channel
-          value:
+          status:
             type: string
             enum: ["enabled", "disabled", "not_set"] 
         required:
           - name
-          - value
+          - status
