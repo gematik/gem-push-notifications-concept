@@ -44,20 +44,30 @@
 </head>
 <body>
     <div id="menu">
-        <a  onclick="loadPage(this)" href="concept/index.html" target="content">Concept</a >
-        <a  onclick="loadPage(this)" href="fd_openapi.html" target="content">FD OpenAPI</a >
-        <a  onclick="loadPage(this)" href="push_gateway_openapi.html" target="content">Push Gateway OpenAPI</a >
+        <a  onclick="loadPage(this)" href="concept/concept.html" target="content">Concept</a>
+        <a  onclick="loadPage(this)" href="concept/optional-features.html" target="content">Optional Features</a>
+        <a  onclick="loadPage(this)" href="concept/trigger_ePA.html" target="content">ePA</a>
+        <a  onclick="loadPage(this)" href="fd_openapi.html" target="content">FD OpenAPI</a>
+        <a  onclick="loadPage(this)" href="push_gateway_openapi.html" target="content">Push Gateway OpenAPI</a>
         <div style="flex-grow: 1;display: flex; flex-direction: row-reverse;">
             <img src="images/gematik_logo.png" alt="Gematik Logo">
         </div>
     </div>
-    <iframe id="content" name="content" src="concept/index.html" frameborder="0"></iframe>
+    <iframe id="content" name="content" src="concept/concept.html" frameborder="0"></iframe>
 
     <script>
         function loadPage(element) {
             var links = document.querySelectorAll('#menu a');
             links.forEach(link => link.classList.remove('active'));
             element.classList.add('active');
+
+            var path = element.getAttribute("href")
+            // escape # from path
+            path = path.replace('#', '%23');
+
+            if (window.location.hash.substring(1) != path) {
+                window.location.replace("#" + path);
+            }
         }
 
         window.addEventListener('load', function() {
@@ -76,6 +86,17 @@
         });
 
         document.getElementById('content').addEventListener('load', function() {
+            let path = this.contentWindow.location.pathname + this.contentWindow.location.hash
+            // escape # from path
+            path = path.replace('#', '%23');
+            rootPath = window.location.pathname;
+            rootPath = rootPath.replace('index.html', '');
+            path = path.replace(rootPath, '');
+
+            if (window.location.hash.substring(1) != path) {
+                window.location.replace("#" + path);
+            }
+
             this.contentWindow.addEventListener('hashchange', function() {
                 console.log("hashchange" + this.location.pathname + this.location.hash);
 
