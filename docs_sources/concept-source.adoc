@@ -394,7 +394,7 @@ if notification.counts.badge then
 end if
 ----
 
-===== GCM (Google Cloud Messaging)
+===== FCM (Firebase Cloud Messaging)
 
 .HTTP-Header
 |===
@@ -406,18 +406,21 @@ end if
 
 |===
 
-
 [,json]
 .Push Gateway payload send to Push Provider
 ----
 Payload:
 {
-    "to": "PUSH_KEY",
-    "priority": "high",
-    "data": {
+  "message":{
+    "token":"PUSH_KEY",
+    "android": {
+      "priority": "HIGH",
+    }
+    "data":{
       "ciphertext": "ENCRYPTED_DATA_HERE",
       "month": notification.month
     }
+  }
 }
 
 ----
