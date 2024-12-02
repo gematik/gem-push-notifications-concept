@@ -1,5 +1,4 @@
 = Notification Management image:gematik_logo.png[width=150, float="right"]
-
 include::./config-source.adoc[]
 
 toc::[]
@@ -9,11 +8,10 @@ image:{Status_InReview}[]
 image:{Status_ReadyForComments}[]
 image:{Status_OK}[]
 
+
 == Konzept
 
-Versicherte können sich über das mobile FdV mittels Push-Notifications über Ereignisse in Fachdiensten (z.B. ePA-Aktensystem, E-Rezept-Fachdienst, Dienste der Kassen) informieren lassen.
-Der Versicherte kann im FdV aus den möglichen Ereignissen (zum Beispiel in Form von Channels) diejenigen auswählen, für die er benachrichtigt werden möchte.
-Standardmäßig werden keine Push-Notifications gesendet.
+Versicherte können sich über das mobile FdV mittels Push-Notifications über Ereignisse in Fachdiensten (z.B. ePA-Aktensystem, E-Rezept-Fachdienst, Dienste der Kassen) informieren lassen. Der Versicherte kann im FdV aus den möglichen Ereignissen (zum Beispiel in Form von Channels) diejenigen auswählen, für die er benachrichtigt werden möchte. Standardmäßig werden keine Push-Notifications gesendet.
 
 === Architektur image:{Status_ReadyForComments}[]
 
@@ -24,20 +22,13 @@ An der Umsetzung des Notification Managements sind folgende Komponenten und Serv
 image::diagrams/push_overview.svg[width=100%]
 
 Der Zweck dieses Konzepts besteht darin, eine flexible und sichere Push Infrastruktur bereitzustellen, die es ermöglicht, dass verschiedene Fachdienste Push-Notifications an eine mobile Anwendung senden können.
-Durch die Implementierung eines zentralen Push Gateways pro Frontend wird eine einheitliche Schnittstelle geschaffen, die als Fassade für die plattformspezifischen APIs von Anbietern wie Google und Apple fungiert.
-Dies erlaubt es mehreren Backends, gleichzeitig Push-Benachrichtigungen für eine fremde App bereitzustellen, ohne dass jedes Backend individuell mit den plattformspezifischen APIs interagieren muss.
-Ein wesentlicher Vorteil dieses Ansatzes ist die erhöhte Sicherheit: Die sensiblen Zugangsdaten und Schlüssel, die für die Nutzung der plattformspezifischen Push-APIs erforderlich sind, verbleiben beim Push Gateway und müssen nicht mit den einzelnen Fachdiensten geteilt werden.
-Dadurch wird das Risiko eines unbefugten Zugriffs auf diese Geheimnisse minimiert und die Integrität der Kommunikation gewährleistet.
-Als Vorbild dient die Push Implementierung wie sie im Matrix Protokoll beschrieben ist.
+Durch die Implementierung eines zentralen Push Gateways pro Frontend wird eine einheitliche Schnittstelle geschaffen, die als Fassade für die plattformspezifischen APIs von Anbietern wie Google und Apple fungiert. Dies erlaubt es mehreren Backends, gleichzeitig Push-Benachrichtigungen für eine fremde App bereitzustellen, ohne dass jedes Backend individuell mit den plattformspezifischen APIs interagieren muss. Ein wesentlicher Vorteil dieses Ansatzes ist die erhöhte Sicherheit: Die sensiblen Zugangsdaten und Schlüssel, die für die Nutzung der plattformspezifischen Push-APIs erforderlich sind, verbleiben beim Push Gateway und müssen nicht mit den einzelnen Fachdiensten geteilt werden. Dadurch wird das Risiko eines unbefugten Zugriffs auf diese Geheimnisse minimiert und die Integrität der Kommunikation gewährleistet. Als Vorbild dient die Push Implementierung wie sie im Matrix Protokoll beschrieben ist.
 
 [#push_encrypted_channel]
 .Veschlüsselter Kanal zwischen Fachdienst und FdV
 image::secret_channel.drawio.svg[width=100%]
 
-Um zusätzliche Sicherheit zu gewährleisten kann eine Push-Nachricht zwischen dem Fachdienst und dem FdV verschlüsselt werden.
-Weder Push Gateway noch Push Provider besitzen die Information um eine Entschlüsselung vorzunehmen.
-Die Entscheidung ob eine Push-Nachricht verschlüsselt werden muss oder unverschlüsselt bleiben kann wird durch die Spezifikation des jeweiligen Fachdienstes vorgenommen.
-Bisher wird davon ausgegangen, dass eine Verschlüsselung für ePA und E-Rezept notwending sein wird, diese jedoch bei TIM optional ist.
+Um zusätzliche Sicherheit zu gewährleisten kann eine Push-Nachricht zwischen dem Fachdienst und dem FdV verschlüsselt werden. Weder Push Gateway noch Push Provider besitzen die Information um eine Entschlüsselung vorzunehmen. Die Entscheidung ob eine Push-Nachricht verschlüsselt werden muss oder unverschlüsselt bleiben kann wird durch die Spezifikation des jeweiligen Fachdienstes vorgenommen. Bisher wird davon ausgegangen, dass eine Verschlüsselung für ePA und E-Rezept notwending sein wird, diese jedoch bei TIM optional ist.
 
 ==== Fachdienst image:{Status_ReadyForComments}[]
 
@@ -45,20 +36,15 @@ Der anwendungsspezifische Fachdienst verwaltet Geräte die sich bei ihm für den
 
 ==== Push Gateway image:{Status_ReadyForComments}[]
 
-Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden.
-Das Push Gateway leitet die Informationen der Push-Notification an den Push Provider weiter.
-Es wird vom Hersteller des FdV bereitgestellt, und es kann weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.
+Das Push Gateway besitzt einen anwendungsübergreifenden Endpunkt, an den Push-Notifications übermittelt werden. Das Push Gateway leitet die Informationen der Push-Notification an den Push Provider weiter. Es wird vom Hersteller des FdV bereitgestellt, und es kann weitere Endpunkte für Kassendienste geben, die ebenfalls über dieses Push Gateway Notifications versenden.
 
 ==== Push Provider image:{Status_ReadyForComments}[]
 
-Der Push Provider ist ein Service des Herstellers des mobilen Betriebssystems (z.B. Google, Apple).
-Der Push Provider sendet Notifications an App-Instanzen auf Endgeräten der Nutzer.
+Der Push Provider ist ein Service des Herstellers des mobilen Betriebssystems (z.B. Google, Apple). Der Push Provider sendet Notifications an App-Instanzen auf Endgeräten der Nutzer.
 
 ==== FdV Instanz image:{Status_ReadyForComments}[]
 
-Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.
-Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.
-Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push-Notifications auswählen kann.
+Die FdV-Instanz ist ein auf einem mobilen Endgerät installiertes FdV.  Push-Notifications werden für eine FdV-Instanz registriert und an diese gesendet.  Die FdV-Instanz kann mehrere Anwendungen integrieren (ePA, E-Rezept, TI-Messenger, Kassenanwendungen), für die der Versicherte jeweils Push-Notifications auswählen kann.
 
 === Authentisierung image:{Status_ReadyForComments}[]
 
@@ -77,13 +63,11 @@ Im Fall von Verschlüsselten Push-Nachrichten wird der Benachrichtigungsinhalt e
 
 Wenn sich eine FdV-Instanz beim Fachdienst für Benachrichtigungen registriert, erzeugt die App ein initiales gemeinsames Geheimnis (`initial-shared-secret` (`ISS`)) und überträgt dieses kryptographisch gesichert an den Fachdienst. Registriert sich das FdV an verschieden Fachdiensten, so wird für jeden Fachdienst ein eigenes `ISS` erzeugt.
 
-Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes.
-Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Instanz übermittelt.
+Dieses gemeinsame Geheimnis ist die Grundlage der kryptographischen Sicherung des Benachrichtigungsinhaltes. Die Benachrichtigung wird vom Fachdienst mit verschlüsseltem Benachrichtigungsinhalt über das Push Gateway und den Push Provider an die FdV-Instanz übermittelt.
 
 Ganz ähnlich wie bei vielen Messaging-Anwendungen werden die verwendeten Schlüssel für die kryptographische Absicherung der Nachrichten regelmäßig gewechselt auf eine Weise, dass eine Wiederherstellbarkeit von alten Schlüsseln kryptographisch ausgeschlossen ist.
 
-Der Fachdienst erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem FdV bei der Registrierung.
-Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per `HKDF(ISS, info="<Jahr>-<Monat>")` zwei Werte abgeleitet:
+Der Fachdienst erhält ein ISS und einen Zeitstempel von dessen Erzeugung von dem FdV bei der Registrierung. Mittels einer "Hashed Message Authentication Code (HMAC)-based key derivation function" (HKDF) [RFC-5869] werden per `HKDF(ISS, info="<Jahr>-<Monat>")` zwei Werte abgeleitet:
 
 1. Ein Geheimnis für den Monat und Jahr des Zeitstempels (`shared-secret-Jahr-Monat`)
 2. ein AES/GCM-Schlüssel für den Monat und Jahr des Zeitstempels (`AES/GCM-Schlüssel-Jahr-Monat`).
@@ -92,19 +76,13 @@ Diese beiden Werte werden im Fachdienst sicher gespeichert und das `ISS` wird im
 
 ==== Beispiel für einen Austausch im Oktober 2023: image:{Status_ReadyForComments}[]
 
-Das ISS sei zufällig erzeugt gleich (hexdump) `f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2`.
-Dann ergibt `HKDF(ISS, info="2023-10", L=64) = (hexdump) 185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`.
-Die ersten 32 Byte (256 Bit) sind das `shared-secret-2023-10` gleich (hexdump) `185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b` und die letzten 32 Byte sind der `AES/GCM-Schlüssel-2023-10` ist gleich (hexdump) `3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`.
+Das ISS sei zufällig erzeugt gleich (hexdump) `f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2`. Dann ergibt `HKDF(ISS, info="2023-10", L=64) = (hexdump) 185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`. Die ersten 32 Byte (256 Bit) sind das `shared-secret-2023-10` gleich (hexdump) `185fed66ea5cabbe00147bbd298b5dab0ed41b57ab254d35897b3a4504306e3b` und die letzten 32 Byte sind der `AES/GCM-Schlüssel-2023-10` ist gleich (hexdump) `3b4adcd58dea98db8e9cb0f5763fcd04fe932d67926cc04b20ba2a2f304ffff9`.
 
-Soll im Oktober 2023 eine Benachrichtigung kryptographisch gesichert werden, um sie an das E-Rezept-FdV zu versenden, dann wird der Schlüssel `AES/GCM-Key-2023-10` dafür verwendet.
-Soll im November 2023 eine Benachrichtigung gesichert werden, so muss per `HKDF(shared-secret-2023-10, info="2023-11")` wieder ein Geheimnis -- diesmal für November 2023 -- und ein neuer AES/GCM-Schlüssel abgeleitet werden. `shared-secret-2023-11 = (hexdump) 0c8662d90b04818afb317406fe7fcfcf8d103cd9bc6ad7847890d28620e85ec3`, `AES/GCM-Schlüssel-2023-11 = (hexdump) 39aa5dacd538f53f4b956d84c9b8f2e26933274d160b9fd1a263a27681c6331b`
+Soll im Oktober 2023 eine Benachrichtigung kryptographisch gesichert werden, um sie an das E-Rezept-FdV zu versenden, dann wird der Schlüssel `AES/GCM-Key-2023-10` dafür verwendet. Soll im November 2023 eine Benachrichtigung gesichert werden, so muss per `HKDF(shared-secret-2023-10, info="2023-11")` wieder ein Geheimnis -- diesmal für November 2023 -- und ein neuer AES/GCM-Schlüssel abgeleitet werden. `shared-secret-2023-11 = (hexdump) 0c8662d90b04818afb317406fe7fcfcf8d103cd9bc6ad7847890d28620e85ec3`, `AES/GCM-Schlüssel-2023-11 = (hexdump) 39aa5dacd538f53f4b956d84c9b8f2e26933274d160b9fd1a263a27681c6331b`
 
-Alle `shared-secret-Jahr-Monat` und alle AES/GCM-Schlüssel-Jahr-Monat, die älter sind als zwei Monate werden, sowohl im Notification Service als auch im E-Rezept-FdV gelöscht, jedoch niemals das jüngste noch verfügbare (auch wenn es älter als zwei Monate ist).
-Der fachliche Hintergrund von "zwei Monaten" ist, dass sichergestellt sein muss, dass falls der E-Rezept-FD die Benachrichtigung Sekunden vor Monatsende erstellt, und diese im E-Rezept-FdV erst nach einigen Sekunden dann im Folgemonat empfangen werden, die Entschlüsselung im E-Rezept-FdV immer noch möglich sein muss.
+Alle `shared-secret-Jahr-Monat` und alle AES/GCM-Schlüssel-Jahr-Monat, die älter sind als zwei Monate werden, sowohl im Notification Service als auch im E-Rezept-FdV gelöscht, jedoch niemals das jüngste noch verfügbare (auch wenn es älter als zwei Monate ist).  Der fachliche Hintergrund von "zwei Monaten" ist, dass sichergestellt sein muss, dass falls der E-Rezept-FD die Benachrichtigung Sekunden vor Monatsende erstellt, und diese im E-Rezept-FdV erst nach einigen Sekunden dann im Folgemonat empfangen werden, die Entschlüsselung im E-Rezept-FdV immer noch möglich sein muss.
 
-Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für `2023-12` erzeugt werden und darauf basierend anschließend die Ableitung für `2024-01`.
-Anschließend werden die Ableitungs- und Schlüsseldaten für `2023-11` gelöscht.
-Die Schlüsseldaten für `2024-01` werden für die kryptographische Sicherung verwendet.
+Sollte erst im Januar 2024 die nächste Benachrichtigung gesendet werden, so muss die Ableitung für `2023-12` erzeugt werden und darauf basierend anschließend die Ableitung für `2024-01`. Anschließend werden die Ableitungs- und Schlüsseldaten für `2023-11` gelöscht. Die Schlüsseldaten für `2024-01` werden für die kryptographische Sicherung verwendet.
 
 Somit erreicht man das Ziel, dass bei Kompromittierung eines `AES/GCM-Jahr-Monat-Schlüssels` nur die Benachrichtigungen der letzten zwei Monate entschlüsselt werden können.
 
@@ -140,9 +118,7 @@ include::./definitions/pusher_post_put_delete.yaml[tags=example_registration]
 
 === Deregistrierung einer FdV-Instanz image:{Status_ReadyForComments}[]
 
-Der gleiche Endpunkt wird sowohl zur Deregistrierung als auch zur Registrierung bei einer FdV-Instanz verwendet.
-Bei der Deregistrierung werden nur das `pushkey`, die `app_id` und `kind` (die Art des Pushers benötigt).
-Die Art des Pushers muss dann null sein, damit der Fachdienst weiß, dass der Pusher gelöscht werden soll.
+Der gleiche Endpunkt wird sowohl zur Deregistrierung als auch zur Registrierung bei einer FdV-Instanz verwendet. Bei der Deregistrierung werden nur das `pushkey`, die `app_id` und `kind` (die Art des Pushers benötigt). Die Art des Pushers muss dann null sein, damit der Fachdienst weiß, dass der Pusher gelöscht werden soll.
 
 === Liste aktuelle Pushers enthalten image:{Status_ReadyForComments}[]
 
@@ -157,13 +133,12 @@ Die folgende Abbildung veranschaulicht den Ablauf, wenn ein Ereignis in einem Fa
 image::diagrams/send_push.svg[width=100%]
 
 1. Der Fachdienst führt folgende Schritte durch
-a. Erzeugen des Nachrichteninhalts für dieses spezifische Ereignis.
-Die Strukturierung ist fachdienstspezifisch.
-b. Erzeugen eines neuen gültigen Schlüssels, wenn kein gültiger vorhanden ist.
+    a. Erzeugen des Nachrichteninhalts für dieses spezifische Ereignis. Die Strukturierung ist fachdienstspezifisch.
+    b. Erzeugen eines neuen gültigen Schlüssels, wenn kein gültiger vorhanden ist.
 2. Für jeden registrierten Pusher `p`, der für das Ereignis abonniert ist, wird eine Push-Benachrichtigung `Notification_p` mit mindestens folgenden Inhalten erzeugt (Die möglichen Felder und deren Beschreibungen sind auf der OpenAPI-Seite zu finden):
-a. `ciphertext` = Nachrichteninhalt aus 1a, `Base64(IV || Chiffrat || Authentication Tag)`  verschlüsselt mit dem aktuell gültigen Schlüssel.
-b. `time_message_encrypted` = Zeitpunkt der Verschlüsselung des Nachrichteinhaltes.
-c. `devices` = (mindestens: app_id, push_token)
+    a. `ciphertext` = Nachrichteninhalt aus 1a, `Base64(IV || Chiffrat || Authentication Tag)`  verschlüsselt mit dem aktuell gültigen Schlüssel.
+    b. `time_message_encrypted` = Zeitpunkt der Verschlüsselung des Nachrichteinhaltes.
+    c. `devices` = (mindestens: app_id, push_token)
 3. Für jeden Pusher p wird die Push-Benachrichtigung `Notification_p` an das Push Gateways des Pushers `p` übermittelt.
 4. Das Push Gateway übermittelt die Push-Benachrichtigung `Notification_p` an den Push Provider.
 5. Der Push-Provider sendet die Notification an die zur `push_token` gehörende FdV-Instanz.
