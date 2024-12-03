@@ -475,9 +475,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_device_registrierung">Device Registrierung</a></li>
 <li><a href="#_event_trigger">Event-Trigger</a></li>
-<li><a href="#_apple_push">Apple Push</a>
+<li><a href="#_push_gateway_2">Push Gateway</a>
 <ul class="sectlevel3">
-<li><a href="#_push_gateway_2">Push Gateway</a></li>
+<li><a href="#_in">IN</a></li>
+<li><a href="#_out">OUT</a></li>
+</ul>
+</li>
+<li><a href="#_mobile_app">Mobile App</a>
+<ul class="sectlevel3">
+<li><a href="#_ios_extension">iOS-Extension:</a></li>
+<li><a href="#_android">Android:</a></li>
 </ul>
 </li>
 </ul>
@@ -961,15 +968,42 @@ function createNotification(trigger, device) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_apple_push">Apple Push</h3>
-<div class="sect3">
-<h4 id="_push_gateway_2">Push Gateway</h4>
+<h3 id="_push_gateway_2">Push Gateway</h3>
 <div class="paragraph">
 <p>Endpoint: <a href="http://localhost:8080/push/v1/notify" class="bare">http://localhost:8080/push/v1/notify</a></p>
 </div>
+<div class="sect3">
+<h4 id="_in">IN</h4>
+<div class="listingblock">
+<div class="title">Push Gateway payload received</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "month": "2024-11",
+    "ciphertext": "asdfdfjksfjklsdljkdsf==",
+    "prio": "high",
+    "counts": {},
+    "devices": [
+        {
+            "app_id": "de.gematikkk.app.ios",
+            "pushkey": "abcd-efghi-jklm-nopq",
+            "pushkey_ts": 0,
+            "data": {
+                "format": "string"
+            },
+            "tweaks": {
+            }
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_out">OUT</h4>
 <div class="sect4">
-<h5 id="_in">IN</h5>
+<h5 id="_apns_apple_push_notification_service">APNS (Apple Push Notification Service)</h5>
 <table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. HTTP-Header</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -1009,32 +1043,6 @@ function createNotification(trigger, device) {
 </tbody>
 </table>
 <div class="listingblock">
-<div class="title">Push Gateway payload received</div>
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">"notification": {
-    "month": "2024-11",
-    "ciphertext": "asdfdfjksfjklsdljkdsf==",
-    "prio": "high",
-    "counts": {},
-    "devices": [
-        {
-            "app_id": "de.gematikkk.app.ios",
-            "pushkey": "abcd-efghi-jklm-nopq",
-            "pushkey_ts": 0,
-            "data": {
-                "format": "string"
-            },
-            "tweaks": {
-            }
-        }
-    ]
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_out">OUT</h5>
-<div class="listingblock">
 <div class="title">Push Gateway payload send to Push Provider</div>
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">Payload:
@@ -1055,9 +1063,69 @@ function createNotification(trigger, device) {
 end if</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Extension:</p>
 </div>
+<div class="sect4">
+<h5 id="_fcm_firebase_cloud_messaging">FCM (Firebase Cloud Messaging)</h5>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. HTTP-Header</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HTTP-Header</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wert</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Beschreibung</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:method</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>POST</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:Content-Type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>application/json</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defines the format of the request</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:access_token_auth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Confirms token-based authentication (optional, specific to certain systems)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">authorization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code>: <code>Bearer</code> <code><strong>&lt;provider_token&gt;</strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Required for token-based authentication.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="title">Push Gateway payload send to Push Provider</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">Payload:
+{
+  "message":{
+    "token":"PUSH_KEY",
+    "android": {
+      "priority": "HIGH",
+    }
+    "data":{
+      "ciphertext": "ENCRYPTED_DATA_HERE",
+      "month": notification.month
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mobile_app">Mobile App</h3>
+<div class="sect3">
+<h4 id="_ios_extension">iOS-Extension:</h4>
 <div class="listingblock">
 <div class="title">Swift Pseudo Code</div>
 <div class="content">
@@ -1084,6 +1152,55 @@ end if</code></pre>
 }</code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_android">Android:</h4>
+<div class="listingblock">
+<div class="title">Kotlin Pseudo Code</div>
+<div class="content">
+<pre class="highlight"><code class="language-kotlin" data-lang="kotlin">fun onMessageReceived(
+    request: RemoteMessage
+) {
+    // Retrieve the push notification payload
+    val payload = request.data
+
+    // Decrypt the ciphertext
+    val ciphertext = payload["ciphertext"]
+    val plaintext = decrypt(ciphertext)
+
+    // Update the notification content
+    val eventId = payload["event_id"]
+
+    val title = resources.getString(resources.getIdentifier("notification_title_$eventId", "string", packageName))
+    val body = resources.getString(resources.getIdentifier("notification_body_$eventId", "string", packageName))
+
+    // Display the notification using the processed title and body
+    showNotification(title, body)
+}
+
+fun showNotification(title: String?, body: String?) {
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notificationId = 1
+
+     // Create a notification channel for Android O (API 26) and above
+    if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            "default_channel",
+            "Default Channel",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationManager.createNotificationChannel(channel)
+    }
+    // Build the notification using NotificationCompat for backward compatibility
+    val notification = NotificationCompat.Builder(this, "default_channel")
+        .setContentTitle(title)
+        .setContentText(body)
+        .build()
+    // Display the notification with a unique notification ID
+    notificationManager.notify(notificationId, notification)
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Sync: 22.11.2024 14:56</p>
 </div>
@@ -1092,10 +1209,9 @@ end if</code></pre>
 </div>
 </div>
 </div>
-</div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-28 17:29:23 +0100
+Last updated 2024-12-03 11:37:17 +0100
 </div>
 </div>
 </body>
