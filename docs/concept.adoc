@@ -332,27 +332,16 @@ function createNotification(trigger, device) {
 }
 ----
 
-=== Apple Push
-
-==== Push Gateway
+=== Push Gateway
 
 Endpoint: http://localhost:8080/push/v1/notify
 
-===== IN
-
-|===
-| HTTP-Header | Wert | Beschreibung
-| `:method` | `POST` |
-| `:path` | `/3/device/*<pushkey>*` |
-| authorization | `*<provider_token>*` | Required for token-based authentication
-| apns-push-type | `alert` |
-| apns-priority | `<prio != high ? 5 : 10>` |
-|===
+==== IN
 
 [,json]
 .Push Gateway payload received
 ----
-"notification": {
+{
     "month": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
     "prio": "high",
@@ -372,7 +361,19 @@ Endpoint: http://localhost:8080/push/v1/notify
 }
 ----
 
-===== OUT
+==== OUT
+
+===== APNS (Apple Push Notification Service)
+
+.HTTP-Header
+|===
+| HTTP-Header | Wert | Beschreibung
+| `:method` | `POST` |
+| `:path` | `/3/device/*<pushkey>*` |
+| authorization | `*<provider_token>*` | Required for token-based authentication
+| apns-push-type | `alert` |
+| apns-priority | `<prio != high ? 5 : 10>` |
+|===
 
 [,json]
 .Push Gateway payload send to Push Provider
@@ -395,9 +396,40 @@ if notification.counts.badge then
 end if
 ----
 
+===== FCM (Firebase Cloud Messaging)
 
+.HTTP-Header
+|===
+| HTTP-Header | Wert | Beschreibung
+| `:method` | `POST` |
+| `:Content-Type` | `application/json` |Defines the format of the request
+| `:access_token_auth` | `true` |Confirms token-based authentication (optional, specific to certain systems)
+| authorization | `Authorization`: `Bearer` `*<provider_token>*`|Required for token-based authentication.
 
-Extension:
+|===
+
+[,json]
+.Push Gateway payload send to Push Provider
+----
+Payload:
+{
+  "message":{
+    "token":"PUSH_KEY",
+    "android": {
+      "priority": "HIGH",
+    }
+    "data":{
+      "ciphertext": "ENCRYPTED_DATA_HERE",
+      "month": notification.month
+    }
+  }
+}
+
+----
+
+=== Mobile App
+
+==== iOS-Extension:
 
 [,swift]
 .Swift Pseudo Code
@@ -423,6 +455,56 @@ func didReceive(
     // Call the completion handler with the updated notification content
     contentHandler(content)
 }
+----
+
+==== Android:
+
+.Kotlin Pseudo Code
+[,kotlin]
+----
+
+fun onMessageReceived(
+    request: RemoteMessage
+) {
+    // Retrieve the push notification payload
+    val payload = request.data
+
+    // Decrypt the ciphertext
+    val ciphertext = payload["ciphertext"]
+    val plaintext = decrypt(ciphertext)
+
+    // Update the notification content
+    val eventId = payload["event_id"]
+
+    val title = resources.getString(resources.getIdentifier("notification_title_$eventId", "string", packageName))
+    val body = resources.getString(resources.getIdentifier("notification_body_$eventId", "string", packageName))
+
+    // Display the notification using the processed title and body
+    showNotification(title, body)
+}
+
+fun showNotification(title: String?, body: String?) {
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    val notificationId = 1
+
+     // Create a notification channel for Android O (API 26) and above
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val channel = NotificationChannel(
+            "default_channel",
+            "Default Channel",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationManager.createNotificationChannel(channel)
+    }
+    // Build the notification using NotificationCompat for backward compatibility
+    val notification = NotificationCompat.Builder(this, "default_channel")
+        .setContentTitle(title)
+        .setContentText(body)
+        .build()
+    // Display the notification with a unique notification ID
+    notificationManager.notify(notificationId, notification)
+}
+
 ----
 
 Sync: 22.11.2024 14:56

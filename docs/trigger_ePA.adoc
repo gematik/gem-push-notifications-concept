@@ -11,7 +11,7 @@
 | Dokument eingestellt durch LEI, DiGA, KTR oder Vertreter
 | Dokumente
 | ja
-| [technische ID]
+| gem.epa.xds.put
 |
 
 | 2
@@ -19,7 +19,7 @@
 | Dokument gelesen durch LEI, DiGA, KTR oder Vertreter
 | Dokumente
 | nein
-| [technische ID]
+| gem.epa.xds.update
 |
 
 | 3
@@ -251,7 +251,7 @@
 | Vertreter hat eine Befugnis für LEI oder DiGA erteilt
 | Befugnis
 | ja
-| [technische ID]
+| gem.epa.entitle.put
 |
 
 | 32
@@ -259,7 +259,7 @@
 | Vertreter hat eine Befugnis für LEI oder DiGA gelöscht.
 | Befugnis
 | ja
-| [technische ID]
+| gem.epa.entitle.del
 | email an Versicherten, wenn Vertreter eigene Befugnis löscht
 
 | 33
@@ -339,7 +339,7 @@
 | Verborgenes Dokument durch Vertreter wieder sichtbar
 | Sichtbarkeit
 | ja
-| [technische ID]
+| gem.epa.constraint.del oder gem.epa.constraintdoc.del
 |
 
 | 43
@@ -355,7 +355,7 @@
 | Kategorie durch Vertreter wieder sichtbar
 | Sichtbarkeit
 | ja
-| [technische ID]
+| gem.epa.constraint.del oder gem.epa.constraintcat.del
 |
 
 | 45
@@ -371,7 +371,7 @@
 | Ordner durch Vertreter wieder sichtbar
 | Sichtbarkeit
 | ja
-| [technische ID]
+| gem.epa.constraint.del oder gem.epa.constraintfolder.del
 |
 
 | 47
