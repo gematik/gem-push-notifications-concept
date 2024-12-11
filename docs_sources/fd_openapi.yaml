@@ -50,8 +50,6 @@ paths:
                   }
       tags:
         - Setup
-      security: 
-        -  bearerAuth: []
   /pushers/v1/set:
     post:
       summary: Modify a pusher for this user on the homeserver.
@@ -106,14 +104,14 @@ paths:
             application/json:
               schema:
                 $ref: definitions/rate_limited.yaml
-      security: 
-        -  bearerAuth: []
       tags:
         - Setup
   /channels/v1/{pushtoken}:
     get:
       summary: Gets channels for a specific device.
-      description: Gets all channels and there configuration state of the users device identified by the `pushtoken`.
+      description: |-
+        Gets all channels and there configuration state of the users device identified by the
+        `pushtoken`.
       operationId: getChannelsOfDevice
       parameters: 
         - name: pushtoken
@@ -156,13 +154,14 @@ paths:
                   }
       tags:
         - Fachdienst
-      security: 
-        -  bearerAuth: []
     post:
       summary: Modify the channels for a specific device. 
       description: |-
         This endpoint allows the creation, modification and deletion of channel subscriptions
-        for a specific device identified by `pushtoken`.
+        for a specific device identified by `pushtoken`. If a channel is not present in the POST
+        request, the state of the channel on the server is not changed.
+        An unset channel is treated as disabled and thus no pushes will be triggerd that correspond
+        to the channel.
       operationId: postChannelsOfDevice
       parameters: 
         - name: pushtoken
@@ -178,10 +177,8 @@ paths:
             schema:
               $ref: definitions/channels_post.yaml#/schema
             examples:
-              registration:
-                $ref: definitions/channels_post.yaml#/examples/registration
-              deletion:
-                $ref: definitions/channels_post.yaml#/examples/deletion
+              update:
+                $ref: definitions/channels_post.yaml#/examples/update
         description: The channel information.
         required: true
       responses:
@@ -215,8 +212,6 @@ paths:
                 $ref: definitions/rate_limited.yaml
       tags:
         - Fachdienst
-      security: 
-        -  bearerAuth: []
   /channels/v1:
     get:
       summary: Gets the available channels for the authenticated user
@@ -255,8 +250,6 @@ paths:
                   }
       tags:
         - Fachdienst
-      security: 
-        -  bearerAuth: []
 servers:
   - url: "{protocol}://{hostname}{basePath}"
     variables:
@@ -269,9 +262,4 @@ servers:
         default: localhost:8008
       basePath:
         default: /client/v1
-components: 
-  securitySchemes: 
-    bearerAuth: 
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+security: []

@@ -1,9 +1,9 @@
 examples:
   response:
-    status: {
+    value: {
       "channels": [
         {
-          "id": "channel1"
+          "id": "channel1",
           "status": "enabled"
         },
         {
@@ -29,5 +29,5 @@ schema:
             type: string
             enum: ["enabled", "disabled", "not_set"] 
         required:
-          - name
+          - id
           - status
