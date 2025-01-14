@@ -32,7 +32,7 @@ Um zusätzliche Sicherheit zu gewährleisten kann eine Push-Nachricht zwischen d
 
 ==== Fachdienst image:{Status_ReadyForComments}[]
 
-Der anwendungsspezifische Fachdienst verwaltet Geräte die sich bei ihm für den Push-Notification empfang registriert haben. Der Fachdienst erstellt Push-Notifications für vom Nutzer abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für die FdVs der Versicherten zur Registrierung und Konfiguration von Pushern an. Ein Pusher bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für mehrere Endgeräte Pusher im Fachdienst hinterlegen.
+Der anwendungsspezifische Fachdienst verwaltet Geräte die sich bei ihm für den Push-Notification empfang registriert haben. Der Fachdienst erstellt Push-Notifications für vom Nutzer abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für die FdVs der Versicherten zur Registrierung und Konfiguration von Pushern an. Ein Pusher bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für mehrere FdV-Instanzen Pusher im Fachdienst hinterlegen.
 
 ==== Push Gateway image:{Status_ReadyForComments}[]
 
@@ -214,17 +214,17 @@ prio != high ? 5 : 10
 // | attributes
 // |===
 
-=== Themen für produktspezifische Implementierungen image:{Status_ReadyForComments}[]
+=== Themen für fachdienstspezifische Implementierungen image:{Status_ReadyForComments}[]
 
-Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der produktspezifischen Implementierung abhängen:
+Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der fachdienstspezifischen Implementierung abhängen:
 
 1. Lokalisierung: Die genaue Implementierung der Lokalisierung ist stark abhängig vom Payload und damit vom spezifischen Anwendungsfall.
-2. Channels: Die Anforderungen und Implementierung von Channels sind anwendungsspezifisch und können je nach Produkt variieren.
-3. Payload: Die genaue Struktur und der Inhalt der Nutzdaten können je  nach Anwendungsfall und Produktfunktionalität unterschiedlich sein. Die Struktur wird im Fachkonzept der jeweiligen Anwendung spezifiziert.
+2. Channels: Die Anforderungen und Implementierung von Channels sind anwendungsspezifisch und können je nach Fachdienst variieren.
+3. Payload: Die genaue Struktur und der Inhalt der Nutzdaten können je  nach Anwendungsfall und Fachdienstfunktionalität unterschiedlich sein. Die Struktur wird im Fachkonzept der jeweiligen Anwendung spezifiziert. *TODO: Eventuell Beispiele?*
 4. Implementierung des Push Gateways: Die technische Umsetzung des Push-Mechanismus kann von der gewählten Infrastruktur und den spezifischen Anforderungen des Push Gateways abhängen. Die Technologie entwickelt sich schnell weiter, was auch die Kommunikation zwischen Push Gateway und Push Providers beeinflusst.
-5. Berechtigung: Die Berechtigungen für die verschiedenen Endpunkte sind anwendungsfallspezifisch und können je nach Produkt variieren. +
+5. Berechtigung: Die Berechtigungen für die verschiedenen Endpunkte sind anwendungsfallspezifisch und können je nach Fachdienst variieren. +
 
-Für Hinweise zur Implementierung dieser Themen verweisen wir auf die produktspezifischen Spezifikationen und Implementierungsleitfäden.
+Für Hinweise zur Implementierung dieser Themen verweisen wir auf die fachdienstspezifischen Spezifikationen und Implementierungsleitfäden.
 
 Optionale Features können xref:optional-features.adoc[hier] gefunden werden.
 
@@ -245,6 +245,12 @@ Optionale Features können xref:optional-features.adoc[hier] gefunden werden.
     "data": {
         "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
     },
+    "encryption": {
+        "method": "aes-hmac-sha256",
+        "initial_shared_secret": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+        "time_iss_created": "2023-10",
+        "key_identifier": "123e4567-e89b-12d3-a456-426614174000"
+    },
     "append": false
 }
 ----
@@ -263,6 +269,12 @@ Optionale Features können xref:optional-features.adoc[hier] gefunden werden.
         "url": "https://push-gateway.location.here/_matrix/push/v1/notify",
         "platform": "ios"
     },
+    "encryption": {
+        "method": "aes-hmac-sha256",
+        "initial_shared_secret": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+        "time_iss_created": "2023-10",
+        "key_identifier": "123e4567-e89b-12d3-a456-426614174000"
+    },
     "append": false
 }
 ----
@@ -279,6 +291,12 @@ Optionale Features können xref:optional-features.adoc[hier] gefunden werden.
     "pushkey": "<APNS/GCM TOKEN>",
     "data": {
         "url": "https://push-gateway.location.here/ios/_matrix/push/v1/notify"
+    },
+    "encryption": {
+        "method": "aes-hmac-sha256",
+        "initial_shared_secret": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+        "time_iss_created": "2023-10",
+        "key_identifier": "123e4567-e89b-12d3-a456-426614174000"
     },
     "append": false
 }
@@ -312,13 +330,14 @@ function createNotification(trigger, device) {
     }
 
     iv = random(32)
-    (cipher, authTag) = aesEncrypt(payload)
+    (cipher, authTag) = aesEncrypt(encryptionKey.privateKey, iv, payload)
     
     ciphertext = Base64(iv + cipher + authTag)
 
     return {
         time_message_encrypted: time_message_encrypted,
         ciphertext: ciphertext,
+        key_identifier: encryptionKey.identifier
         devices: [
             app_id: device.app_id,
             pushkey: device.pushkey,

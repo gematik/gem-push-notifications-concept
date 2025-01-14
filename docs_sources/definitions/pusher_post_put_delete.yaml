@@ -12,6 +12,12 @@ examples:
         "data": {
           "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
         },
+        "encryption": {
+          "method": "aes-hmac-sha256",
+          "initial_key_period": "2023-10",
+          "iss": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+          "key_identifier": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        },
         "append": false
       }
     # end::example_registration[]
@@ -101,17 +107,22 @@ schema:
             The format to send notifications in to Push Gateways if the
             `kind` is `http`. The details about what fields the
             homeserver should send to the push gateway are defined in the
-            [Push Gateway Specification](/push-gateway-api/). Currently the only format
-            available is 'event_id_only'.
+            [Push Gateway Specification](/push-gateway-api/).
+            
+            **TIM:** Currently the only format available is `event_id_only`.
+
+            **Others:** This property is not used and should be omitted unless
+            specified explicitly by the service implementing this specification.
     encryption:
       type: object
       description: |-
-        This object contains information on how to encrypt the notifications for the pusher. This property may be `required` depending on what service it is called on.
+        This object contains information on how to encrypt the notifications for the pusher.
+        This property may be `required` or `forbidden` depending on what service it is called on.
       properties:
         method:
           type: string
           description: |-
-            The encryption method to use. As currently only AES/GCM with a key generated using HKDF is supported, this value is static and should be 'aes-hmac-sha2'.
+            The encryption method to use. As currently only AES/GCM with a key generated using HKDF is supported, this value is static and should be 'aes-hmac-sha256'.
         initial_key_period:
           type: string
           description: |-
@@ -120,6 +131,14 @@ schema:
           type: string
           description: |-
             A string containing the hex representation of the 256 bit initial shared secret.
+        key_identifier:
+          type: string
+          description: |-
+            A string containing an identifier for the key. This is used
+            to identify the key and the corresponding service (Fachdienst)
+            when a push notification is received within the FdV. The
+            `key_identifier` must be random and must not be reused for a
+            different ISS. An UUID is recommended.
     append:
       type: boolean
       description: |-

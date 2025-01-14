@@ -23,7 +23,7 @@ info:
 paths:
   /pushers/v1:
     get:
-      summary: Gets the current pushers for the authenticated user
+      summary: Gets the current pushers
       description: Gets all currently active pushers for the authenticated user.
       operationId: getPushers
       responses:
@@ -52,10 +52,10 @@ paths:
         - Setup
   /pushers/v1/set:
     post:
-      summary: Modify a pusher for this user on the homeserver.
+      summary: Modify a pusher
       description: |-
         This endpoint allows the creation, modification and deletion of [pushers](/client-server-api/#push-notifications)
-        for this user ID. The behaviour of this endpoint varies depending on the
+        for the authenticated user. The behaviour of this endpoint varies depending on the
         values in the JSON body.
 
         If `kind` is not `null`, the pusher with this `app_id` and `pushkey`
@@ -108,9 +108,9 @@ paths:
         - Setup
   /channels/v1/{pushtoken}:
     get:
-      summary: Gets channels for a specific device.
+      summary: Gets channels for a specific device
       description: |-
-        Gets all channels and there configuration state of the users device identified by the
+        Gets all channels and their configuration state of the authenticated user's device identified by the
         `pushtoken`.
       operationId: getChannelsOfDevice
       parameters: 
@@ -155,10 +155,10 @@ paths:
       tags:
         - Fachdienst
     post:
-      summary: Modify the channels for a specific device. 
+      summary: Modify the channels for a specific device 
       description: |-
         This endpoint allows the creation, modification and deletion of channel subscriptions
-        for a specific device identified by `pushtoken`. If a channel is not present in the POST
+        for a specific device identified by `pushtoken` of the authenticated user. If a channel is not present in the POST
         request, the state of the channel on the server is not changed.
         An unset channel is treated as disabled and thus no pushes will be triggerd that correspond
         to the channel.
@@ -214,7 +214,7 @@ paths:
         - Fachdienst
   /channels/v1:
     get:
-      summary: Gets the available channels for the authenticated user
+      summary: Gets the available channels
       description: Gets all all active channels for the authenticated user.
       operationId: getChannels
       requestBody: 
