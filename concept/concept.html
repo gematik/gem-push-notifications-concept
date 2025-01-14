@@ -463,8 +463,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_registrierung_einer_epa_fdv_instanz">Registrierung einer ePA-FdV-Instanz <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a></li>
 <li><a href="#_deregistrierung_einer_fdv_instanz">Deregistrierung einer FdV-Instanz <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a></li>
 <li><a href="#_liste_aktuelle_pushers_enthalten">Liste aktuelle Pushers enthalten <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a></li>
-<li><a href="#_versenden_von_push_notifications">Versenden von Push-Notifications <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a>
+<li><a href="#_versenden_von_push_notifications">Versenden von Push-Notifications <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a></li>
+</ul>
+</li>
+<li><a href="#_implementierungsdetails">Implementierungsdetails <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a>
+<ul class="sectlevel2">
+<li><a href="#_priorität">Priorität <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a>
 <ul class="sectlevel3">
+<li><a href="#_apple">Apple</a></li>
+<li><a href="#_android">Android</a></li>
 <li><a href="#_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a></li>
 </ul>
 </li>
@@ -484,7 +491,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_mobile_app">Mobile App</a>
 <ul class="sectlevel3">
 <li><a href="#_ios_extension">iOS-Extension:</a></li>
-<li><a href="#_android">Android:</a></li>
+<li><a href="#_android_2">Android:</a></li>
 </ul>
 </li>
 </ul>
@@ -762,10 +769,43 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 </li>
 </ol>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementierungsdetails">Implementierungsdetails <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_priorität">Priorität <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h3>
+<div class="sect3">
+<h4 id="_apple">Apple</h4>
+<div class="paragraph">
+<p>prio != high ? 5 : 10</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_android">Android</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "message":{
+    "token":"PUSH_KEY",
+    "android": {
+      "priority": "HIGH",
+    }
+    "data":{
+      "ciphertext": "ENCRYPTED_DATA_HERE",
+      "time_message_encrypted": notification.time_message_encrypted
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
 <div class="sect3">
 <h4 id="_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h4>
 <div class="sect4">
-<h5 id="_apple">Apple</h5>
+<h5 id="_apple_2">Apple</h5>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -940,8 +980,8 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 }
 
 function createNotification(trigger, device) {
-    month = date.now().month // "2024-11"
-    encryptionKey = getEncryptionKey(device, month)
+    time_message_encrypted = date.now().yearAndMonth // "2024-11"
+    encryptionKey = getEncryptionKey(device, time_message_encrypted)
 
     payload = {
         event: "trigger001"
@@ -953,7 +993,7 @@ function createNotification(trigger, device) {
     ciphertext = Base64(iv + cipher + authTag)
 
     return {
-        month: month,
+        time_message_encrypted: time_message_encrypted,
         ciphertext: ciphertext,
         devices: [
             app_id: device.app_id,
@@ -978,7 +1018,7 @@ function createNotification(trigger, device) {
 <div class="title">Push Gateway payload received</div>
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
-    "month": "2024-11",
+    "time_message_encrypted": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
     "prio": "high",
     "counts": {},
@@ -1051,7 +1091,7 @@ function createNotification(trigger, device) {
         "mutable-content": true
     }
     "ciphertext": notification.ciphertext,
-    "month": notification.month
+    "time_message_encrypted": notification.time_message_encrypted
 }</code></pre>
 </div>
 </div>
@@ -1113,7 +1153,7 @@ end if</code></pre>
     }
     "data":{
       "ciphertext": "ENCRYPTED_DATA_HERE",
-      "month": notification.month
+      "time_message_encrypted": notification.time_message_encrypted
     }
   }
 }</code></pre>
@@ -1138,23 +1178,29 @@ end if</code></pre>
 
     // Decrypt the ciphertext
     let ciphertext = payload["ciphertext"]
-    let plaintext = decrypt(ciphertext)
+    let decryptedData = decrypt(ciphertext)
+    let pushData = JSONDecoder().decode(PushData.self, from: decryptedData)
 
     // Update the notification content
     let content = request.content.mutableCopy() as! UNMutableNotificationContent
-    let title = LocalizedString("notification_title_\(event_id)")
-    let body = LocalizedString("notification_body_\(event_id)")
+    let title = LocalizedString("notification_title_\(pushData.event_id)")
+    let body = LocalizedString("notification_body_\(pushData.event_id)", pushData.documentTitle ?? "*****")
     content.title = title
     content.body = body
 
     // Call the completion handler with the updated notification content
     contentHandler(content)
+}
+
+struct PushData: Codable {
+    let eventId: String
+    let documentTitle: String?
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_android">Android:</h4>
+<h4 id="_android_2">Android:</h4>
 <div class="listingblock">
 <div class="title">Kotlin Pseudo Code</div>
 <div class="content">
@@ -1211,7 +1257,7 @@ fun showNotification(title: String?, body: String?) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-12-11 12:58:38 +0100
+Last updated 2025-01-14 09:12:30 +0100
 </div>
 </div>
 </body>
