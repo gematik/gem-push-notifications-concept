@@ -475,7 +475,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a></li>
 </ul>
 </li>
-<li><a href="#_themen_für_produktspezifische_implementierungen">Themen für produktspezifische Implementierungen <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a></li>
+<li><a href="#_themen_für_fachdienstspezifische_implementierungen">Themen für fachdienstspezifische Implementierungen <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a></li>
 </ul>
 </li>
 <li><a href="#_beispiele">Beispiele <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a>
@@ -539,7 +539,7 @@ Durch die Implementierung eines zentralen Push Gateways pro Frontend wird eine e
 <div class="sect3">
 <h4 id="_fachdienst">Fachdienst <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></h4>
 <div class="paragraph">
-<p>Der anwendungsspezifische Fachdienst verwaltet Geräte die sich bei ihm für den Push-Notification empfang registriert haben. Der Fachdienst erstellt Push-Notifications für vom Nutzer abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für die FdVs der Versicherten zur Registrierung und Konfiguration von Pushern an. Ein Pusher bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für mehrere Endgeräte Pusher im Fachdienst hinterlegen.</p>
+<p>Der anwendungsspezifische Fachdienst verwaltet Geräte die sich bei ihm für den Push-Notification empfang registriert haben. Der Fachdienst erstellt Push-Notifications für vom Nutzer abonnierte Ereignisse und übermittelt diese an das zuständige Push Gateway. Er bietet Schnittstellen für die FdVs der Versicherten zur Registrierung und Konfiguration von Pushern an. Ein Pusher bezieht sich auf eine FdV-Instanz und ist eine Konfiguration im Fachdienst, in der die Informationen zur Adressierung der Push-Notifications hinterlegt werden (u.a. das zu nutzende Push Gateway, Schlüssel zur Verschlüsselung von Nachrichteninhalten). Der Versicherte kann für mehrere FdV-Instanzen Pusher im Fachdienst hinterlegen.</p>
 </div>
 </div>
 <div class="sect3">
@@ -692,6 +692,12 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
         "pushkey": "&lt;APNS/GCM TOKEN&gt;",
         "data": {
           "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+        },
+        "encryption": {
+          "method": "aes-hmac-sha256",
+          "initial_key_period": "2023-10",
+          "iss": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+          "key_identifier": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
         },
         "append": false
       }</pre>
@@ -869,9 +875,9 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 </div>
 </div>
 <div class="sect2">
-<h3 id="_themen_für_produktspezifische_implementierungen">Themen für produktspezifische Implementierungen <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></h3>
+<h3 id="_themen_für_fachdienstspezifische_implementierungen">Themen für fachdienstspezifische Implementierungen <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></h3>
 <div class="paragraph">
-<p>Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der produktspezifischen Implementierung abhängen:</p>
+<p>Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der fachdienstspezifischen Implementierung abhängen:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -879,21 +885,21 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 <p>Lokalisierung: Die genaue Implementierung der Lokalisierung ist stark abhängig vom Payload und damit vom spezifischen Anwendungsfall.</p>
 </li>
 <li>
-<p>Channels: Die Anforderungen und Implementierung von Channels sind anwendungsspezifisch und können je nach Produkt variieren.</p>
+<p>Channels: Die Anforderungen und Implementierung von Channels sind anwendungsspezifisch und können je nach Fachdienst variieren.</p>
 </li>
 <li>
-<p>Payload: Die genaue Struktur und der Inhalt der Nutzdaten können je  nach Anwendungsfall und Produktfunktionalität unterschiedlich sein. Die Struktur wird im Fachkonzept der jeweiligen Anwendung spezifiziert.</p>
+<p>Payload: Die genaue Struktur und der Inhalt der Nutzdaten können je  nach Anwendungsfall und Fachdienstfunktionalität unterschiedlich sein. Die Struktur wird im Fachkonzept der jeweiligen Anwendung spezifiziert. <strong>TODO: Eventuell Beispiele?</strong></p>
 </li>
 <li>
 <p>Implementierung des Push Gateways: Die technische Umsetzung des Push-Mechanismus kann von der gewählten Infrastruktur und den spezifischen Anforderungen des Push Gateways abhängen. Die Technologie entwickelt sich schnell weiter, was auch die Kommunikation zwischen Push Gateway und Push Providers beeinflusst.</p>
 </li>
 <li>
-<p>Berechtigung: Die Berechtigungen für die verschiedenen Endpunkte sind anwendungsfallspezifisch und können je nach Produkt variieren.<br></p>
+<p>Berechtigung: Die Berechtigungen für die verschiedenen Endpunkte sind anwendungsfallspezifisch und können je nach Fachdienst variieren.<br></p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>Für Hinweise zur Implementierung dieser Themen verweisen wir auf die produktspezifischen Spezifikationen und Implementierungsleitfäden.</p>
+<p>Für Hinweise zur Implementierung dieser Themen verweisen wir auf die fachdienstspezifischen Spezifikationen und Implementierungsleitfäden.</p>
 </div>
 <div class="paragraph">
 <p>Optionale Features können <a href="optional-features.html">hier</a> gefunden werden.</p>
@@ -919,6 +925,12 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
     "data": {
         "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
     },
+    "encryption": {
+        "method": "aes-hmac-sha256",
+        "initial_shared_secret": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+        "time_iss_created": "2023-10",
+        "key_identifier": "123e4567-e89b-12d3-a456-426614174000"
+    },
     "append": false
 }</code></pre>
 </div>
@@ -937,6 +949,12 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
         "url": "https://push-gateway.location.here/_matrix/push/v1/notify",
         "platform": "ios"
     },
+    "encryption": {
+        "method": "aes-hmac-sha256",
+        "initial_shared_secret": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+        "time_iss_created": "2023-10",
+        "key_identifier": "123e4567-e89b-12d3-a456-426614174000"
+    },
     "append": false
 }</code></pre>
 </div>
@@ -953,6 +971,12 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
     "pushkey": "&lt;APNS/GCM TOKEN&gt;",
     "data": {
         "url": "https://push-gateway.location.here/ios/_matrix/push/v1/notify"
+    },
+    "encryption": {
+        "method": "aes-hmac-sha256",
+        "initial_shared_secret": "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2",
+        "time_iss_created": "2023-10",
+        "key_identifier": "123e4567-e89b-12d3-a456-426614174000"
     },
     "append": false
 }</code></pre>
@@ -988,13 +1012,14 @@ function createNotification(trigger, device) {
     }
 
     iv = random(32)
-    (cipher, authTag) = aesEncrypt(payload)
+    (cipher, authTag) = aesEncrypt(encryptionKey.privateKey, iv, payload)
 
     ciphertext = Base64(iv + cipher + authTag)
 
     return {
         time_message_encrypted: time_message_encrypted,
         ciphertext: ciphertext,
+        key_identifier: encryptionKey.identifier
         devices: [
             app_id: device.app_id,
             pushkey: device.pushkey,
@@ -1257,7 +1282,7 @@ fun showNotification(title: String?, body: String?) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-01-14 09:12:30 +0100
+Last updated 2025-01-14 14:01:11 +0100
 </div>
 </div>
 </body>
