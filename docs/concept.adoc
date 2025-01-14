@@ -172,6 +172,31 @@ image::diagrams/send_push.svg[width=100%]
 6. Die FdV-Instanz entschlüsselt den Nachrichteninhalt mit dem aktuell gültigen Schlüssel (erzeugt ihn, wenn er nicht schon vorhanden ist) und zeigt dem Nutzer den Nachrichteninhalt entsprechend an.
 7. Bei Bedarf kann sich der Nutzer in der FdV-Instanz anmelden, um sich beispielsweise ein eingestelltes Dokument anzusehen.
 
+== Implementierungsdetails image:{Status_WIP}[]
+
+=== Priorität image:{Status_WIP}[]
+
+==== Apple
+
+prio != high ? 5 : 10
+
+==== Android
+
+```json
+{
+  "message":{
+    "token":"PUSH_KEY",
+    "android": {
+      "priority": "HIGH",
+    }
+    "data":{
+      "ciphertext": "ENCRYPTED_DATA_HERE",
+      "time_message_encrypted": notification.time_message_encrypted
+    }
+  }
+}
+```
+
 ==== Versenden aus Push Gateway Sicht image:{Status_WIP}[]
 
 ===== Apple
@@ -306,8 +331,8 @@ function trigger001() {
 }
 
 function createNotification(trigger, device) {
-    month = date.now().month // "2024-11"
-    encryptionKey = getEncryptionKey(device, month)
+    time_message_encrypted = date.now().yearAndMonth // "2024-11"
+    encryptionKey = getEncryptionKey(device, time_message_encrypted)
 
     payload = {
         event: "trigger001"
@@ -319,7 +344,7 @@ function createNotification(trigger, device) {
     ciphertext = Base64(iv + cipher + authTag)
 
     return {
-        month: month,
+        time_message_encrypted: time_message_encrypted,
         ciphertext: ciphertext,
         devices: [
             app_id: device.app_id,
@@ -342,7 +367,7 @@ Endpoint: http://localhost:8080/push/v1/notify
 .Push Gateway payload received
 ----
 {
-    "month": "2024-11",
+    "time_message_encrypted": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
     "prio": "high",
     "counts": {},
@@ -384,7 +409,7 @@ Payload:
         "mutable-content": true
     }
     "ciphertext": notification.ciphertext,
-    "month": notification.month
+    "time_message_encrypted": notification.time_message_encrypted
 }
 ----
 
@@ -420,7 +445,7 @@ Payload:
     }
     "data":{
       "ciphertext": "ENCRYPTED_DATA_HERE",
-      "month": notification.month
+      "time_message_encrypted": notification.time_message_encrypted
     }
   }
 }
@@ -443,17 +468,23 @@ func didReceive(
 
     // Decrypt the ciphertext
     let ciphertext = payload["ciphertext"]
-    let plaintext = decrypt(ciphertext)
+    let decryptedData = decrypt(ciphertext)
+    let pushData = JSONDecoder().decode(PushData.self, from: decryptedData)
 
     // Update the notification content
     let content = request.content.mutableCopy() as! UNMutableNotificationContent
-    let title = LocalizedString("notification_title_\(event_id)")
-    let body = LocalizedString("notification_body_\(event_id)")
+    let title = LocalizedString("notification_title_\(pushData.event_id)")
+    let body = LocalizedString("notification_body_\(pushData.event_id)", pushData.documentTitle ?? "*****")
     content.title = title
     content.body = body
 
     // Call the completion handler with the updated notification content
     contentHandler(content)
+}
+
+struct PushData: Codable {
+    let eventId: String
+    let documentTitle: String?
 }
 ----
 

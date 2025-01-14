@@ -22,10 +22,18 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 servers:
-  - url: http://localhost:8080
-    description: Local server
+  - url: "{protocol}://{hostname}{basePath}"
+    variables:
+      protocol:
+        enum:
+          - https
+        default: https
+      hostname:
+        default: localhost:8080
+      basePath:
+        default: /push/v1
 paths:
-  /push/v1/notify:
+  /notify:
     post:
       operationId: push_v1_notify
       summary: Push data to the gateway
@@ -39,7 +47,7 @@ paths:
                   {
                     "notification": {
                       "ciphertext": "base64_of_ciphertext",
-                      "key_month": "2024-11",
+                      "time_message_encrypted": "2024-11",
                       "prio": "high",
                       "counts": {
                         "unread": 1,
@@ -100,16 +108,36 @@ paths:
                 - $ref: '#/components/schemas/EncryptedNotification'
                 - $ref: '#/components/schemas/PlainNotification'
       responses:
-        '200':
-          description: Successfully pushed data
+        "200":
+          description: A list of rejected push keys.
           content:
             application/json:
               schema:
-                type: object
+                type: object  # empty json object
                 properties:
-                  status:
-                    type: string
-                    example: "success"
+                  rejected:
+                    type: array
+                    description: |-
+                      A list of all pushkeys given in the notification request that
+                      are not valid. These could have been rejected by an upstream
+                      gateway because they have expired or have never been valid.
+                      Homeservers must cease sending notification requests for these
+                      pushkeys and remove the associated pushers. It may not
+                      necessarily be the notification in the request that failed:
+                      it could be that a previous notification to the same pushkey
+                      failed. May be empty.
+                    items:
+                      type: string
+                      description: A pushkey that has been rejected.
+                required:
+                  - rejected
+              examples:
+                response:
+                  value: {
+                    "rejected": [
+                      "V2h5IG9uIGVhcnRoIGRpZCB5b3UgZGVjb2RlIHRoaXM/"
+                    ]
+                  }
         '400':
           description: Invalid input
           content:
@@ -146,9 +174,9 @@ components:
             ciphertext:
               type: string
               description: "base64_of_ciphertext"
-            key_month:
+            time_message_encrypted:
               type: string
-              description: "Month the key was derived and the message was sent. e.g. `2024-11` for November 2024."
+              description: "Year + Month the key was derived and the message was sent. e.g. `2024-11` for November 2024."
             prio:
               type: string
               enum:

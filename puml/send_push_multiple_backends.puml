@@ -19,11 +19,11 @@ group SendPush
 
     Fachdienst -> Fachdienst : event_trigger
     activate Fachdienst
-    Fachdienst -> NotificationService : **POST** //push/v1/notify//
-    activate NotificationService
-    NotificationService -->> NotificationProvider
+    Fachdienst -> NotificationService2 : **POST** //push/v1/notify//
+    activate NotificationService2
+    NotificationService2 -->> NotificationProvider
     activate NotificationProvider
-    deactivate NotificationService
+    deactivate NotificationService2
     deactivate Fachdienst
     NotificationProvider -> App2
     deactivate NotificationProvider
