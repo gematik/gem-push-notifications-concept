@@ -145,16 +145,27 @@ image::diagrams/send_push.svg[width=100%]
 6. Die FdV-Instanz entschlüsselt den Nachrichteninhalt mit dem aktuell gültigen Schlüssel (erzeugt ihn, wenn er nicht schon vorhanden ist) und zeigt dem Nutzer den Nachrichteninhalt entsprechend an.
 7. Bei Bedarf kann sich der Nutzer in der FdV-Instanz anmelden, um sich beispielsweise ein eingestelltes Dokument anzusehen.
 
-== Implementierungsdetails image:{Status_WIP}[]
+== Implementierungshinweise image:{Status_WIP}[]
 
 === Priorität image:{Status_WIP}[]
 
+[cols="1,1,1", options="header"]
+|===
+| Priority Level | Apple Priority | Android Priority
+| High           | 10             | HIGH
+| Low            | 5              | NORMAL
+|===
+
 ==== Apple
 
-prio != high ? 5 : 10
+Die Priorität einer Push-Benachrichtigung wird durch das Feld `apns-priority` im HTTP-Header festgelegt. Die Priorität kann entweder `5` oder `10` sein. Die Priorität `5` wird für Benachrichtigungen mit niedriger Priorität verwendet, während die Priorität `10` für Benachrichtigungen mit hoher Priorität verwendet wird. Die Priorität wird durch den Fachdienst festgelegt und kann je nach Anwendungsfall variieren.
 
 ==== Android
 
+Die Priorität einer Push-Benachrichtigung wird durch den Wert des Feldes `priority` im JSON-Payload festgelegt. Die Priorität kann entweder `HIGH` oder `NORMAL` sein. Die Priorität `HIGH` wird für Benachrichtigungen mit hoher Priorität verwendet, während die Priorität `NORMAL` für Benachrichtigungen mit niedriger Priorität verwendet wird. Die Priorität wird durch den Fachdienst festgelegt und kann je nach Anwendungsfall variieren.
+
+[#android_push_priority]
+.Push Notification Priorität für Android
 ```json
 {
   "message":{
@@ -162,9 +173,8 @@ prio != high ? 5 : 10
     "android": {
       "priority": "HIGH",
     }
-    "data":{
-      "ciphertext": "ENCRYPTED_DATA_HERE",
-      "time_message_encrypted": notification.time_message_encrypted
+    "data": {
+        ...
     }
   }
 }

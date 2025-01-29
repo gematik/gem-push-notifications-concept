@@ -141,7 +141,7 @@ Möchte der Versicherte Push Notifications von mehreren Fachdiensten erhalten, w
         },
         "encryption": {
           "method": "aes-hmac-sha256",
-          "initial_key_period": "2023-10",
+          "time_iss_created": "2023-10",
           "iss": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
           "key_identifier": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
         },
@@ -178,16 +178,27 @@ image::diagrams/send_push.svg[width=100%]
 6. Die FdV-Instanz entschlüsselt den Nachrichteninhalt mit dem aktuell gültigen Schlüssel (erzeugt ihn, wenn er nicht schon vorhanden ist) und zeigt dem Nutzer den Nachrichteninhalt entsprechend an.
 7. Bei Bedarf kann sich der Nutzer in der FdV-Instanz anmelden, um sich beispielsweise ein eingestelltes Dokument anzusehen.
 
-== Implementierungsdetails image:{Status_WIP}[]
+== Implementierungshinweise image:{Status_WIP}[]
 
 === Priorität image:{Status_WIP}[]
 
+[cols="1,1,1", options="header"]
+|===
+| Priority Level | Apple Priority | Android Priority
+| High           | 10             | HIGH
+| Low            | 5              | NORMAL
+|===
+
 ==== Apple
 
-prio != high ? 5 : 10
+Die Priorität einer Push-Benachrichtigung wird durch das Feld `apns-priority` im HTTP-Header festgelegt. Die Priorität kann entweder `5` oder `10` sein. Die Priorität `5` wird für Benachrichtigungen mit niedriger Priorität verwendet, während die Priorität `10` für Benachrichtigungen mit hoher Priorität verwendet wird. Die Priorität wird durch den Fachdienst festgelegt und kann je nach Anwendungsfall variieren.
 
 ==== Android
 
+Die Priorität einer Push-Benachrichtigung wird durch den Wert des Feldes `priority` im JSON-Payload festgelegt. Die Priorität kann entweder `HIGH` oder `NORMAL` sein. Die Priorität `HIGH` wird für Benachrichtigungen mit hoher Priorität verwendet, während die Priorität `NORMAL` für Benachrichtigungen mit niedriger Priorität verwendet wird. Die Priorität wird durch den Fachdienst festgelegt und kann je nach Anwendungsfall variieren.
+
+[#android_push_priority]
+.Push Notification Priorität für Android
 ```json
 {
   "message":{
@@ -195,9 +206,8 @@ prio != high ? 5 : 10
     "android": {
       "priority": "HIGH",
     }
-    "data":{
-      "ciphertext": "ENCRYPTED_DATA_HERE",
-      "time_message_encrypted": notification.time_message_encrypted
+    "data": {
+        ...
     }
   }
 }

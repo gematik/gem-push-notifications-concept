@@ -21,7 +21,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
-  /pushers/v1:
+  /pushers:
     get:
       summary: Gets the current pushers
       description: Gets all currently active pushers for the authenticated user.
@@ -50,7 +50,7 @@ paths:
                   }
       tags:
         - Setup
-  /pushers/v1/set:
+  /pushers/set:
     post:
       summary: Modify a pusher
       description: |-
@@ -106,7 +106,7 @@ paths:
                 $ref: definitions/rate_limited.yaml
       tags:
         - Setup
-  /channels/v1/{pushtoken}:
+  /channels/{pushtoken}:
     get:
       summary: Gets channels for a specific device
       description: |-
@@ -121,25 +121,16 @@ paths:
           schema:
             type: string
           example: "1234567890"
-      requestBody: 
-        content:
-          application/json:
-            schema:
-              $ref: definitions/channels_get.yaml#/schema
-            examples:
-              response:
-                $ref: definitions/channels_get.yaml#/examples/response
       responses:
         "200":
           description: The channels for this user.
           content:
             application/json:
               schema:
-                type: object
-                description: An empty object.
+                $ref: definitions/channels_get.yaml#/schema
               examples:
                 response:
-                  value: {}
+                  $ref: definitions/channels_get.yaml#/examples/response
         "400":
           description: The request was invalid.
           content:
@@ -153,7 +144,7 @@ paths:
                     "errcode": "M_INVALID_PARAM"
                   }
       tags:
-        - Fachdienst
+        - Channel
     post:
       summary: Modify the channels for a specific device 
       description: |-
@@ -211,31 +202,22 @@ paths:
               schema:
                 $ref: definitions/rate_limited.yaml
       tags:
-        - Fachdienst
-  /channels/v1:
+        - Channel
+  /channels:
     get:
       summary: Gets the available channels
       description: Gets all all active channels for the authenticated user.
       operationId: getChannels
-      requestBody: 
-        content:
-          application/json:
-            schema:
-              $ref: definitions/channels_get.yaml#/schema
-            examples:
-              response:
-                $ref: definitions/channels_get.yaml#/examples/response
       responses:
         "200":
           description: The channels for this user.
           content:
             application/json:
               schema:
-                type: object
-                description: An empty object.
+                $ref: definitions/channels_get.yaml#/schema
               examples:
                 response:
-                  value: {}
+                  $ref: definitions/channels_get.yaml#/examples/response
         "400":
           description: The request was invalid.
           content:
@@ -249,7 +231,44 @@ paths:
                     "errcode": "M_INVALID_PARAM"
                   }
       tags:
-        - Fachdienst
+        - Channel
+  /history/{pushtoken}:
+    get:
+      summary: Get notification history (Discussion)
+      description: Get all the sent notification messages of this backend.
+      operationId: getMessages
+      parameters: 
+        - name: pushtoken
+          in: path
+          required: true
+          description: The pushtoken of the device.
+          schema:
+            type: string
+          example: "1234567890"
+      responses: 
+        "200":
+          description: List of sent messages
+          content:
+            application/json:
+              schema:
+                $ref: definitions/messages_get.yaml#/schema
+              examples:
+                response:
+                  $ref: definitions/messages_get.yaml#/examples/response
+        "400":
+          description: The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: definitions/error.yaml
+              examples:
+                response:
+                  value: {
+                    "error": "Invalid parameter",
+                    "errcode": "M_INVALID_PARAM"
+                  }
+      tags:
+        - History
 servers:
   - url: "{protocol}://{hostname}{basePath}"
     variables:
@@ -261,5 +280,5 @@ servers:
       hostname:
         default: localhost:8008
       basePath:
-        default: /client/v1
+        default: /push/v1
 security: []

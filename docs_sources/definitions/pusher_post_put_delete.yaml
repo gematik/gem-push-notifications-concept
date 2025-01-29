@@ -14,7 +14,7 @@ examples:
         },
         "encryption": {
           "method": "aes-hmac-sha256",
-          "initial_key_period": "2023-10",
+          "time_iss_created": "2023-10",
           "iss": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
           "key_identifier": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
         },
@@ -123,7 +123,7 @@ schema:
           type: string
           description: |-
             The encryption method to use. As currently only AES/GCM with a key generated using HKDF is supported, this value is static and should be 'aes-hmac-sha256'.
-        initial_key_period:
+        time_iss_created:
           type: string
           description: |-
             A string in the format "yyyy-MM" that specifies the first period the cypher key is generated for.
