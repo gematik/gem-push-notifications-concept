@@ -466,7 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_versenden_von_push_notifications">Versenden von Push-Notifications <span class="image"><img src="https://img.shields.io/badge/Status-Please_Comment-green" alt="Status Please Comment green"></span></a></li>
 </ul>
 </li>
-<li><a href="#_implementierungsdetails">Implementierungsdetails <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a>
+<li><a href="#_implementierungshinweise">Implementierungshinweise <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a>
 <ul class="sectlevel2">
 <li><a href="#_priorität">Priorität <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></a>
 <ul class="sectlevel3">
@@ -695,7 +695,7 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
         },
         "encryption": {
           "method": "aes-hmac-sha256",
-          "initial_key_period": "2023-10",
+          "time_iss_created": "2023-10",
           "iss": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
           "key_identifier": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
         },
@@ -779,19 +779,49 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 </div>
 </div>
 <div class="sect1">
-<h2 id="_implementierungsdetails">Implementierungsdetails <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h2>
+<h2 id="_implementierungshinweise">Implementierungshinweise <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_priorität">Priorität <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Priority Level</th>
+<th class="tableblock halign-left valign-top">Apple Priority</th>
+<th class="tableblock halign-left valign-top">Android Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HIGH</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NORMAL</p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect3">
 <h4 id="_apple">Apple</h4>
 <div class="paragraph">
-<p>prio != high ? 5 : 10</p>
+<p>Die Priorität einer Push-Benachrichtigung wird durch das Feld <code>apns-priority</code> im HTTP-Header festgelegt. Die Priorität kann entweder <code>5</code> oder <code>10</code> sein. Die Priorität <code>5</code> wird für Benachrichtigungen mit niedriger Priorität verwendet, während die Priorität <code>10</code> für Benachrichtigungen mit hoher Priorität verwendet wird. Die Priorität wird durch den Fachdienst festgelegt und kann je nach Anwendungsfall variieren.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_android">Android</h4>
-<div class="listingblock">
+<div class="paragraph">
+<p>Die Priorität einer Push-Benachrichtigung wird durch den Wert des Feldes <code>priority</code> im JSON-Payload festgelegt. Die Priorität kann entweder <code>HIGH</code> oder <code>NORMAL</code> sein. Die Priorität <code>HIGH</code> wird für Benachrichtigungen mit hoher Priorität verwendet, während die Priorität <code>NORMAL</code> für Benachrichtigungen mit niedriger Priorität verwendet wird. Die Priorität wird durch den Fachdienst festgelegt und kann je nach Anwendungsfall variieren.</p>
+</div>
+<div id="android_push_priority" class="listingblock">
+<div class="title">Push Notification Priorität für Android</div>
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
   "message":{
@@ -799,9 +829,8 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
     "android": {
       "priority": "HIGH",
     }
-    "data":{
-      "ciphertext": "ENCRYPTED_DATA_HERE",
-      "time_message_encrypted": notification.time_message_encrypted
+    "data": {
+        ...
     }
   }
 }</code></pre>
@@ -1282,7 +1311,7 @@ fun showNotification(title: String?, body: String?) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-01-14 14:01:11 +0100
+Last updated 2025-01-29 15:25:19 +0100
 </div>
 </div>
 </body>
