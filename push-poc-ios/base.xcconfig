@@ -1,0 +1,3 @@
+
+// Bundle Identifier + Prefix for Push Extension Bundle Identifier
+GEM_PUSH_POC_BUNDLE_IDENTIFIER = de.gematik.push-poc-ios

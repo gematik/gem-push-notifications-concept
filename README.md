@@ -16,6 +16,10 @@ This repository contains the gematik concept for push notifications.
 
 The concept along with the OpenAPI documentation can be found [here](https://gematik.github.io/gem-push-notifications-concept/).
 
+### Examples
+
+A working iOS Example containing encryption and notification retrieval can be found within [push-poc-ios](push-poc-ios/). See the Readme in this folder for further instructions how to build the application.
+
 ## License
 This project is licensed under the Apache 2.0 license.
 
