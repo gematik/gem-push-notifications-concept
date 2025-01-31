@@ -21,3 +21,4 @@ npx @redocly/cli build-docs docs_sources/fd_openapi.yaml -o build/fd_openapi.htm
 cp images/gematik_logo.png build/images/gematik_logo.png
 cp ./docs_sources/index.html ./build/index.html
 cp images/*.drawio.svg build/images/
+cp push-poc-ios/push_poc.mp4 build/push_poc.mp4
