@@ -1,0 +1,4 @@
+
+// Bundle Identifier, also used as prefix for the Push Extension
+// Change to your own bundle identifier with enabled push notification entitlement.
+GEM_PUSH_POC_BUNDLE_IDENTIFIER = de.example.push-poc
