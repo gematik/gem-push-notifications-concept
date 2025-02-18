@@ -9,7 +9,7 @@ cloud "Apple/Google" {
 
 package "App Developer" {
     component "Push Gateway" as PushGateway
-    component "Mobile Device" as MobileDevice
+    component "FdV\n(Mobile Device)" as MobileDevice
 }
 
 PushGateway -left-> PushProvider
@@ -18,9 +18,13 @@ MobileDevice <-up.> PushProvider
 
 PushGateway -[hidden]-- MobileDevice
 
-cloud "TI" {
+cloud "innerhalb o.\naußerhalb\nTI" {
     component Fachdienst
 }
+' component Fachdienst2
+
+' Fachdienst2 <-- MobileDevice : Register 
+' Fachdienst2 -> PushGateway : "\tSend Push"
 
 Fachdienst <-- MobileDevice : Register 
 Fachdienst -> PushGateway : "\tSend Push"

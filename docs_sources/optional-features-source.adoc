@@ -73,3 +73,50 @@ Oder als JSON:
 }
 --
 ====
+
+=== Historie image:{Status_WIP}[]
+
+Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagertem Dienst dauerhaft speichern zu können. Es kann jedoch am Fachdienst möglich sein, eine Historie von Push Nachrichten zu erhalten, die an das FdV gesendet wurden. Um in einem 3. Service eine vollständige Liste von Push-Notifications aller Fachdienste zu erhalten, kann das Push-Gateway den Versand einer Push-Nachricht an diesem 3. Service protokollieren. Ein neues Property `reference` kann verwendet werden um eine Referenz zu einer Push-Nachricht zu speichern.
+
+[#push_notification_plus_reference]
+.Beispiel für eine Push Nachricht mit Referenz (FD -> Push-Gateway)
+```json
+{
+    "ciphertext": "abcderf",
+    "reference": "AB12312-12312-123123",
+    "time_message_encrypted": "2024-01",
+    "key_identifier": "123123123",
+    "data": {
+        "service": "epa",
+        "provider": "tk"
+    }
+}
+```
+
+Diese Referenz kann dann später vom FdV verwendet werden, um die Push-Nachricht sicher im entsprechenden Fachdienst abzurufen.
+
+[#get_push_notifications_from_internal_service]
+.Beispiel für eine Liste von Push Nachrichten aus den `Internal Services` (Internal Services -> FdV)
+```json
+[
+    {
+        "title": "Allgemeine Benachrichtigung",
+        "description": "Witz des Tages: Warum können Geister so schlecht lügen? Weil man durch sie hindurchsieht!"
+    },
+    {
+        "title": "Nachricht zu Ihrer ePA",
+        "description": "Sie haben eine Nachricht für Ihre ePA erhalten.",
+        "reference": "AB12312-12312-123123",
+        "service": "epa"
+    },
+    {
+        "title": "Nachricht zu fremder ePA",
+        "description": "Sie haben eine Nachricht für eine fremde ePA erhalten.",
+        "reference": "CD12312-12312-123123"
+    }
+]
+```
+
+[#push_history]
+.Push Historie
+image::diagrams/push_history.svg[width=100%]

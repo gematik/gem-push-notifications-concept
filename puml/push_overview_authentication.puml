@@ -1,7 +1,7 @@
 @startuml push_overview_authentication
 !theme gematik from ../puml
 
-skinparam nodesep 100
+skinparam nodesep 150
 
 cloud "Apple/Google" {
     component "Push Provider" as PushProvider
@@ -9,10 +9,10 @@ cloud "Apple/Google" {
 
 package "App Developer" {
     component "Push Gateway" as PushGateway
-    component MobileDevice
+    component "FdV\n(MobileDevice)" as MobileDevice
 }
 
-PushGateway -left-> PushProvider : "Provider\nspezifisch"
+PushGateway -left-> PushProvider : "FdV\nspezifisches\nSecret"
 
 MobileDevice <-up.> PushProvider
 ' MobileDevice "PushToken" <- PushProvider

@@ -1,0 +1,27 @@
+examples:
+  response:
+    value: {
+        "id": "1",
+        "title": "Welcome",
+        "message": "Welcome to our service!",
+        "reference": "REF123"
+    }
+schema:
+  title: Message
+  properties:
+    id:
+      type: string
+      description: uniquie identifier for the message
+    title:
+      type: string
+      description: title of the message
+    message:
+      type: string
+      description: message content
+    reference:
+      type: string
+      description: reference the message is based on. Can be null. How a reference is structured is defined by the backends specification.
+  required:
+    - id
+    - title
+    - message

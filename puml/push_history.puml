@@ -1,4 +1,4 @@
-@startuml registration_complex
+@startuml push_history
 !theme gematik from ../puml
 
 actor "FdV" as App
@@ -7,26 +7,6 @@ entity "Push Gateway\n" as NotificationService
 entity "Notification Provider\n(e.g. Apple/Google)" as NotificationProvider
 
 entity "Internal\nServices" as PrivateNotificationService
-
-group Registration
-    activate App
-    App -> NotificationProvider : get_device_push_token
-    activate NotificationProvider
-    NotificationProvider -->> App : device_push_token
-    deactivate NotificationProvider
-
-    App -> PrivateNotificationService : get_pushkey(device_push_token)
-    activate PrivateNotificationService
-    PrivateNotificationService -->> App : pushkey
-    deactivate PrivateNotificationService
-
-    App -> App : create iss
-    App -> Fachdienst : **POST** //pushers/v1/set//
-    activate Fachdienst
-    Fachdienst -> Fachdienst : store information
-    Fachdienst -->> App : status
-    deactivate Fachdienst
-end
 
 group SendPush
     Fachdienst -> Fachdienst : event_trigger
@@ -41,14 +21,22 @@ group SendPush
     activate PrivateNotificationService
     PrivateNotificationService -> NotificationService : push_token
     deactivate PrivateNotificationService
-    NotificationService -> NotificationProvider : send_push
-    deactivate NotificationService
 
+    NotificationService -> NotificationProvider : send_push
     activate NotificationProvider
+
+
     NotificationProvider -> App : push
     deactivate NotificationProvider
-
     activate App
+
+    NotificationService -> PrivateNotificationService : register(\n\tpush: {service:epa, date:now()},\n\tfor: pushkey\n)    
+    activate PrivateNotificationService
+    PrivateNotificationService -> NotificationService
+    deactivate PrivateNotificationService
+
+    deactivate NotificationService
+
     App -> App : decrypt_notification
     App -> App : show_notification
 end

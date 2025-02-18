@@ -106,18 +106,18 @@ paths:
                 $ref: definitions/rate_limited.yaml
       tags:
         - Setup
-  /channels/{pushtoken}:
+  /channels/{pushkey}:
     get:
       summary: Gets channels for a specific device
       description: |-
         Gets all channels and their configuration state of the authenticated user's device identified by the
-        `pushtoken`.
+        `pushkey`.
       operationId: getChannelsOfDevice
       parameters: 
-        - name: pushtoken
+        - name: pushkey
           in: path
           required: true
-          description: The pushtoken of the device.
+          description: The pushkey of the device.
           schema:
             type: string
           example: "1234567890"
@@ -149,16 +149,16 @@ paths:
       summary: Modify the channels for a specific device 
       description: |-
         This endpoint allows the creation, modification and deletion of channel subscriptions
-        for a specific device identified by `pushtoken` of the authenticated user. If a channel is not present in the POST
+        for a specific device identified by `pushkey` of the authenticated user. If a channel is not present in the POST
         request, the state of the channel on the server is not changed.
         An unset channel is treated as disabled and thus no pushes will be triggerd that correspond
         to the channel.
       operationId: postChannelsOfDevice
       parameters: 
-        - name: pushtoken
+        - name: pushkey
           in: path
           required: true
-          description: The pushtoken of the device.
+          description: The pushkey of the device.
           schema:
             type: string
           example: "1234567890"
@@ -232,16 +232,53 @@ paths:
                   }
       tags:
         - Channel
-  /history/{pushtoken}:
+  /history/{notification_id}:
+    get:
+      summary: Get notification by id
+      description: Get the notofication message with the given id.
+      operationId: getNotification
+      parameters: 
+        - name: notification_id
+          in: path
+          required: true
+          description: The id of the notification.
+          schema:
+            type: string
+          example: "1234567890"
+      responses:
+        "200":
+          description: The notification message.
+          content:
+            application/json:
+              schema:
+                $ref: definitions/message_get.yaml#/schema
+              examples:
+                response:
+                  $ref: definitions/message_get.yaml#/examples/response
+        "400":
+          description: The request was invalid.
+          content:
+            application/json:
+              schema:
+                $ref: definitions/error.yaml
+              examples:
+                response:
+                  value: {
+                    "error": "Invalid parameter",
+                    "errcode": "M_INVALID_PARAM"
+                  }
+      tags:
+        - History
+  /history/device/{pushkey}:
     get:
       summary: Get notification history (Discussion)
       description: Get all the sent notification messages of this backend.
-      operationId: getMessages
+      operationId: getNotifications
       parameters: 
-        - name: pushtoken
+        - name: pushkey
           in: path
           required: true
-          description: The pushtoken of the device.
+          description: The pushkey of the device.
           schema:
             type: string
           example: "1234567890"

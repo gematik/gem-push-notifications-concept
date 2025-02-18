@@ -271,6 +271,14 @@ Für Hinweise zur Implementierung dieser Themen verweisen wir auf die fachdienst
 
 Optionale Features können xref:optional-features.adoc[hier] gefunden werden.
 
+=== Indirekte `pushkey`s
+
+TODO
+
+[#indirect_push_key]
+.Indirekt_Pushkey
+image::diagrams/registration_complex.svg[width=100%]
+
 == Beispiele image:{Status_WIP}[]
 
 === Device Registrierung
