@@ -76,7 +76,7 @@ Oder als JSON:
 
 === Historie image:{Status_WIP}[]
 
-Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagertem Dienst dauerhaft speichern zu können. Es kann jedoch am Fachdienst möglich sein, eine Historie von Push Nachrichten zu erhalten, die an das FdV gesendet wurden. Um in einem 3. Service eine vollständige Liste von Push-Notifications aller Fachdienste zu erhalten, kann das Push-Gateway den Versand einer Push-Nachricht an diesem 3. Service protokollieren. Ein neues Property `reference` kann verwendet werden um eine Referenz zu einer Push-Nachricht zu speichern.
+Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagerten Dienst dauerhaft speichern zu können. Es kann jedoch am Fachdienst möglich sein, eine Historie von Push Nachrichten zu erhalten, die an das FdV gesendet wurden. Um in einem 3. Service eine vollständige Liste von Push-Notifications aller Fachdienste zu erhalten, kann das Push-Gateway den Versand einer Push-Nachricht an diesem 3. Service protokollieren. Ein neues Property `reference` kann verwendet werden um eine Referenz zu einer Push-Nachricht zu speichern. Der Inhalt der Push-Notification (`ciphertext´) wird in diesem 3. Service nicht gespeichert.
 
 [#push_notification_plus_reference]
 .Beispiel für eine Push Nachricht mit Referenz (FD -> Push-Gateway)
