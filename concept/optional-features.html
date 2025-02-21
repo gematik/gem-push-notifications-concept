@@ -568,7 +568,7 @@ document.delete</p>
 <div class="sect2">
 <h3 id="_historie">Historie <span class="image"><img src="https://img.shields.io/badge/Status-Work_In_Progress-red" alt="Status Work In Progress red"></span></h3>
 <div class="paragraph">
-<p>Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagertem Dienst dauerhaft speichern zu können. Es kann jedoch am Fachdienst möglich sein, eine Historie von Push Nachrichten zu erhalten, die an das FdV gesendet wurden. Um in einem 3. Service eine vollständige Liste von Push-Notifications aller Fachdienste zu erhalten, kann das Push-Gateway den Versand einer Push-Nachricht an diesem 3. Service protokollieren. Ein neues Property <code>reference</code> kann verwendet werden um eine Referenz zu einer Push-Nachricht zu speichern.</p>
+<p>Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagerten Dienst dauerhaft speichern zu können. Es kann jedoch am Fachdienst möglich sein, eine Historie von Push Nachrichten zu erhalten, die an das FdV gesendet wurden. Um in einem 3. Service eine vollständige Liste von Push-Notifications aller Fachdienste zu erhalten, kann das Push-Gateway den Versand einer Push-Nachricht an diesem 3. Service protokollieren. Ein neues Property <code>reference</code> kann verwendet werden um eine Referenz zu einer Push-Nachricht zu speichern. Der Inhalt der Push-Notification (`ciphertext´) wird in diesem 3. Service nicht gespeichert.</p>
 </div>
 <div id="push_notification_plus_reference" class="listingblock">
 <div class="title">Beispiel für eine Push Nachricht mit Referenz (FD &#8594; Push-Gateway)</div>
@@ -586,7 +586,7 @@ document.delete</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Diese Referenz kann dann später vom FdV verwendet werden, um die Push-Nachricht sicher im entsprechenden Fachdienst abzurufen.</p>
+<p>Diese Referenz kann dann später vom FdV verwendet werden, um die Push-Nachricht sicher im entsprechenden Fachdienst abzurufen. Ist ein Nutzer nicht angemeldet, kann das FdV trotzdem eine vollständige aber weniger detailierte Liste mit Push-Nachrichten anzeigen.</p>
 </div>
 <div id="get_push_notifications_from_internal_service" class="listingblock">
 <div class="title">Beispiel für eine Liste von Push Nachrichten aus den <code>Internal Services</code> (Internal Services &#8594; FdV)</div>
@@ -622,7 +622,7 @@ document.delete</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-18 17:24:19 +0100
+Last updated 2025-02-21 11:18:18 +0100
 </div>
 </div>
 </body>
