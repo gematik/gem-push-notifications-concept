@@ -93,7 +93,7 @@ Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlü
 }
 ```
 
-Diese Referenz kann dann später vom FdV verwendet werden, um die Push-Nachricht sicher im entsprechenden Fachdienst abzurufen.
+Diese Referenz kann dann später vom FdV verwendet werden, um die Push-Nachricht sicher im entsprechenden Fachdienst abzurufen. Ist ein Nutzer nicht angemeldet, kann das FdV trotzdem eine vollständige aber weniger detailierte Liste mit Push-Nachrichten anzeigen.
 
 [#get_push_notifications_from_internal_service]
 .Beispiel für eine Liste von Push Nachrichten aus den `Internal Services` (Internal Services -> FdV)

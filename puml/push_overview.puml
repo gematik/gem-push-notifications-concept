@@ -1,32 +1,27 @@
 @startuml push_overview
 !theme gematik from ../puml
 
-skinparam nodesep 150
+skinparam ranksep 10
 
-cloud "Apple/Google" {
+cloud "e.g. Apple/Google" {
     component "Push Provider" as PushProvider
 }
 
-package "App Developer" {
-    component "Push Gateway" as PushGateway
-    component "FdV\n(Mobile Device)" as MobileDevice
+cloud "TI" {
+    component Fachdienst
+
+    package "App Developer" {
+        component "Push Gateway" as PushGateway
+        component "FdV\n(Mobile Device)" as MobileDevice
+    }
 }
 
 PushGateway -left-> PushProvider
+MobileDevice <-left.> PushProvider
 
-MobileDevice <-up.> PushProvider
+PushGateway -[hidden]- MobileDevice
 
-PushGateway -[hidden]-- MobileDevice
-
-cloud "innerhalb o.\naußerhalb\nTI" {
-    component Fachdienst
-}
-' component Fachdienst2
-
-' Fachdienst2 <-- MobileDevice : Register 
-' Fachdienst2 -> PushGateway : "\tSend Push"
-
-Fachdienst <-- MobileDevice : Register 
-Fachdienst -> PushGateway : "\tSend Push"
+Fachdienst <-left- MobileDevice : "Register"
+PushGateway <-right- Fachdienst: "Send Push"
 
 @enduml

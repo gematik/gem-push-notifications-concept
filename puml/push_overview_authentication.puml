@@ -19,7 +19,9 @@ MobileDevice <-up.> PushProvider
 
 PushGateway -[hidden]-- MobileDevice
 
-component Fachdienst
+cloud "innerhalb o.\naußerhalb\nTI" {
+    component Fachdienst
+}
 
 Fachdienst <--> MobileDevice : "Fachdienst\nspezifische\nAuthentisierung"
 Fachdienst <-> PushGateway : "\tmTLS"
