@@ -237,7 +237,7 @@ paths:
       summary: Get notification by id
       description: Get the notofication message with the given id.
       operationId: getNotification
-      parameters: 
+      parameters:
         - name: notification_id
           in: path
           required: true
