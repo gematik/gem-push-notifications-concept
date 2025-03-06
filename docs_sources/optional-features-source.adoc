@@ -76,46 +76,67 @@ Oder als JSON:
 
 === Historie image:{Status_WIP}[]
 
-Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagerten Dienst dauerhaft speichern zu können. Es kann jedoch am Fachdienst möglich sein, eine Historie von Push Nachrichten zu erhalten, die an das FdV gesendet wurden. Um in einem 3. Service eine vollständige Liste von Push-Notifications aller Fachdienste zu erhalten, kann das Push-Gateway den Versand einer Push-Nachricht an diesem 3. Service protokollieren. Ein neues Property `reference` kann verwendet werden um eine Referenz zu einer Push-Nachricht zu speichern. Der Inhalt der Push-Notification (`ciphertext´) wird in diesem 3. Service nicht gespeichert.
+Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagerten Dienst dauerhaft speichern zu können. Eine der folgen daraus ist, dass keine vollständige Liste aller Push Notifications verschiedener Dienste geführt werden kann. Mit dem optionalen Feature der Push Historie kann diese Problematik Datenschutzkonform verbessert werden.
+
+Dafür werden zwei Erweiterungen am Fachdienst getroffen. Die erste Erweiterung betrifft zusätzliche Endpunkte `/history/*` die für authentisierte Benutzer zur Verfügung stehen. Die Endpunkte ermöglichen Zugriff auf versendete Push Nachrichten. Der Nachrichteninhalt ist damit auch nach dem Versand der Push Nachrichten weiter verfügbar.
+
+Die zweite Erweiterung betrifft den Versand der eigentlichen Push Nachrichten vom Fachdienst zum Push Gateway. Ein zusätzliches (unverschlüsseltes) property mit dem Namen "identifier" wird vom Fachdinest versendet. Dieser Identifier kann vom Push Gateway an einen dritten (FdV Betreiber internen) Service weitergegeben werden und dort gemeinsam mit einem Zeitstempel persistiert werden. Da der Identifier keine Personenbezogene Daten beinhaltet ist dies zulässig.
+
+Am FdV kann der interne Service verwendet werden um eine vollständige Liste aller empfangenen Push Nachrichten zu bekommen. Die Elemente die aus dem vorherigen Schritt persistiert wurden können im FdV um die Informationen des Fachdienstes ergänzt werden.
+
+
+==== Beispiel
+
+Ein Fachdienst sendet eine Push Nachricht mit zusätzlichem `identifier`.
 
 [#push_notification_plus_reference]
 .Beispiel für eine Push Nachricht mit Referenz (FD -> Push-Gateway)
 ```json
 {
     "ciphertext": "abcderf",
-    "reference": "AB12312-12312-123123",
+    "key_identifier": "123123",
     "time_message_encrypted": "2024-01",
-    "key_identifier": "123123123",
+    "identifier": "123-4567-890",
     "data": {
-        "service": "epa",
-        "provider": "tk"
+        "service": "epa15"
     }
 }
 ```
 
-Diese Referenz kann dann später vom FdV verwendet werden, um die Push-Nachricht sicher im entsprechenden Fachdienst abzurufen. Ist ein Nutzer nicht angemeldet, kann das FdV trotzdem eine vollständige aber weniger detailierte Liste mit Push-Nachrichten anzeigen.
+Das Push Gateway übergibt diesen Identifier zusammen z.B. mit einem Zeitstempel in einen internen Service. Das FdV ruft eine Liste aller Push Nachrichten vom internen Service ab. Dies könnte vereinfacht z.B. so aussehen:
 
 [#get_push_notifications_from_internal_service]
 .Beispiel für eine Liste von Push Nachrichten aus den `Internal Services` (Internal Services -> FdV)
 ```json
 [
     {
+        "id": 1,
         "title": "Allgemeine Benachrichtigung",
-        "description": "Witz des Tages: Warum können Geister so schlecht lügen? Weil man durch sie hindurchsieht!"
+        "description": "Witz des Tages: Warum können Geister so schlecht lügen? Weil man durch sie hindurchsieht!",
+        "created_at": "2024-01-01T12:00:00Z"
     },
     {
+        "id": 2,
         "title": "Nachricht zu Ihrer ePA",
         "description": "Sie haben eine Nachricht für Ihre ePA erhalten.",
-        "reference": "AB12312-12312-123123",
-        "service": "epa"
+        "notification.identifier": "123-4567-890",
+        "service": "epa15",
+        "created_at": "2024-04-01T12:00:00Z"
     },
     {
+        "id": 3,
         "title": "Nachricht zu fremder ePA",
         "description": "Sie haben eine Nachricht für eine fremde ePA erhalten.",
-        "reference": "CD12312-12312-123123"
+        "notification.identifier": "098-7654-321",
+        "service": "erp",
+        "created_at": "2024-05-01T12:00:00Z"
     }
 ]
 ```
+
+In diesem Beispiel sind die Nachrichten mit den IDs 2 und 3 von jeweils einem anderen Fachdienst der den eigentlichen Nachrichteninhalt verschlüsselt versendet hat. Die Texte für `title` und `description` sind hier vom internen Service generiert, da der eigenliche Nachrichteninhalt dem internen Service nicht bekannt ist.
+
+Das FdV kann jetzt von den eigentlichen Fachdiensten die Nachrichteninhalte laden und anzeigen.
 
 [#push_history]
 .Push Historie

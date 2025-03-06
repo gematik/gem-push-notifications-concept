@@ -379,6 +379,7 @@ Endpoint: http://localhost:8080/push/v1/notify
 {
     "time_message_encrypted": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
+    "key_identifier": "123e4567-e89b-12d3-a456-426614174000",
     "prio": "high",
     "counts": {},
     "devices": [
@@ -419,7 +420,8 @@ Payload:
         "mutable-content": true
     }
     "ciphertext": notification.ciphertext,
-    "time_message_encrypted": notification.time_message_encrypted
+    "time_message_encrypted": notification.time_message_encrypted,
+    "key_identifier": notification.key_identifier
 }
 ----
 
@@ -455,7 +457,8 @@ Payload:
     }
     "data":{
       "ciphertext": "ENCRYPTED_DATA_HERE",
-      "time_message_encrypted": notification.time_message_encrypted
+      "time_message_encrypted": notification.time_message_encrypted,
+      "key_identifier": notification.key_identifier
     }
   }
 }
@@ -478,7 +481,7 @@ func didReceive(
 
     // Decrypt the ciphertext
     let ciphertext = payload["ciphertext"]
-    let decryptedData = decrypt(ciphertext)
+    let decryptedData = decrypt(ciphertext, usingKeyIdentifier: payload["key_identifier"])
     let pushData = JSONDecoder().decode(PushData.self, from: decryptedData)
 
     // Update the notification content
@@ -512,7 +515,7 @@ fun onMessageReceived(
 
     // Decrypt the ciphertext
     val ciphertext = payload["ciphertext"]
-    val plaintext = decrypt(ciphertext)
+    val plaintext = decrypt(ciphertext, usingKeyIdentifier: payload["key_identifier"])
 
     // Update the notification content
     val eventId = payload["event_id"]
