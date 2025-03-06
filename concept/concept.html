@@ -1087,6 +1087,7 @@ function createNotification(trigger, device) {
 <pre class="highlight"><code class="language-json" data-lang="json">{
     "time_message_encrypted": "2024-11",
     "ciphertext": "asdfdfjksfjklsdljkdsf==",
+    "key_identifier": "123e4567-e89b-12d3-a456-426614174000",
     "prio": "high",
     "counts": {},
     "devices": [
@@ -1158,7 +1159,8 @@ function createNotification(trigger, device) {
         "mutable-content": true
     }
     "ciphertext": notification.ciphertext,
-    "time_message_encrypted": notification.time_message_encrypted
+    "time_message_encrypted": notification.time_message_encrypted,
+    "key_identifier": notification.key_identifier
 }</code></pre>
 </div>
 </div>
@@ -1220,7 +1222,8 @@ end if</code></pre>
     }
     "data":{
       "ciphertext": "ENCRYPTED_DATA_HERE",
-      "time_message_encrypted": notification.time_message_encrypted
+      "time_message_encrypted": notification.time_message_encrypted,
+      "key_identifier": notification.key_identifier
     }
   }
 }</code></pre>
@@ -1245,7 +1248,7 @@ end if</code></pre>
 
     // Decrypt the ciphertext
     let ciphertext = payload["ciphertext"]
-    let decryptedData = decrypt(ciphertext)
+    let decryptedData = decrypt(ciphertext, usingKeyIdentifier: payload["key_identifier"])
     let pushData = JSONDecoder().decode(PushData.self, from: decryptedData)
 
     // Update the notification content
@@ -1279,7 +1282,7 @@ struct PushData: Codable {
 
     // Decrypt the ciphertext
     val ciphertext = payload["ciphertext"]
-    val plaintext = decrypt(ciphertext)
+    val plaintext = decrypt(ciphertext, usingKeyIdentifier: payload["key_identifier"])
 
     // Update the notification content
     val eventId = payload["event_id"]
@@ -1324,7 +1327,7 @@ fun showNotification(title: String?, body: String?) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-03-03 17:49:16 +0100
+Last updated 2025-03-06 15:36:32 +0100
 </div>
 </div>
 </body>
