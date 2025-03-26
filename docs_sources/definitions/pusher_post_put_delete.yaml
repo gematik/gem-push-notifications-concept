@@ -48,9 +48,8 @@ schema:
         The kind of pusher to configure. `"http"` makes a pusher that
         sends HTTP pokes. `"email"` makes a pusher that emails the
         user with unread notifications. `null` deletes the pusher.
-      oneOf:
-        - type: string
-        - type: "null"
+      type: string
+      nullable: true
     app_id:
       type: string
       description: |-
