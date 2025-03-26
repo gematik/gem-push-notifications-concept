@@ -206,7 +206,7 @@ paths:
   /channels:
     get:
       summary: Gets the available channels
-      description: Gets all all available channels for the authenticated user.
+      description: Gets all available channels for the authenticated user.
       operationId: getChannels
       responses:
         "200":
