@@ -149,6 +149,46 @@ paths:
                   error:
                     type: string
                     example: "Invalid data format"
+        '401':
+          description: The client is not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid mutual TLS (mTLS) certificate."
+        '413':
+          description: The request payload exceeds the maximum allowed size.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Notification object is too large."
+        '500':
+          description: A generic error occurred on the Push Gateway.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unexpected failure during processing."
+        '503':
+          description: The Push Gateway is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Push Gateway under maintenance or overloaded."
       security: 
         -  mtls: []
       tags:

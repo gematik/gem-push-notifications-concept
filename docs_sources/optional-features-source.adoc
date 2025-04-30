@@ -3,7 +3,7 @@ include::./config-source.adoc[]
 
 toc::[]
 
-== Trigger-Verwaltung (Channels) image:{Status_ReadyForComments}[]
+== Trigger-Verwaltung (Channels)
 
 === Beschreibung
 
@@ -74,7 +74,7 @@ Oder als JSON:
 --
 ====
 
-=== Historie image:{Status_WIP}[]
+=== Historie
 
 Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagerten Dienst dauerhaft speichern zu können. Eine der folgen daraus ist, dass keine vollständige Liste aller Push Notifications verschiedener Dienste geführt werden kann. Mit dem optionalen Feature der Push Historie kann diese Problematik Datenschutzkonform verbessert werden.
 
