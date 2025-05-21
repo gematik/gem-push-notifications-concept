@@ -366,6 +366,20 @@ function createNotification(trigger, device) {
 }
 ----
 
+=== Payload-Beispiel
+
+.Beispiel für die Payload-Struktur der ePA:
+----
+Einstellen eines Dokuments von Dr. XYZ mit Titel 'Laborbefund ABC':
+pushContent:
+  channelId: xds.put
+  title: Laborbefund ABC
+  docId: 1.2.3.4.5.6.7.8.9.0
+  when: '2023-04-01T12:34:56Z'
+  actor: Dr. XYZ
+  insurantId: Z123456789
+----
+
 === Push Gateway
 
 Endpoint: http://localhost:8080/push/v1/notify
