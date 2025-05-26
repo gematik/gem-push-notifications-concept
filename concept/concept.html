@@ -483,6 +483,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_device_registrierung">Device Registrierung</a></li>
 <li><a href="#_event_trigger">Event-Trigger</a></li>
+<li><a href="#_payload_beispiel">Payload-Beispiel</a></li>
 <li><a href="#_push_gateway_2">Push Gateway</a>
 <ul class="sectlevel3">
 <li><a href="#_in">IN</a></li>
@@ -1082,6 +1083,22 @@ function createNotification(trigger, device) {
 </div>
 </div>
 <div class="sect2">
+<h3 id="_payload_beispiel">Payload-Beispiel</h3>
+<div class="listingblock">
+<div class="title">Beispiel für die Payload-Struktur der ePA:</div>
+<div class="content">
+<pre>Einstellen eines Dokuments von Dr. XYZ mit Titel 'Laborbefund ABC':
+pushContent:
+  channelId: xds.put
+  title: Laborbefund ABC
+  docId: 1.2.3.4.5.6.7.8.9.0
+  when: '2023-04-01T12:34:56Z'
+  actor: Dr. XYZ
+  insurantId: Z123456789</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_push_gateway_2">Push Gateway</h3>
 <div class="paragraph">
 <p>Endpoint: <a href="http://localhost:8080/push/v1/notify" class="bare">http://localhost:8080/push/v1/notify</a></p>
@@ -1334,7 +1351,7 @@ fun showNotification(title: String?, body: String?) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-30 16:41:21 +0200
+Last updated 2025-05-26 16:00:17 +0200
 </div>
 </div>
 </body>
