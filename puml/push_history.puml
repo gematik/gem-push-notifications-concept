@@ -12,7 +12,7 @@ group SendPush
     Fachdienst -> Fachdienst : event_trigger
     activate Fachdienst
     Fachdienst -> Fachdienst : encrypt_message
-    Fachdienst -> NotificationService : **POST** //push/v1/notify//
+    Fachdienst -> NotificationService : **POST** //push/v1/notifyEncrypted/batch//
     activate NotificationService
     NotificationService -->> Fachdienst : status
     deactivate Fachdienst

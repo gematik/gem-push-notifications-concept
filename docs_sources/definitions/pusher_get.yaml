@@ -11,7 +11,7 @@ examples:
           "profile_tag": "xyz",
           "lang": "en-US",
           "data": {
-            "url": "https://example.com/_matrix/push/v1/notify"
+            "url": "https://example.com/_matrix/push/v1/"
           }
         }
       ]
@@ -70,7 +70,7 @@ schema:
               to use for sending notifications. Clients MAY use this object
               to pass custom data to their push gateway. Servers MUST forward
               the entire content including `format` and any custom keys but excluding `url`
-              when calling [`/push/v1/notify`](/push-gateway-api/#postpushv1notify).
+              when calling [`/push/v1/notify*`](/push-gateway-api/#postpushv1notify).
             title: PusherData
             properties:
               url:
@@ -79,8 +79,10 @@ schema:
                 description: |-
                   Required if `kind` is `http`. The URL to use for sending
                   notifications. MUST be an HTTPS URL with a path of
-                  `/push/v1/notify`.
-                example: https://push-gateway.location.here/push/v1/notify
+                  `/push/v1/` that can be extended by `notify`, `notify/batch`
+                  or `notifyEncrypted/batch`, so that the FD can pick the method, if not
+                  specified otherwise by the FD specification.
+                example: https://push-gateway.location.here/push/v1/
               format:
                 type: string
                 description: |-

@@ -11,7 +11,7 @@ entity "Internal\nServices" as PrivateNotificationService
 group SendPush
     Fachdienst -> Fachdienst : event_trigger
     activate Fachdienst
-    Fachdienst -> NotificationService : **POST** //push/v1/notify//
+    Fachdienst -> NotificationService : **POST** //push/v1/notifyEncrypted/batch//
     activate NotificationService
     NotificationService -->> Fachdienst : status
     deactivate Fachdienst

@@ -35,40 +35,13 @@ servers:
 paths:
   /notify:
     post:
-      operationId: push_v1_notify
-      summary: Push data to the gateway
+      operationId: push_v1_notify_plain
+      summary: Push plain data to the gateway
       requestBody:
         required: true
         content:
           application/json:
             examples:
-              encryptedPushNotification:
-                value:
-                  {
-                    "notification": {
-                      "ciphertext": "base64_of_ciphertext",
-                      "time_message_encrypted": "2024-11",
-                      "key_identifier": "123e4567-e89b-12d3-a456-426614174000",
-                      "prio": "high",
-                      "counts": {
-                        "unread": 1,
-                        "missed_calls": 0
-                      },
-                      "devices": [
-                        {
-                          "app_id": "app_id",
-                          "pushkey": "pushkey",
-                          "pushkey_ts": 1634025600,
-                          "data": {
-                            "format": "format"
-                          },
-                          "tweaks": {
-                            "tweak": "tweak"
-                          }
-                        }
-                      ]
-                    }
-                  }
               plainPushNotification:
                 value: 
                   {
@@ -105,9 +78,7 @@ paths:
                     }
                   }
             schema:
-              oneOf: 
-                - $ref: '#/components/schemas/EncryptedNotification'
-                - $ref: '#/components/schemas/PlainNotification'
+              $ref: '#/components/schemas/PlainNotification'
       responses:
         "200":
           description: A list of rejected push keys.
@@ -193,6 +164,358 @@ paths:
         -  mtls: []
       tags:
         - Push Gateway
+  /notify/batch:
+    post:
+      operationId: push_v1_notify_batch_plain
+      summary: Push multiple plain notifications to the gateway in a single request
+      description: |-
+        Submit multiple plain push notifications in a single batch request. This endpoint
+        is optimized for high-throughput scenarios where multiple plain notifications
+        need to be sent efficiently. The batch can contain up to a maximum of 100 notifications per request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchNotificationRequest'
+            examples:
+              plainBatch:
+                value:
+                  notifications:
+                    - id: "batch_item_1"
+                      notification:
+                        event_id: "event_id_1"
+                        room_id: "room_id_1"
+                        type: "m.room.message"
+                        sender: "sender_1"
+                        sender_display_name: "Sender Display Name"
+                        room_name: "Room Name"
+                        prio: "high"
+                        content:
+                          content: "Message content"
+                        counts:
+                          unread: 1
+                          missed_calls: 0
+                        devices:
+                          - app_id: "app_id_1"
+                            pushkey: "pushkey_1"
+                            pushkey_ts: 1634025600
+                            data:
+                              format: "format"
+                            tweaks:
+                              tweak: "tweak"
+                    - id: "batch_item_2"
+                      notification:
+                        event_id: "event_id_2"
+                        room_id: "room_id_2"
+                        type: "m.room.message"
+                        sender: "sender_2"
+                        sender_display_name: "Sender Display Name"
+                        room_name: "Room Name"
+                        prio: "high"
+                        content:
+                          content: "Message content"
+                        counts:
+                          unread: 2
+                          missed_calls: 0
+                        devices:
+                          - app_id: "app_id_2"
+                            pushkey: "pushkey_2"
+                            pushkey_ts: 1634025600
+                            data:
+                              format: "format"
+                            tweaks:
+                              tweak: "tweak"
+      responses:
+        "200":
+          description: Batch processing results with per-item status and summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchNotificationResponse'
+              examples:
+                batchResponse:
+                  value:
+                    results:
+                      - id: "batch_item_1"
+                        status: "success"
+                        rejected: []
+                      - id: "batch_item_2"
+                        status: "partial"
+                        rejected: ["expired_pushkey_123"]
+                    summary:
+                      total: 2
+                      successful: 1
+                      failed: 0
+                      partial: 1
+        '400':
+          description: Invalid batch request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: 
+                      - "Invalid data format"
+                      - "Batch size exceeds maximum limit"
+                      - "Duplicate notification IDs in batch"
+                      - "Individual notification too large"
+                    example: "Batch size exceeds maximum limit"
+                  details:
+                    type: object
+                    properties:
+                      max_batch_size:
+                        type: integer
+                        example: 100
+                      max_notification_size_kb:
+                        type: integer
+                        example: 64
+                      duplicate_ids:
+                        type: array
+                        items:
+                          type: string
+                        example: ["batch_item_1", "batch_item_1"]
+                      current_batch_size:
+                        type: integer
+                        example: 150
+        '401':
+          description: The client is not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid mutual TLS (mTLS) certificate."
+        '413':
+          description: The request payload exceeds the maximum allowed size.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Batch request payload is too large."
+        '422':
+          description: Batch partially processed - some notifications failed validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchNotificationResponse'
+              examples:
+                partialFailure:
+                  value:
+                    results:
+                      - id: "batch_item_1"
+                        status: "success"
+                        rejected: []
+                      - id: "batch_item_2"
+                        status: "failed"
+                        error: "Invalid notification format"
+                    summary:
+                      total: 2
+                      successful: 1
+                      failed: 1
+                      partial: 0
+        '500':
+          description: A generic error occurred on the Push Gateway.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unexpected failure during batch processing."
+        '503':
+          description: The Push Gateway is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Push Gateway under maintenance or overloaded."
+      security: 
+        -  mtls: []
+      tags:
+        - Push Gateway
+  /notifyEncrypted/batch:
+    post:
+      operationId: push_v1_notify_batch_encrypted
+      summary: Push multiple encrypted notifications to the gateway in a single request
+      description: |-
+        Submit multiple encrypted push notifications in a single batch request. This endpoint
+        is optimized for high-throughput scenarios where multiple encrypted notifications
+        need to be sent efficiently. The batch can contain up to a maximum of 100 notifications per request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncryptedBatchNotificationRequest'
+            examples:
+              encryptedBatch:
+                value:
+                  notifications:
+                    - id: "enc_batch_1"
+                      notification:
+                        ciphertext: "base64_of_ciphertext_1"
+                        time_message_encrypted: "2024-11"
+                        key_identifier: "123e4567-e89b-12d3-a456-426614174000"
+                        prio: "high"
+                        counts:
+                          unread: 1
+                          missed_calls: 0
+                        device:
+                          app_id: "app_id"
+                          pushkey: "pushkey"
+                          pushkey_ts: 1634025600
+                          data:
+                            format: "format"
+                          tweaks:
+                            tweak: "tweak"
+                    - id: "enc_batch_2"
+                      notification:
+                        ciphertext: "base64_of_ciphertext_2"
+                        time_message_encrypted: "2024-11"
+                        key_identifier: "456e7890-e89b-12d3-a456-426614174001"
+                        prio: "low"
+                        counts:
+                          unread: 2
+                          missed_calls: 0
+                        device:
+                          app_id: "app_id"
+                          pushkey: "pushkey"
+                          pushkey_ts: 1634025600
+                          data:
+                            format: "format"
+                          tweaks:
+                            tweak: "tweak"
+      responses:
+        "200":
+          description: Batch processing results with per-item status and summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchNotificationResponse'
+              examples:
+                batchResponse:
+                  value:
+                    results:
+                      - id: "enc_batch_1"
+                        status: "success"
+                        rejected: []
+                      - id: "enc_batch_2"
+                        status: "partial"
+                        rejected: ["expired_pushkey_123"]
+                    summary:
+                      total: 2
+                      successful: 1
+                      failed: 0
+                      partial: 1
+        '400':
+          description: Invalid batch request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    enum: 
+                      - "Invalid data format"
+                      - "Batch size exceeds maximum limit"
+                      - "Duplicate notification IDs in batch"
+                      - "Individual notification too large"
+                    example: "Batch size exceeds maximum limit"
+                  details:
+                    type: object
+                    properties:
+                      max_batch_size:
+                        type: integer
+                        example: 100
+                      max_notification_size_kb:
+                        type: integer
+                        example: 64
+                      duplicate_ids:
+                        type: array
+                        items:
+                          type: string
+                        example: ["enc_batch_1", "enc_batch_1"]
+                      current_batch_size:
+                        type: integer
+                        example: 150
+        '401':
+          description: The client is not authenticated.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing or invalid mutual TLS (mTLS) certificate."
+        '413':
+          description: The request payload exceeds the maximum allowed size.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Batch request payload is too large."
+        '422':
+          description: Batch partially processed - some notifications failed validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchNotificationResponse'
+              examples:
+                partialFailure:
+                  value:
+                    results:
+                      - id: "enc_batch_1"
+                        status: "success"
+                        rejected: []
+                      - id: "enc_batch_2"
+                        status: "failed"
+                        error: "Invalid notification format"
+                    summary:
+                      total: 2
+                      successful: 1
+                      failed: 1
+                      partial: 0
+        '500':
+          description: A generic error occurred on the Push Gateway.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unexpected failure during batch processing."
+        '503':
+          description: The Push Gateway is temporarily unavailable.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Push Gateway under maintenance or overloaded."
+      security: 
+        -  mtls: []
+      tags:
+        - Push Gateway
 components:
   securitySchemes:
     mtls:
@@ -209,7 +532,10 @@ components:
           title: Notification
           description: Information about the push notification
           required:
-            - devices
+            - device
+            - ciphertext
+            - time_message_encrypted
+            - key_identifier
           properties:
             ciphertext:
               type: string
@@ -260,49 +586,45 @@ components:
                   description: |-
                     The number of unacknowledged missed calls a user has
                     across all rooms of which they are a member.
-            devices:
-              type: array
-              title: Devices
-              description: This is an array of devices that the notification should be sent
-                to.
-              items:
-                type: object
-                title: Device
-                properties:
-                  app_id:
-                    type: string
-                    description: The `app_id` given when the pusher was created.
-                  pushkey:
-                    type: string
-                    description: The `pushkey` given when the pusher was created.
-                  pushkey_ts:
-                    type: integer
-                    format: int64
-                    description: |-
-                      The unix timestamp (in seconds) when the
-                      pushkey was last updated.
-                  data:
-                    type: object
-                    title: PusherData
-                    description: |-
-                      A dictionary of additional pusher-specific data. This
-                      is the `data` dictionary passed in at
-                      [pusher creation](/client-server-api/#post_matrixclientv3pushersset)
-                      minus the `url` key.
-                    properties:
-                      format:
-                        type: string
-                        description: |-
-                          The format to use for sending notifications.
-                  tweaks:
-                    type: object
-                    title: Tweaks
-                    description: |-
-                      A dictionary of customisations made to the way this
-                      notification is to be presented. These are added by push rules.
-                required:
-                  - app_id
-                  - pushkey
+            device:
+              type: object
+              title: Device
+              description: The device that the notification should be sent to.
+              properties:
+                app_id:
+                  type: string
+                  description: The `app_id` given when the pusher was created.
+                pushkey:
+                  type: string
+                  description: The `pushkey` given when the pusher was created.
+                pushkey_ts:
+                  type: integer
+                  format: int64
+                  description: |-
+                    The unix timestamp (in seconds) when the
+                    pushkey was last updated.
+                data:
+                  type: object
+                  title: PusherData
+                  description: |-
+                    A dictionary of additional pusher-specific data. This
+                    is the `data` dictionary passed in at
+                    [pusher creation](/client-server-api/#post_matrixclientv3pushersset)
+                    minus the `url` key.
+                  properties:
+                    format:
+                      type: string
+                      description: |-
+                        The format to use for sending notifications.
+                tweaks:
+                  type: object
+                  title: Tweaks
+                  description: |-
+                    A dictionary of customisations made to the way this
+                    notification is to be presented. These are added by push rules.
+              required:
+                - app_id
+                - pushkey
     PlainNotification:
       type: object
       properties:
@@ -428,3 +750,101 @@ components:
                 required:
                   - app_id
                   - pushkey
+    BatchNotificationRequest:
+      type: object
+      properties:
+        notifications:
+          type: array
+          minItems: 1
+          maxItems: 100
+          description: Array of plain notifications to process in this batch
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                maxLength: 64
+                description: Client-provided identifier for tracking this notification in the response
+              notification:
+                $ref: '#/components/schemas/PlainNotification/properties/notification'
+            required:
+              - id
+              - notification
+      required:
+        - notifications
+    EncryptedBatchNotificationRequest:
+      type: object
+      properties:
+        notifications:
+          type: array
+          minItems: 1
+          maxItems: 100
+          description: Array of encrypted notifications to process in this batch
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                maxLength: 64
+                description: Client-provided identifier for tracking this notification in the response
+              notification:
+                $ref: '#/components/schemas/EncryptedNotification/properties/notification'
+            required:
+              - id
+              - notification
+      required:
+        - notifications
+    BatchNotificationResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          description: Results for each notification in the batch, in the same order as submitted
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The client-provided identifier from the request
+              status:
+                type: string
+                enum: [success, failed, partial]
+                description: |-
+                  Processing status for this notification:
+                  - `success`: The notification was processed successfully and will be sent to all target devices. All pushkeys were valid and accepted by the upstream gateway for past notifications (if any).
+                  - `failed`: The notification failed to process completely. This could be due to invalid notification format, missing required fields, or a complete failure in reaching any target devices. Check the `error` field for details.
+                  - `partial`: The notification was partially successful. Can only happen if multiple devices were to receive the same message (using `notify` or `notify/batch`). Some pushkeys were accepted and the notification will be sent to those devices, but other pushkeys were rejected (listed in the `rejected` array). This typically happens when some pushkeys have expired or become invalid (e.g. on device restore or app reinstallation).
+              rejected:
+                type: array
+                items:
+                  type: string
+                description: List of rejected pushkeys for this notification (when status is success or partial)
+              error:
+                type: string
+                description: Error message when status is failed
+            required:
+              - id
+              - status
+        summary:
+          type: object
+          properties:
+            total:
+              type: integer
+              description: Total number of notifications in the batch
+            successful:
+              type: integer
+              description: Number of successfully processed notifications
+            failed:
+              type: integer
+              description: Number of failed notifications
+            partial:
+              type: integer
+              description: Number of partially successful notifications (some pushkeys rejected)
+          required:
+            - total
+            - successful
+            - failed
+            - partial
+      required:
+        - results
+        - summary

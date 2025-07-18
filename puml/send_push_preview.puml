@@ -14,7 +14,7 @@ group SendPush
     activate NotificationManagement
     deactivate Fachdienst
     NotificationManagement -> NotificationManagement: encrypt_message
-    NotificationManagement -> NotificationService : **POST** //push/v1/notify//
+    NotificationManagement -> NotificationService: **POST** //push/v1/notifyEncrypted/batch//
     activate NotificationService
     NotificationService -->> NotificationManagement : status
     deactivate NotificationManagement

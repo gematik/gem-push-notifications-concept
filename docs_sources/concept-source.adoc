@@ -132,7 +132,7 @@ image::diagrams/send_push.svg[width=100%]
 2. Für jeden registrierten Pusher `p`, der für das Ereignis abonniert ist, wird eine Push-Benachrichtigung `Notification_p` mit mindestens folgenden Inhalten erzeugt (Die möglichen Felder und deren Beschreibungen sind auf der OpenAPI-Seite zu finden):
     a. `ciphertext` = Nachrichteninhalt aus 1a, `Base64(IV || Chiffrat || Authentication Tag)`  verschlüsselt mit dem aktuell gültigen Schlüssel.
     b. `time_message_encrypted` = Zeitpunkt der Verschlüsselung des Nachrichteinhaltes.
-    c. `devices` = (mindestens: app_id, push_token)
+    c. `device` = (mindestens: app_id, push_token) - Einzelnes Gerät für verschlüsselte Nachrichten
 3. Für jeden Pusher p wird die Push-Benachrichtigung `Notification_p` an das Push Gateways des Pushers `p` übermittelt.
 4. Das Push Gateway übermittelt die Push-Benachrichtigung `Notification_p` an den Push Provider.
 5. Der Push-Provider sendet die Notification an die zur `push_token` gehörende FdV-Instanz.
@@ -260,7 +260,7 @@ Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen
     "app_id": "com.example.app.ios",
     "pushkey": "<APNS/GCM TOKEN>",
     "data": {
-        "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+        "url": "https://push-gateway.location.here/_matrix/push/v1"
     },
     "encryption": {
         "method": "aes-hmac-sha256",
@@ -283,7 +283,7 @@ Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen
     "app_id": "com.example.app",
     "pushkey": "<APNS/GCM TOKEN>",
     "data": {
-        "url": "https://push-gateway.location.here/_matrix/push/v1/notify",
+        "url": "https://push-gateway.location.here/_matrix/push/v1",
         "platform": "ios"
     },
     "encryption": {
@@ -307,7 +307,7 @@ Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen
     "app_id": "com.example.app",
     "pushkey": "<APNS/GCM TOKEN>",
     "data": {
-        "url": "https://push-gateway.location.here/ios/_matrix/push/v1/notify"
+        "url": "https://push-gateway.location.here/ios/_matrix/push/v1"
     },
     "encryption": {
         "method": "aes-hmac-sha256",
@@ -355,13 +355,13 @@ function createNotification(trigger, device) {
         time_message_encrypted: time_message_encrypted,
         ciphertext: ciphertext,
         key_identifier: encryptionKey.identifier
-        devices: [
+        device: {
             app_id: device.app_id,
             pushkey: device.pushkey,
             pushkey_ts: device.pushkey_ts,
             data: device.data,
             tweaks: {}
-        ]
+        }
     }
 }
 ----
@@ -382,7 +382,7 @@ pushContent:
 
 === Push Gateway
 
-Endpoint: http://localhost:8080/push/v1/notify
+Endpoint: http://localhost:8080/push/v1/notifyEncrypted/batch
 
 ==== IN
 
@@ -395,18 +395,16 @@ Endpoint: http://localhost:8080/push/v1/notify
     "key_identifier": "123e4567-e89b-12d3-a456-426614174000",
     "prio": "high",
     "counts": {},
-    "devices": [
-        {
-            "app_id": "de.gematikkk.app.ios",
-            "pushkey": "abcd-efghi-jklm-nopq",
-            "pushkey_ts": 0,
-            "data": {
-                "format": "string"
-            },
-            "tweaks": {
-            }
+    "device": {
+        "app_id": "de.gematikkk.app.ios",
+        "pushkey": "abcd-efghi-jklm-nopq",
+        "pushkey_ts": 0,
+        "data": {
+            "format": "string"
+        },
+        "tweaks": {
         }
-    ]
+    }
 }
 ----
 
