@@ -197,8 +197,7 @@ components:
   securitySchemes:
     mtls:
       description: |-
-        Mutual TLS authentication. The client must present a certificate signed by the
-        server's CA. The server will verify the client's certificate and reject the
+        Mutual TLS authentication. The server will verify the client's certificate and reject the
         connection if it is invalid.
       type: mutualTLS
   schemas:
