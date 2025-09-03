@@ -687,7 +687,7 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
         "app_id": "com.example.app.ios",
         "pushkey": "&lt;APNS/GCM TOKEN&gt;",
         "data": {
-          "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+          "url": "https://push-gateway.location.here/_matrix/push/v1/"
         },
         "encryption": {
           "method": "aes-hmac-sha256",
@@ -749,7 +749,7 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 <p><code>time_message_encrypted</code> = Zeitpunkt der Verschlüsselung des Nachrichteinhaltes.</p>
 </li>
 <li>
-<p><code>devices</code> = (mindestens: app_id, push_token)</p>
+<p><code>device</code> = (mindestens: app_id, push_token) - Einzelnes Gerät für verschlüsselte Nachrichten</p>
 </li>
 </ol>
 </div>
@@ -973,7 +973,7 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
     "app_id": "com.example.app.ios",
     "pushkey": "&lt;APNS/GCM TOKEN&gt;",
     "data": {
-        "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+        "url": "https://push-gateway.location.here/_matrix/push/v1"
     },
     "encryption": {
         "method": "aes-hmac-sha256",
@@ -996,7 +996,7 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
     "app_id": "com.example.app",
     "pushkey": "&lt;APNS/GCM TOKEN&gt;",
     "data": {
-        "url": "https://push-gateway.location.here/_matrix/push/v1/notify",
+        "url": "https://push-gateway.location.here/_matrix/push/v1",
         "platform": "ios"
     },
     "encryption": {
@@ -1020,7 +1020,7 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
     "app_id": "com.example.app",
     "pushkey": "&lt;APNS/GCM TOKEN&gt;",
     "data": {
-        "url": "https://push-gateway.location.here/ios/_matrix/push/v1/notify"
+        "url": "https://push-gateway.location.here/ios/_matrix/push/v1"
     },
     "encryption": {
         "method": "aes-hmac-sha256",
@@ -1070,13 +1070,13 @@ function createNotification(trigger, device) {
         time_message_encrypted: time_message_encrypted,
         ciphertext: ciphertext,
         key_identifier: encryptionKey.identifier
-        devices: [
+        device: {
             app_id: device.app_id,
             pushkey: device.pushkey,
             pushkey_ts: device.pushkey_ts,
             data: device.data,
             tweaks: {}
-        ]
+        }
     }
 }</code></pre>
 </div>
@@ -1101,7 +1101,7 @@ pushContent:
 <div class="sect2">
 <h3 id="_push_gateway_2">Push Gateway</h3>
 <div class="paragraph">
-<p>Endpoint: <a href="http://localhost:8080/push/v1/notify" class="bare">http://localhost:8080/push/v1/notify</a></p>
+<p>Endpoint: <a href="http://localhost:8080/push/v1/notifyEncrypted/batch" class="bare">http://localhost:8080/push/v1/notifyEncrypted/batch</a></p>
 </div>
 <div class="sect3">
 <h4 id="_in">IN</h4>
@@ -1114,18 +1114,16 @@ pushContent:
     "key_identifier": "123e4567-e89b-12d3-a456-426614174000",
     "prio": "high",
     "counts": {},
-    "devices": [
-        {
-            "app_id": "de.gematikkk.app.ios",
-            "pushkey": "abcd-efghi-jklm-nopq",
-            "pushkey_ts": 0,
-            "data": {
-                "format": "string"
-            },
-            "tweaks": {
-            }
+    "device": {
+        "app_id": "de.gematikkk.app.ios",
+        "pushkey": "abcd-efghi-jklm-nopq",
+        "pushkey_ts": 0,
+        "data": {
+            "format": "string"
+        },
+        "tweaks": {
         }
-    ]
+    }
 }</code></pre>
 </div>
 </div>
@@ -1351,7 +1349,7 @@ fun showNotification(title: String?, body: String?) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-26 16:00:17 +0200
+Last updated 2025-09-03 16:10:40 +0200
 </div>
 </div>
 </body>

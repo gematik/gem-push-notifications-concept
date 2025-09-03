@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<title>Untitled</title>
+<title>Optionale Features</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -436,13 +436,224 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
+<h1>Optionale Features <span class="image right"><img src="../images/gematik_logo.png" alt="gematik logo" width="150"></span></h1>
 </div>
 <div id="content">
-
+<div id="preamble">
+<div class="sectionbody">
+<div id="toc" class="toc">
+<div id="toctitle" class="title">Inhaltsverzeichnis</div>
+<ul class="sectlevel1">
+<li><a href="#_trigger_verwaltung_channels">Trigger-Verwaltung (Channels)</a>
+<ul class="sectlevel2">
+<li><a href="#_beschreibung">Beschreibung</a></li>
+<li><a href="#_beispiel">Beispiel</a></li>
+<li><a href="#_historie">Historie</a>
+<ul class="sectlevel3">
+<li><a href="#_beispiel_2">Beispiel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_trigger_verwaltung_channels">Trigger-Verwaltung (Channels)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_beschreibung">Beschreibung</h3>
+<div class="paragraph">
+<p>Der Nutzer des FdVs kann konfigurieren, welche Push Notifications er auf diesem Gerät erhalten möchte. Diese Konfiguration wird mit Hilfe von sogenannten Channels vorgenommen. Jeder Trigger im Fachdienst ist einem Channel zugeordnet. Die Liste der Trigger, Channel und die Zuordnung dieser wird durch das Fachspezifische Konzept vorgegeben. Es ist denktbar, dass mehrere Trigger den gleichen Channel bedienen. Beispiele hierfür wären, wenn die gleiche Notification von zwei verschiedenen Stellen ausgelöst werden kann oder auf Fachlicher Ebene Events gruppiert werden sollen oder müssen.</p>
+</div>
+<div class="paragraph">
+<p>Die Liste der verfügbaren <code>channel</code> ist als <code>GET</code> Aufruf verfügbar. Das FdV kann die Liste der <code>channel</code> in gruppen abbilden, um sie für den Nutzer übersichtlicher zu gestalten. Es kann auch vorkommen, dass das FdV nicht alle <code>channel</code> abbildet und sie somit dem Nutzer nicht zur Verfügung stellt. In diesem Fall würde ein Trigger, dessen <code>channel`</code> für einen Nutzer nicht als <code>aktiv</code> konfiguriert wurde keine Push-Nachricht auslösen.</p>
+</div>
+<div class="paragraph">
+<p>Der Fachdienst hat drei Endpunkte:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><strong>GET</strong> /channels/v1</code> - Ruft die Liste aller verfügbaren <code>channel</code> ab.</p>
+</li>
+<li>
+<p><code><strong>GET</strong> /channels/v1/{pushkey}</code> - Ruft die Liste aller <code>channel</code> und deren Konfiguration für das Gerät mit dem Idnetifier <code>pushkey</code>.</p>
+</li>
+<li>
+<p><code><strong>POST</strong> /channels/v1/{pushkey}</code> - Sendet eine Aktualisierung an den Fachdienst um die Konfiguration vorzunehmen.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Die Auswahl des Nutzers hat drei Optionen <code>enabled</code>, <code>disabled</code> und <code>not_set</code>. <code>enabled</code> bedeutet, dass der Nutzer die Push Notification für diesen <code>channel</code> aktiviert hat. <code>disabled</code> bedeutet, dass der Nutzer die Push Notification für diesen <code>channel</code> deaktiviert hat. <code>not_set</code> bedeutet, dass für die FdV-Installation  <code>not_set</code> wird für den Trigger wie <code>disabled</code> behandelt. Der Nutzer kann die Auswahl für jeden <code>channel</code> treffen und speichern. Die Auswahl wird dann an den Fachdienst gesendet und dort gespeichert.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_beispiel">Beispiel</h3>
+<div class="paragraph">
+<p>Es gibt drei verschiedene Arten von Push Notifications:</p>
+</div>
+<div class="paragraph">
+<p>Dokument erstellen
+Dokument lesen
+Dokument löschen</p>
+</div>
+<div class="paragraph">
+<p>Dafür gibt es drei verschiedene Trigger (sie können auch numerisch sein):</p>
+</div>
+<div class="paragraph">
+<p>document.create
+document.read
+document.delete</p>
+</div>
+<div class="paragraph">
+<p>Wenn das FdV einen Aufruf der Operation <code><strong>GET</strong> /channels/v1/{pushkey}</code> durchführt, wird eine Liste mit den drei <code>channel</code> zurückgegeben. Diese werden dann im FdV angezeigt, damit der Nutzer entscheiden kann, welche er erhalten möchte. Beim ersten Mal haben alle den Status <code>not_set</code>, da der Nutzer sich noch nicht entscheiden hat. Der Nutzer kann dann seine Auswahl treffen, und beim Speichern führt das FdV einen Aufruf der Operation <code><strong>POST</strong> /channels/v1/{pushkey}</code>` durch und sendet die neue Liste an den Fachdienst.</p>
+</div>
+<div class="paragraph">
+<p>Die Liste kann so aussehen:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">event_id</th>
+<th class="tableblock halign-left valign-top">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>document.create</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enabled</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>document.read</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>disabled</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>document.delete</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enabled</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Oder als JSON:</p>
+</div>
+<details>
+<summary class="title">Details</summary>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>{
+  "channel": [
+    {
+      "event_id": "document.create",
+      "status": "enabled"
+    },
+    {
+      "event_id": "document.read",
+      "status": "disabled"
+    },
+    {
+      "event_id": "document.delete",
+      "status": "enabled"
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+</div>
+</details>
+</div>
+<div class="sect2">
+<h3 id="_historie">Historie</h3>
+<div class="paragraph">
+<p>Es wird nicht möglich sein, eine Push Nachricht verschlüsselt oder unverschlüsselt im Push Gateway oder einem nebengelagerten Dienst dauerhaft speichern zu können. Eine der folgen daraus ist, dass keine vollständige Liste aller Push Notifications verschiedener Dienste geführt werden kann. Mit dem optionalen Feature der Push Historie kann diese Problematik Datenschutzkonform verbessert werden.</p>
+</div>
+<div class="paragraph">
+<p>Dafür werden zwei Erweiterungen am Fachdienst getroffen. Die erste Erweiterung betrifft zusätzliche Endpunkte <code>/history/*</code> die für authentisierte Benutzer zur Verfügung stehen. Die Endpunkte ermöglichen Zugriff auf versendete Push Nachrichten. Der Nachrichteninhalt ist damit auch nach dem Versand der Push Nachrichten weiter verfügbar.</p>
+</div>
+<div class="paragraph">
+<p>Die zweite Erweiterung betrifft den Versand der eigentlichen Push Nachrichten vom Fachdienst zum Push Gateway. Ein zusätzliches (unverschlüsseltes) property mit dem Namen "identifier" wird vom Fachdinest versendet. Dieser Identifier kann vom Push Gateway an einen dritten (FdV Betreiber internen) Service weitergegeben werden und dort gemeinsam mit einem Zeitstempel persistiert werden. Da der Identifier keine Personenbezogene Daten beinhaltet ist dies zulässig.</p>
+</div>
+<div class="paragraph">
+<p>Am FdV kann der interne Service verwendet werden um eine vollständige Liste aller empfangenen Push Nachrichten zu bekommen. Die Elemente die aus dem vorherigen Schritt persistiert wurden können im FdV um die Informationen des Fachdienstes ergänzt werden.</p>
+</div>
+<div class="sect3">
+<h4 id="_beispiel_2">Beispiel</h4>
+<div class="paragraph">
+<p>Ein Fachdienst sendet eine Push Nachricht mit zusätzlichem <code>identifier</code>.</p>
+</div>
+<div id="push_notification_plus_reference" class="listingblock">
+<div class="title">Beispiel für eine Push Nachricht mit Referenz (FD &#8594; Push-Gateway)</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "ciphertext": "abcderf",
+    "key_identifier": "123123",
+    "time_message_encrypted": "2024-01",
+    "identifier": "123-4567-890",
+    "data": {
+        "service": "epa15"
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Das Push Gateway übergibt diesen Identifier zusammen z.B. mit einem Zeitstempel in einen internen Service. Das FdV ruft eine Liste aller Push Nachrichten vom internen Service ab. Dies könnte vereinfacht z.B. so aussehen:</p>
+</div>
+<div id="get_push_notifications_from_internal_service" class="listingblock">
+<div class="title">Beispiel für eine Liste von Push Nachrichten aus den <code>Internal Services</code> (Internal Services &#8594; FdV)</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">[
+    {
+        "id": 1,
+        "title": "Allgemeine Benachrichtigung",
+        "description": "Witz des Tages: Warum können Geister so schlecht lügen? Weil man durch sie hindurchsieht!",
+        "created_at": "2024-01-01T12:00:00Z"
+    },
+    {
+        "id": 2,
+        "title": "Nachricht zu Ihrer ePA",
+        "description": "Sie haben eine Nachricht für Ihre ePA erhalten.",
+        "notification.identifier": "123-4567-890",
+        "service": "epa15",
+        "created_at": "2024-04-01T12:00:00Z"
+    },
+    {
+        "id": 3,
+        "title": "Nachricht zu fremder ePA",
+        "description": "Sie haben eine Nachricht für eine fremde ePA erhalten.",
+        "notification.identifier": "098-7654-321",
+        "service": "erp",
+        "created_at": "2024-05-01T12:00:00Z"
+    }
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In diesem Beispiel sind die Nachrichten mit den IDs 2 und 3 von jeweils einem anderen Fachdienst der den eigentlichen Nachrichteninhalt verschlüsselt versendet hat. Die Texte für <code>title</code> und <code>description</code> sind hier vom internen Service generiert, da der eigenliche Nachrichteninhalt dem internen Service nicht bekannt ist.</p>
+</div>
+<div class="paragraph">
+<p>Das FdV kann jetzt von den eigentlichen Fachdiensten die Nachrichteninhalte laden und anzeigen.</p>
+</div>
+<div id="push_history" class="imageblock">
+<div class="content">
+<img src="../images/diagrams/push_history.svg" alt="push history" width="100%">
+</div>
+<div class="title">Abbildung 1. Push Historie</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-03 16:08:29 +0200
+Last updated 2025-04-30 16:41:22 +0200
 </div>
 </div>
 </body>
