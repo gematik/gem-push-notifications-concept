@@ -12,6 +12,11 @@ RUN apt-get update \
     && gem install asciidoctor -v 2.0.20 \
     && gem install asciidoctor-diagram -v 2.2.14 \
     && gem install asciidoctor-reducer \
+# Install Node.js and npm
+    && apt-get install -y curl \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get update \ 
+    && apt-get install -y nodejs \
     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Copy keybinding and task configuration files to the container's .vscode directory
