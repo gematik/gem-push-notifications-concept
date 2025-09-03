@@ -10,7 +10,7 @@ examples:
         "app_id": "com.example.app.ios",
         "pushkey": "<APNS/GCM TOKEN>",
         "data": {
-          "url": "https://push-gateway.location.here/_matrix/push/v1/notify"
+          "url": "https://push-gateway.location.here/_matrix/push/v1/"
         },
         "encryption": {
           "method": "aes-hmac-sha256",
@@ -89,7 +89,8 @@ schema:
         to use for sending notifications. Clients MAY use this object
         to pass custom data to their push gateway. Servers MUST forward
         the entire content including `format` and any custom keys but excluding `url`
-        when calling [`/notify`](./push_gateway_openapi.html#tag/Push-Gateway/operation/push_v1_notify).       
+        when calling [`/notify`](./push_gateway_openapi.html#tag/Push-Gateway/operation/push_v1_notify_plain) 
+        or [`/notifyEncrypted`](./push_gateway_openapi.html#tag/Push-Gateway/operation/push_v1_notify_batch_encrypted).
       title: PusherData
       properties:
         url:
@@ -98,8 +99,8 @@ schema:
           description: |-
             Required if `kind` is `http`. The URL to use for sending
             notifications. MUST be an HTTPS URL with a path of
-            `/_matrix/push/v1/notify`.
-          example: https://push-gateway.location.here/_matrix/push/v1/notify
+            `/_matrix/push/v1/`.
+          example: https://push-gateway.location.here/_matrix/push/v1/
         format:
           type: string
           description: |-

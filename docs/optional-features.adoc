@@ -113,6 +113,15 @@ Ein Fachdienst sendet eine Push Nachricht mit zusätzlichem `identifier`.
     "key_identifier": "123123",
     "time_message_encrypted": "2024-01",
     "identifier": "123-4567-890",
+    "device": {
+        "app_id": "de.gematik.app.ios",
+        "pushkey": "example-pushkey-123",
+        "pushkey_ts": 1634025600,
+        "data": {
+            "format": "string"
+        },
+        "tweaks": {}
+    },
     "data": {
         "service": "epa15"
     }
