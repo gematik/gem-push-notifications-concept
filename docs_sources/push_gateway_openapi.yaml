@@ -248,6 +248,21 @@ paths:
                       successful: 1
                       failed: 0
                       partial: 1
+                partialFailure:
+                  value:
+                    results:
+                      - id: "batch_item_1"
+                        status: "success"
+                        rejected: []
+                      - id: "batch_item_2"
+                        status: "failed"
+                        error: "Invalid notification format"
+                    summary:
+                      total: 2
+                      successful: 1
+                      failed: 1
+                      partial: 0
+
         '400':
           description: Invalid batch request
           content:
@@ -300,27 +315,6 @@ paths:
                   error:
                     type: string
                     example: "Batch request payload is too large."
-        '422':
-          description: Batch partially processed - some notifications failed validation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchNotificationResponse'
-              examples:
-                partialFailure:
-                  value:
-                    results:
-                      - id: "batch_item_1"
-                        status: "success"
-                        rejected: []
-                      - id: "batch_item_2"
-                        status: "failed"
-                        error: "Invalid notification format"
-                    summary:
-                      total: 2
-                      successful: 1
-                      failed: 1
-                      partial: 0
         '500':
           description: A generic error occurred on the Push Gateway.
           content:
@@ -419,6 +413,20 @@ paths:
                       successful: 1
                       failed: 0
                       partial: 1
+                partialFailure:
+                  value:
+                    results:
+                      - id: "enc_batch_1"
+                        status: "success"
+                        rejected: []
+                      - id: "enc_batch_2"
+                        status: "failed"
+                        error: "Invalid notification format"
+                    summary:
+                      total: 2
+                      successful: 1
+                      failed: 1
+                      partial: 0
         '400':
           description: Invalid batch request
           content:
@@ -471,27 +479,6 @@ paths:
                   error:
                     type: string
                     example: "Batch request payload is too large."
-        '422':
-          description: Batch partially processed - some notifications failed validation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BatchNotificationResponse'
-              examples:
-                partialFailure:
-                  value:
-                    results:
-                      - id: "enc_batch_1"
-                        status: "success"
-                        rejected: []
-                      - id: "enc_batch_2"
-                        status: "failed"
-                        error: "Invalid notification format"
-                    summary:
-                      total: 2
-                      successful: 1
-                      failed: 1
-                      partial: 0
         '500':
           description: A generic error occurred on the Push Gateway.
           content:
