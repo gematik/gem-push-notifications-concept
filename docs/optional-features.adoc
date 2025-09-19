@@ -54,7 +54,7 @@ Wenn das FdV einen Aufruf der Operation ``*GET* /channels/v1/{pushkey}`` durchfÃ
 Die Liste kann so aussehen:
 [cols="1,1"]
 |===
-|event_id|Status
+|`id`|`status``
 
 |`document.create`
 |`enabled`
@@ -74,15 +74,15 @@ Oder als JSON:
 {
   "channel": [
     {
-      "event_id": "document.create",
+      "id": "document.create",
       "status": "enabled"
     },
     {
-      "event_id": "document.read",
+      "id": "document.read",
       "status": "disabled"
     },
     {
-      "event_id": "document.delete",
+      "id": "document.delete",
       "status": "enabled"
     }
   ]
