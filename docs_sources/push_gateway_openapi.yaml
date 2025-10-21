@@ -397,7 +397,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchNotificationResponse'
+                $ref: '#/components/schemas/EncryptedBatchNotificationResponse'
               examples:
                 batchResponse:
                   value:
@@ -406,13 +406,12 @@ paths:
                         status: "success"
                         rejected: []
                       - id: "enc_batch_2"
-                        status: "partial"
+                        status: "failed"
                         rejected: ["expired_pushkey_123"]
                     summary:
                       total: 2
                       successful: 1
                       failed: 0
-                      partial: 1
                 partialFailure:
                   value:
                     results:
@@ -426,7 +425,6 @@ paths:
                       total: 2
                       successful: 1
                       failed: 1
-                      partial: 0
         '400':
           description: Invalid batch request
           content:
@@ -832,6 +830,55 @@ components:
             - successful
             - failed
             - partial
+      required:
+        - results
+        - summary
+    EncryptedBatchNotificationResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          description: Results for each notification in the batch, in the same order as submitted
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The client-provided identifier from the request
+              status:
+                type: string
+                enum: [success, failed]
+                description: |-
+                  Processing status for this notification:
+                  - `success`: The notification was processed successfully and will be sent to all target devices. All pushkeys were valid and accepted by the upstream gateway for past notifications (if any).
+                  - `failed`: The notification failed to process completely. This could be due to invalid notification format, missing required fields, or a complete failure in reaching the target device. Check the `error` field for details.
+              rejected:
+                type: array
+                items:
+                  type: string
+                description: List of rejected pushkeys for this notification (when status is success or partial)
+              error:
+                type: string
+                description: Error message when status is failed
+            required:
+              - id
+              - status
+        summary:
+          type: object
+          properties:
+            total:
+              type: integer
+              description: Total number of notifications in the batch
+            successful:
+              type: integer
+              description: Number of successfully processed notifications
+            failed:
+              type: integer
+              description: Number of failed notifications
+          required:
+            - total
+            - successful
+            - failed
       required:
         - results
         - summary
