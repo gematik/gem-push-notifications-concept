@@ -1,4 +1,6 @@
 == Festlegungen zum MVP
+*Diese Seite dient ausschließlich als Diskussionsgrundlage und hat keine spezifikatorische Bedeutung.*
+
 1.	Push Notifications können nur an Versicherten des Aktenkontos gesendet werden (Vertreter können keine Push Nachrichten erhalten)
 2.	Push Notifications werden nicht an Akteure der ePA versendet, die das Ereignis ausgelöst haben.
 3.	Ereignisse, die eine Push Notification auslösen:
