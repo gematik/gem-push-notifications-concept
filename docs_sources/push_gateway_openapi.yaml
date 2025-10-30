@@ -228,7 +228,7 @@ paths:
                               tweak: "tweak"
       responses:
         "200":
-          description: Batch processing results with per-item status and summary
+          description: Batch processing results with per-item status and summary. If the Push Gateway is unable to complete processing for some notifications, those will be marked as failed in the results.
           content:
             application/json:
               schema:
@@ -393,7 +393,7 @@ paths:
                             tweak: "tweak"
       responses:
         "200":
-          description: Batch processing results with per-item status and summary
+          description: Batch processing results with per-item status and summary. If the Push Gateway is unable to complete processing for some notifications, those will be marked as failed in the results.
           content:
             application/json:
               schema:
