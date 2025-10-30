@@ -37,6 +37,12 @@ paths:
     post:
       operationId: push_v1_notify_plain
       summary: Push plain data to the gateway
+      description: |-
+        Submit a plain push notification to the Push Gateway. The notification
+        will be sent to all devices listed in the `devices` array of the
+        notification object.
+        
+        *This mimics the Matrix Push Gateway API in version 1.0.0.*
       requestBody:
         required: true
         content:
