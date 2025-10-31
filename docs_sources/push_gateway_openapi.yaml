@@ -544,10 +544,12 @@ components:
         identifier:
           type: string
           description: |-
-            Random identifier to reidentify the push notification at the originating fachdienst.
+            An identifier to reidentify the push notification at the originating fachdienst.
             This property may be send to a 3rd service (e.g. in combination with some properties from the `data` dictionary)
             to create a complete list of all push notifications that have been sent to a client.
             This property is optional and must only be set by a fachdienst, if the fachdienst implements the history endpoints.
+            NOTE: It is possible that this identifier is not unique across multiple push notifications, e.g. if the fachdienst
+            sends multiple push notifications for the same event (e.g. in a retry scenario or multiple push notifications being sent for one event). 
         prio:
           $ref: "#/components/schemas/Priority"
         counts:
