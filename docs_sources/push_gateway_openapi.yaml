@@ -94,19 +94,7 @@ paths:
                 type: object  # empty json object
                 properties:
                   rejected:
-                    type: array
-                    description: |-
-                      A list of all pushkeys given in the notification request that
-                      are not valid. These could have been rejected by an upstream
-                      gateway because they have expired or have never been valid.
-                      Homeservers must cease sending notification requests for these
-                      pushkeys and remove the associated pushers. It may not
-                      necessarily be the notification in the request that failed:
-                      it could be that a previous notification to the same pushkey
-                      failed. May be empty.
-                    items:
-                      type: string
-                      description: A pushkey that has been rejected.
+                    $ref: '#/components/schemas/RejectedPushKeys'
                 required:
                   - rejected
               examples:
@@ -639,6 +627,20 @@ components:
           description: |-
             The number of unacknowledged missed calls a user has
             across all rooms of which they are a member.
+    RejectedPushKeys:
+      type: array
+      description: |-
+        A list of all pushkeys given in the notification request that
+        are not valid. These could have been rejected by an upstream
+        gateway because they have expired or have never been valid.
+        Homeservers must cease sending notification requests for these
+        pushkeys and remove the associated pushers. It may not
+        necessarily be the notification in the request that failed:
+        it could be that a previous notification to the same pushkey
+        failed. May be empty.
+      items:
+        type: string
+        description: A pushkey that has been rejected.
     BatchNotificationRequest:
       type: object
       properties:
@@ -706,10 +708,7 @@ components:
                   - `failed`: The notification failed to process completely. This could be due to invalid notification format, missing required fields, or a complete failure in reaching any target devices. Check the `error` field for details.
                   - `partial`: The notification was partially successful. Can only happen if multiple devices were to receive the same message (using `notify` or `notify/batch`). Some pushkeys were accepted and the notification will be sent to those devices, but other pushkeys were rejected (listed in the `rejected` array). This typically happens when some pushkeys have expired or become invalid (e.g. on device restore or app reinstallation).
               rejected:
-                type: array
-                items:
-                  type: string
-                description: List of rejected pushkeys for this notification (when status is success or partial)
+                $ref: '#/components/schemas/RejectedPushKeys'
               error:
                 type: string
                 description: Error message when status is failed
