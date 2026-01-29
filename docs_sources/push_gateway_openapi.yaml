@@ -263,6 +263,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - error
                 properties:
                   error:
                     type: string
@@ -272,23 +274,44 @@ paths:
                       - "Duplicate notification IDs in batch"
                       - "Individual notification too large"
                     example: "Batch size exceeds maximum limit"
+                    description: |-
+                      The type of validation error that occurred. When multiple validation errors
+                      are present, the Push Gateway returns the first applicable error in the
+                      following priority order (highest to lowest):
+                      1. `Invalid data format` - JSON parsing or schema validation failed
+                      2. `Batch size exceeds maximum limit` - too many notifications in batch
+                      3. `Duplicate notification IDs in batch` - non-unique IDs detected
+                      4. `Individual notification too large` - a single notification exceeds size limit
                   details:
                     type: object
+                    description: |-
+                      Additional details about the error. The properties included depend on the
+                      `error` type and contain only information relevant to that specific error.
                     properties:
                       max_batch_size:
                         type: integer
+                        minimum: 100
+                        description: |-
+                          The maximum number of notifications allowed per batch request.
+                          Push Gateway implementations must support at least 100 notifications
+                          per batch. Higher values may be supported depending on the implementation.
                         example: 100
                       max_notification_size_kb:
                         type: integer
+                        description: |-
+                          The maximum allowed size (in kilobytes) for a single notification
+                          object within the batch. Size is measured as the byte length of the
+                          UTF-8 encoded JSON serialization of the `notification` object.
+                          Enforcement of this limit is optional for Push Gateway implementations.
                         example: 64
                       duplicate_ids:
                         type: array
+                        description: |-
+                          List of notification IDs that appear more than once in the batch.
+                          Each duplicate ID is listed only once. No specific order is guaranteed.
                         items:
                           type: string
-                        example: ["batch_item_1", "batch_item_1"]
-                      current_batch_size:
-                        type: integer
-                        example: 150
+                        example: ["batch_item_1"]
         '401':
           description: The client is not authenticated.
           content:
@@ -427,6 +450,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - error
                 properties:
                   error:
                     type: string
@@ -436,23 +461,44 @@ paths:
                       - "Duplicate notification IDs in batch"
                       - "Individual notification too large"
                     example: "Batch size exceeds maximum limit"
+                    description: |-
+                      The type of validation error that occurred. When multiple validation errors
+                      are present, the Push Gateway returns the first applicable error in the
+                      following priority order (highest to lowest):
+                      1. `Invalid data format` - JSON parsing or schema validation failed
+                      2. `Batch size exceeds maximum limit` - too many notifications in batch
+                      3. `Duplicate notification IDs in batch` - non-unique IDs detected
+                      4. `Individual notification too large` - a single notification exceeds size limit
                   details:
                     type: object
+                    description: |-
+                      Additional details about the error. The properties included depend on the
+                      `error` type and contain only information relevant to that specific error.
                     properties:
                       max_batch_size:
                         type: integer
+                        minimum: 100
+                        description: |-
+                          The maximum number of notifications allowed per batch request.
+                          Push Gateway implementations must support at least 100 notifications
+                          per batch. Higher values may be supported depending on the implementation.
                         example: 100
                       max_notification_size_kb:
                         type: integer
+                        description: |-
+                          The maximum allowed size (in kilobytes) for a single notification
+                          object within the batch. Size is measured as the byte length of the
+                          UTF-8 encoded JSON serialization of the `notification` object.
+                          Enforcement of this limit is optional for Push Gateway implementations.
                         example: 64
                       duplicate_ids:
                         type: array
+                        description: |-
+                          List of notification IDs that appear more than once in the batch.
+                          Each duplicate ID is listed only once. No specific order is guaranteed.
                         items:
                           type: string
-                        example: ["enc_batch_1", "enc_batch_1"]
-                      current_batch_size:
-                        type: integer
-                        example: 150
+                        example: ["enc_batch_1"]
         '401':
           description: The client is not authenticated.
           content:
