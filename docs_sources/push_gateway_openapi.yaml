@@ -125,15 +125,29 @@ paths:
                     type: string
                     example: "Missing or invalid mutual TLS (mTLS) certificate."
         '413':
-          description: The request payload exceeds the maximum allowed size.
+          description: |-
+            The request payload exceeds the maximum allowed size.
+            Push Gateway implementations MUST support request payloads of at least 256 KB.
           content:
             application/json:
               schema:
                 type: object
+                required:
+                  - error
                 properties:
                   error:
                     type: string
                     example: "Notification object is too large."
+                  details:
+                    type: object
+                    description: Additional information about the size limit.
+                    properties:
+                      max_request_size_kb:
+                        type: integer
+                        description: |-
+                          The maximum allowed request payload size in kilobytes.
+                          Implementations MUST support at least 256 KB.
+                        example: 256
         '500':
           description: A generic error occurred on the Push Gateway.
           content:
@@ -323,15 +337,29 @@ paths:
                     type: string
                     example: "Missing or invalid mutual TLS (mTLS) certificate."
         '413':
-          description: The request payload exceeds the maximum allowed size.
+          description: |-
+            The request payload exceeds the maximum allowed size.
+            Push Gateway implementations MUST support request payloads of at least 256 KB.
           content:
             application/json:
               schema:
                 type: object
+                required:
+                  - error
                 properties:
                   error:
                     type: string
                     example: "Batch request payload is too large."
+                  details:
+                    type: object
+                    description: Additional information about the size limit.
+                    properties:
+                      max_request_size_kb:
+                        type: integer
+                        description: |-
+                          The maximum allowed request payload size in kilobytes.
+                          Implementations MUST support at least 256 KB.
+                        example: 1024
         '500':
           description: A generic error occurred on the Push Gateway.
           content:
@@ -510,15 +538,29 @@ paths:
                     type: string
                     example: "Missing or invalid mutual TLS (mTLS) certificate."
         '413':
-          description: The request payload exceeds the maximum allowed size.
+          description: |-
+            The request payload exceeds the maximum allowed size.
+            Push Gateway implementations MUST support request payloads of at least 256 KB.
           content:
             application/json:
               schema:
                 type: object
+                required:
+                  - error
                 properties:
                   error:
                     type: string
                     example: "Batch request payload is too large."
+                  details:
+                    type: object
+                    description: Additional information about the size limit.
+                    properties:
+                      max_request_size_kb:
+                        type: integer
+                        description: |-
+                          The maximum allowed request payload size in kilobytes.
+                          Implementations MUST support at least 256 KB.
+                        example: 1024
         '500':
           description: A generic error occurred on the Push Gateway.
           content:
