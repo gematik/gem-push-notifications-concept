@@ -615,6 +615,7 @@ components:
           $ref: "#/components/schemas/Counts"
         devices:
           type: array
+          uniqueItems: true
           title: Devices
           description: This is an array of devices that the notification should be sent to.
           items:
@@ -643,6 +644,7 @@ components:
       properties:
         notifications:
           type: array
+          uniqueItems: true
           minItems: 1
           maxItems: 100
           description: Array of plain notifications to process in this batch
@@ -665,6 +667,7 @@ components:
       properties:
         notifications:
           type: array
+          uniqueItems: true
           minItems: 1
           maxItems: 100
           description: Array of encrypted notifications to process in this batch
