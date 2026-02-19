@@ -605,7 +605,7 @@ components:
       properties:
         ciphertext:
           type: string
-          description: "Base64 encoded ciphertext. The original ciphertext always contains 1024 bytes of payload. Encoding this using Base64 results in 1368 bytes for this data field."
+          description: "Base64 encoded ciphertext. The original ciphertext always contains 1024 bytes of payload. Encoding this along with the IV and Authentication code using Base64 results in 1404 bytes for this data field."
         time_message_encrypted:
           type: string
           description: "Year + Month the key was derived and the message was sent. e.g. `2024-11` for November 2024."
