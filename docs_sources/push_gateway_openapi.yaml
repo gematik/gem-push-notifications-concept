@@ -146,8 +146,8 @@ paths:
                         type: integer
                         description: |-
                           The maximum allowed request payload size in kilobytes.
-                          Implementations MUST support at least 256 KB.
-                        example: 256
+                          Implementations MUST support at least 3 KB (256 KB of the batch request roughly divided by 100).
+                        example: 3
         '500':
           description: A generic error occurred on the Push Gateway.
           content:
