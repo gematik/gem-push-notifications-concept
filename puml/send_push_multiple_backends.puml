@@ -1,5 +1,5 @@
 @startuml send_push_multiple_backends
-!theme gematik from ../puml
+!include puml-theme-gematik.puml
 
 actor "FdV TK" as App
 actor "FdV HKK" as App2

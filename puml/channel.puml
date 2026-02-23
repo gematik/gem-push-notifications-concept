@@ -1,5 +1,5 @@
 @startuml channel
-!theme gematik from ../puml
+!include puml-theme-gematik.puml
 
 skinparam nodesep 50
 

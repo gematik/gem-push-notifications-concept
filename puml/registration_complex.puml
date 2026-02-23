@@ -1,5 +1,5 @@
 @startuml registration_complex
-!theme gematik from ../puml
+!include puml-theme-gematik.puml
 
 actor "FdV" as App
 entity "Fachdienst\n" as Fachdienst

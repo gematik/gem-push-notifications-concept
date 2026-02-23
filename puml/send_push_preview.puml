@@ -1,5 +1,5 @@
 @startuml send_push_preview
-!theme gematik from ../puml
+!include puml-theme-gematik.puml
 
 actor "FdV" as App
 entity "Fachdienst\n\n" as Fachdienst
