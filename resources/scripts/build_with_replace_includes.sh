@@ -22,8 +22,10 @@ actual_asciidoctor_diagram_version=$(gem list | grep "asciidoctor-diagram (")
 cd "$(dirname "$0")" || exit
 # rm ../../images/puml_*
 
+export PLANTUML_INCLUDE_PATH="$(cd ../../puml && pwd)"
+
 # loop through all puml files and create the image
-for filename in $(find ../../puml -name '*.puml'); do
+for filename in $(find ../../puml -name '*.puml' ! -name 'puml-theme-*'); do
 
     filebase=$(basename -- "$filename") # test.adoc
     name="${filebase%.*}" # test

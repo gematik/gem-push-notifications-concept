@@ -1,5 +1,5 @@
 @startuml push_history
-!theme gematik from ../puml
+!include puml-theme-gematik.puml
 
 actor "FdV" as App
 entity "Fachdienst\n" as Fachdienst

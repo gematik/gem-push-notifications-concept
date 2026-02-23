@@ -7,13 +7,18 @@ cd "$(dirname "$0")" || exit
 
 cd ../..
 
-plantuml -tsvg -o ../images/diagrams ./puml/
-plantuml -tsvg -o ../build/images/diagrams ./puml/
+export PLANTUML_INCLUDE_PATH="$(pwd)/puml"
+
+plantuml -tsvg -o ../images/diagrams ./puml/ -x "**/puml-theme-*.puml"
+plantuml -tsvg -o ../build/images/diagrams ./puml/ -x "**/puml-theme-*.puml"
 
 for filename in $(find ./docs -name '*.adoc'); do
     newFileName=$(basename $filename | sed 's/adoc/html/')
     asciidoctor $filename -o build/concept/$newFileName -a allow-uri-read
 done
+
+npx @redocly/cli lint docs_sources/push_gateway_openapi.yaml
+npx @redocly/cli lint docs_sources/fd_openapi.yaml
 
 npx @redocly/cli build-docs docs_sources/push_gateway_openapi.yaml -o build/push_gateway_openapi.html
 npx @redocly/cli build-docs docs_sources/fd_openapi.yaml -o build/fd_openapi.html

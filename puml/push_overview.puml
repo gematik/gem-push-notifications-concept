@@ -1,5 +1,5 @@
 @startuml push_overview
-!theme gematik from ../puml
+!include puml-theme-gematik.puml
 
 skinparam ranksep 10
 

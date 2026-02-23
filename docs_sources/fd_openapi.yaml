@@ -54,7 +54,7 @@ paths:
     post:
       summary: Modify a pusher
       description: |-
-        This endpoint allows the creation, modification and deletion of [pushers](/client-server-api/#push-notifications)
+        This endpoint allows the creation, modification and deletion of pushers
         for the authenticated user. The behaviour of this endpoint varies depending on the
         values in the JSON body.
 
@@ -206,7 +206,7 @@ paths:
   /channels:
     get:
       summary: Gets the available channels
-      description: Gets all available channels for the authenticated user.
+      description: Gets all channels available for the authenticated user and their default status. When a pusher is set and no channel modification is requested for this pusher, this default configuration is used.
       operationId: getChannels
       responses:
         "200":

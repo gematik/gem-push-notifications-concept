@@ -1,5 +1,5 @@
 @startuml push_overview_authentication
-!theme gematik from ../puml
+!include puml-theme-gematik.puml
 
 skinparam nodesep 150
 
