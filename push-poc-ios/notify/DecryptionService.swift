@@ -98,11 +98,32 @@ class DecryptionService {
         let latestGeneration = generation.first!
         let key = SymmetricKey(data: Data(hexEncoded: latestGeneration.key))
         let sealedBox = try AES.GCM.SealedBox(combined: cipher)
-        return try AES.GCM.open(sealedBox, using: key)
+        guard let decryptedData = try? AES.GCM.open(sealedBox, using: key) else {
+            throw DecryptionError.decryptionFailed
+        }
+
+        // Check and strip PNM1 + length + spaces
+        let prefix = "PNM1".data(using: .utf8)!
+        guard decryptedData.starts(with: prefix) else {
+            throw DecryptionError.prefixOfDecryptedPayloadWrong
+        }
+        let lengthData = decryptedData[prefix.count..<(prefix.count + 2)]
+        let length = UInt16(bigEndian: lengthData.withUnsafeBytes { $0.load(as: UInt16.self) })
+        
+        // payload
+        let payloadStartIndex = prefix.count + 2 + Int(length)
+        guard payloadStartIndex <= decryptedData.count else {
+            throw DecryptionError.invalidLengthOfDecryptedPayload
+        }
+
+        return decryptedData[payloadStartIndex...]
     }
     
     enum DecryptionError: Error {
         case tooManyGenerations
+        case decryptionFailed
+        case prefixOfDecryptedPayloadWrong
+        case invalidLengthOfDecryptedPayload
     }
 }
 

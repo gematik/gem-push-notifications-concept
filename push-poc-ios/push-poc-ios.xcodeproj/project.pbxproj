@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5D62607F2D3803FE00622D8C /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D62607D2D3803F600622D8C /* debug.xcconfig */; };
-		5D6260812D38041300622D8C /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D6260802D38041000622D8C /* release.xcconfig */; };
-		5D6260832D38042000622D8C /* base.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 5D6260822D38041900622D8C /* base.xcconfig */; };
 		5DE1C6CD2CFDDE750068DDFC /* notify.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5DE1C6C62CFDDE750068DDFC /* notify.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -179,7 +176,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					5DAA67102CFDB05200855D37 = {
 						CreatedOnToolsVersion = 16.0;
@@ -216,7 +213,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D62607F2D3803FE00622D8C /* debug.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,8 +220,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D6260832D38042000622D8C /* base.xcconfig in Resources */,
-				5D6260812D38041300622D8C /* release.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +310,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -373,6 +368,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};

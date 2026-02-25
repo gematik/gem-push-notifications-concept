@@ -23,7 +23,15 @@
 import UserNotifications
 
 struct Message: Codable {
-    let eventId: String
+    let channelId: String
+    let identifier: String
+    let identifierType: String
+
+    enum CodingKeys: String, CodingKey {
+        case channelId = "ChannelId"
+        case identifier = "Identifier"
+        case identifierType = "IdentifierType"
+    }
 }
 
 class NotificationService: UNNotificationServiceExtension {
@@ -57,7 +65,7 @@ class NotificationService: UNNotificationServiceExtension {
 
             let content = UNMutableNotificationContent()
             content.title = "Neue Nachricht"
-            content.body = "EventId: '\(message.eventId)'"
+            content.body = "EventId: '\(message.channelId)', TaskId: '\(message.identifier)', IdentifierType: '\(message.identifierType)'"
             content.categoryIdentifier = "myCategory"
             contentHandler(content)
         } catch {
