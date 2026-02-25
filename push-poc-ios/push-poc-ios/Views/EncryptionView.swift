@@ -64,7 +64,7 @@ struct EncryptionView: View {
                         .multilineTextAlignment(.trailing)
                 } header: {
                     Text("Encrypt/Decrypt")
-                } footer: {
+
                     if viewModel.generation.isEmpty {
                         Text("⚠️ Add at least one generation to encrypt/decrypt.")
                             .foregroundColor(.red)
@@ -82,6 +82,34 @@ struct EncryptionView: View {
                 } footer: {
                     Button {
                         UIPasteboard.general.string = viewModel.notificationFD2Gateway
+                    } label: {
+                        Label("Copy to clipboard", systemImage: "doc.on.doc")
+                            .font(.footnote)
+                    }
+                    .contentShape(Rectangle())
+                }
+
+                Section {
+                    TextField("Push Gateway URL", text: $viewModel.pushGatewayURL)
+                        .font(.footnote.monospaced())
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                } header: {
+                    Text("Push Gateway URL")
+                }
+                
+                Section {
+                    ScrollView(.horizontal) {
+                        Text(viewModel.curlCommand)
+                            .font(.footnote.monospacedDigit())
+                            .foregroundColor(.secondary)
+                    }
+                } header: {
+                    Text("cURL Command")
+                } footer: {
+                    Button {
+                        UIPasteboard.general.string = viewModel.curlCommand
                     } label: {
                         Label("Copy to clipboard", systemImage: "doc.on.doc")
                             .font(.footnote)

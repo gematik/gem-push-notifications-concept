@@ -34,11 +34,29 @@ class ViewModel: ObservableObject {
     @Published var info = "2023-10"
     @Published var generation: [Generation] = []
     
-    @Published var plaintext = "{\"eventId\": \"001\"}"
+    @Published var plaintext = "{\"ChannelId\": \"erp.task.activate\", \"Identifier\": \"Task.identifier.PrescriptionID\", \"IdentifierType\": \"TaskId\"}"
     @Published var cipher = ""
     @Published var notificationFD2Gateway = ""
     @Published var notificationGateway2FdV = ""
     @Published var decrypted = ""
+    @Published var pushGatewayURL: String = UserDefaults.standard.pushGatewayURL {
+        didSet {
+            UserDefaults.standard.pushGatewayURL = pushGatewayURL
+        }
+    }
+
+    var curlCommand: String {
+        """
+        curl -X POST \\
+          '\(pushGatewayURL)' \\
+          -H 'Content-Type: application/json' \\
+          -d '\(notificationFD2Gateway)'
+        """
+    }
+    
+    var appIdentifier: String {
+        Bundle.main.bundleIdentifier ?? "com.example.app"
+    }
 
     struct Generation {
         let key: String
@@ -97,20 +115,25 @@ class ViewModel: ObservableObject {
         cipher = encryptUsingLatestKey(payload: Data(plaintext.utf8)).base64EncodedString()
         notificationFD2Gateway = """
 {
-    "ciphertext": "\(cipher)",
-    "time_message_encrypted": "\(generation.first?.month ?? "")",
-    "key_identifier": "123e4567-e89b-12d3-a456-426614174000",
-    "prio": "high",
-    "devices": [
+    "notifications": [
         {
-            "app_id": "app_id",
-            "pushkey": "\(UserDefaults().string(forKey: "deviceToken") ?? "")",
-            "pushkey_ts": 1634025600,
-            "data": {
-                "fdv_custom_key": "with_custom_value"
+            "id": "enc_batch_1",
+            "notification": {
+                "ciphertext": "\(cipher)",
+                "time_message_encrypted": "\(generation.first?.month ?? "")",
+                "key_identifier": "123e4567-e89b-12d3-a456-426614174000",
+                "prio": "high",
+                "device": {
+                    "app_id": "\(appIdentifier).apns",
+                    "pushkey": "\(UserDefaults().string(forKey: "deviceToken") ?? "")",
+                    "pushkey_ts": 1634025600,
+                    "data": {
+                        "fdv_custom_key": "with_custom_value"
+                    }
+                }
             }
         }
-    ]    
+    ]
 }
 """
         notificationGateway2FdV = """
@@ -135,7 +158,24 @@ class ViewModel: ObservableObject {
         let cipher = Data(base64Encoded: self.cipher)!
         
         let decryptedData = (try? decryptUsingLatestKey(cipher: cipher)) ?? "Failed".data(using: .utf8)!
-        decrypted = String(data: decryptedData, encoding: .utf8)!
+        
+        // Check and strip PNM1 + length + spaces
+        let prefix = "PNM1".data(using: .utf8)!
+        guard decryptedData.starts(with: prefix) else {
+            decrypted = "Decryption failed: Missing prefix"
+            return
+        }
+        let lengthData = decryptedData[prefix.count..<(prefix.count + 2)]
+        let length = UInt16(bigEndian: lengthData.withUnsafeBytes { $0.load(as: UInt16.self) })
+        
+        // payload
+        let payloadStartIndex = prefix.count + 2 + Int(length)
+        guard payloadStartIndex <= decryptedData.count else {
+            decrypted = "Decryption failed: Invalid length"
+            return
+        }
+
+        decrypted = String(data: decryptedData[payloadStartIndex...], encoding: .utf8)!
     }
 
     func encryptUsingLatestKey(payload: Data) -> Data {
@@ -144,7 +184,32 @@ class ViewModel: ObservableObject {
         }
         let key = SymmetricKey(data: Data(hexEncoded: latestGeneration.key))
         let nonce = AES.GCM.Nonce()
-        let sealedBox = try! AES.GCM.seal(payload, using: key, nonce: nonce)
+        
+//        A_27610 - Fachdienst - Push Notification senden - Größe des Nachrichteninhalts verschleiern
+//
+//        Der Fachdienst MUSS, wenn der Fachdienst Notifications verschlüsselt senden muss, den in der Push Notification zu übermittelnden Nachrichteninhalt mit einer Größe von genau 1024 Bytes vor der Verschlüsselung wie folgt kodieren. Es werden folgende Daten konkateniert
+//
+//        die Zeichenkette "PNM1" (4 Bytes),
+//        zwei Bytes Länge des folgenden Leerzeichenabschnitts im Network-Byte-Order (big-endian) berechnet mit:
+//         maximale_verfügbare_Größe_für_Nachrichteninhalt - 4 - 2 - Länge(eigentliche Nachricht)
+//        Anzahl von Leerzeichen (Character 32) wie bei 2 angeführt,
+//        eigentliche Nachricht.
+//        Die Konkatenation ist dann der zu verschlüsselnde Klartext. [<=]
+//        Beispiel zu A_27610-*:
+//
+//        Die maximal verfügbare Größe für den Nachrichteninhalt sind 1024 Bytes. Die eigentliche Nachricht ist "test". Dann ist die Länge des Leerzeichenabschnitts = 1024 - length(payload) - 2 - 4 = 1014.
+//
+//        Hexdump der Konkatenation: 504e4d31 07f6 020202...0202 74657374
+        
+        let prefix: [UInt8] = [0x50, 0x4e, 0x4d, 0x31]
+        let length: UInt16 = UInt16(1024 - payload.count - 2 - 4)
+        let spaces = [UInt8](repeating: 0x20, count: Int(length))
+        let message = [UInt8](payload)
+        let concatenation = prefix + withUnsafeBytes(of: length.bigEndian, Array.init) + spaces + message
+        // print as hex
+        print("Concatenation: \(Data(concatenation).hexEncodedString)")
+
+        let sealedBox = try! AES.GCM.seal(concatenation, using: key, nonce: nonce)
         return sealedBox.combined!
     }
 

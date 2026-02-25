@@ -29,4 +29,13 @@ extension UserDefaults {
             set(newValue, forKey: "deviceToken")
         }
     }
+
+    @objc dynamic var pushGatewayURL: String {
+        get {
+            string(forKey: "pushGatewayURL") ?? "https://pushgw.example.de/push/v1/notifyEncrypted/batch"
+        }
+        set {
+            set(newValue, forKey: "pushGatewayURL")
+        }
+    }
 }
