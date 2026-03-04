@@ -260,7 +260,7 @@ Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen
     "app_id": "com.example.app.ios",
     "pushkey": "<APNS/GCM TOKEN>",
     "data": {
-        "url": "https://push-gateway.location.here/_matrix/push/v1"
+        "url": "https://push-gateway.location.here/push/v1"
     },
     "encryption": {
         "method": "aes-hmac-sha256",
@@ -283,7 +283,7 @@ Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen
     "app_id": "com.example.app",
     "pushkey": "<APNS/GCM TOKEN>",
     "data": {
-        "url": "https://push-gateway.location.here/_matrix/push/v1",
+        "url": "https://push-gateway.location.here/push/v1",
         "platform": "ios"
     },
     "encryption": {
@@ -307,7 +307,7 @@ Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen
     "app_id": "com.example.app",
     "pushkey": "<APNS/GCM TOKEN>",
     "data": {
-        "url": "https://push-gateway.location.here/ios/_matrix/push/v1"
+        "url": "https://push-gateway.location.here/ios/push/v1"
     },
     "encryption": {
         "method": "aes-hmac-sha256",

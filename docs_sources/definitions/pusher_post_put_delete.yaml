@@ -10,7 +10,7 @@ examples:
         "app_id": "com.example.app.ios",
         "pushkey": "<APNS/GCM TOKEN>",
         "data": {
-          "url": "https://push-gateway.location.here/_matrix/push/v1/"
+          "url": "https://push-gateway.location.here/push/v1/"
         },
         "encryption": {
           "method": "aes-hmac-sha256",
@@ -98,9 +98,9 @@ schema:
           format: uri
           description: |-
             Required if `kind` is `http`. The URL to use for sending
-            notifications. MUST be an HTTPS URL with a path of
-            `/_matrix/push/v1/`.
-          example: https://push-gateway.location.here/_matrix/push/v1/
+            notifications. MUST be an HTTPS URL with a path of `/push/v1/`. The actual endpoint (e.g. `notify`,
+            `notify/batch` or `notifyEncrypted/batch`) is appended by the FD to send the actual notifications.
+          example: https://push-gateway.location.here/push/v1/
         format:
           type: string
           description: |-

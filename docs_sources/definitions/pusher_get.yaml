@@ -11,7 +11,7 @@ examples:
           "profile_tag": "xyz",
           "lang": "en-US",
           "data": {
-            "url": "https://example.com/_matrix/push/v1/"
+            "url": "https://example.com/push/v1/"
           }
         }
       ]
