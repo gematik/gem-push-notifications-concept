@@ -792,7 +792,7 @@ components:
       properties:
         results:
           type: array
-          description: Results for each notification in the batch, in the same order as submitted
+          description: Results for each notification in the batch. Should be in the same order as submitted.
           items:
             type: object
             properties:
