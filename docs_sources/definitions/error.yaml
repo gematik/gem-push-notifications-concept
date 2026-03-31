@@ -15,14 +15,14 @@
 # limitations under the License.
 type: object
 title: Error
-description: Error
+description: Error object with additional information about the occurred error
 properties:
-  errcode:
+  errorCode:
     type: string
     description: An error code.
     example: UNKNOWN
-  error:
+  errorDetail:
     type: string
-    description: A human-readable error message.
+    description: Additional details regarding the error condition (if applicable)
     example: An unknown error occurred
-required: ["errcode"]
+required: ["errorCode"]
