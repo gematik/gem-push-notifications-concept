@@ -16,7 +16,7 @@
 openapi: 3.0.3
 info:
   title: Client-FD Push API
-  version: 1.2.0
+  version: 1.2.1
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
