@@ -78,7 +78,7 @@ schema:
                 format: uri
                 description: |-
                   Required if `kind` is `http`. The URL to use for sending
-                  notifications. MUST be an HTTPS URL with a path of
+                  notifications. This will be an HTTPS URL with a path ending on
                   `/push/v1/` that can be extended by `notify`, `notify/batch`
                   or `notifyEncrypted/batch`, so that the FD can pick the method, if not
                   specified otherwise by the FD specification.

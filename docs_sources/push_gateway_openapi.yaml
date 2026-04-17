@@ -16,11 +16,20 @@
 openapi: 3.1.0
 info:
   title: Push Gateway API
-  description: API for interacting with the Push Gateway
-  version: 1.2.0
+  summary: API for interacting with the Push Gateway
+  description: |-
+    This API defines the endpoints and data formats for sending push notifications to a Push Gateway. It includes operations for submitting plain and encrypted notifications, as well as the expected responses and error handling.
+
+    The API is designed to be flexible and extensible, allowing for different notification formats and encryption methods as needed by various services implementing the Push Gateway specification.
+
+    **Note:** The base path for the endpoints **MUST** end with `/push/v1`, e.g. `/push/v1/notify`. This is to ensure compatibility with TIM.
+
+  version: 1.2.1
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+
 servers:
   - url: "{protocol}://{hostname}{basePath}"
     variables:
@@ -32,6 +41,10 @@ servers:
         default: localhost:8080
       basePath:
         default: /push/v1
+        description: |-
+          The actual endpoints will be appended to this base path, so if the base path is `/push/v1`, the full path for the notify endpoint would be `/push/v1/notify`.
+
+          The basePath **MUST** end with `/push/v1` to ensure that the FD can correctly append the method (e.g. `notify`, `notify/batch` or `notifyEncrypted/batch`) when sending notifications to the Push Gateway.
 paths:
   /notify:
     post:
