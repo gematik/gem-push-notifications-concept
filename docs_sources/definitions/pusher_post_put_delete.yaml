@@ -100,7 +100,7 @@ schema:
             Required if `kind` is `http`. The URL to use for sending
             notifications. MUST be an HTTPS URL with a path of `/push/v1/`. The actual endpoint (e.g. `notify`,
             `notify/batch` or `notifyEncrypted/batch`) is appended by the FD to send the actual notifications.
-            **TIM:** Currently the URL MUST be an HTTPS URL with a path of `_matrix/push/v1/notify`
+            **TI-M:** Currently the URL MUST be an HTTPS URL with a path of `_matrix/push/v1/notify`
           example: https://push-gateway.location.here/push/v1/
         format:
           type: string
