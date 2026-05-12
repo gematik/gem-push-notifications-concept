@@ -22,7 +22,9 @@ info:
 
     The API is designed to be flexible and extensible, allowing for different notification formats and encryption methods as needed by various services implementing the Push Gateway specification.
 
-    **Note:** The base path for the endpoints **MUST** end with `/push/v1`, e.g. `/push/v1/notify`. This is to ensure compatibility with TIM.
+    **Note:** The base path for the endpoints **MUST** end with `/push/v1`, e.g. `/push/v1/notify`. This is to ensure compatibility with TI-M.
+
+    **TI-M:** Currently the URL MUST be an HTTPS URL with a path of `_matrix/push/v1/notify`
 
   version: 1.2.1
   license:
