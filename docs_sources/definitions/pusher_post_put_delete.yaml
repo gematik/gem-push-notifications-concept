@@ -100,6 +100,7 @@ schema:
             Required if `kind` is `http`. The URL to use for sending
             notifications. Will be an HTTPS URL with a path ending on `/push/v1/`. The actual endpoint (e.g. `notify`,
             `notify/batch` or `notifyEncrypted/batch`) is appended by the FD to send the actual notifications.
+            **TI-M:** Currently the URL MUST be an HTTPS URL with a path of `_matrix/push/v1/notify`
           example: https://push-gateway.location.here/push/v1/
         format:
           type: string
@@ -109,7 +110,7 @@ schema:
             server should send to the push gateway are defined in the
             [Push Gateway Specification](/push-gateway-api/).
             
-            **TIM:** Currently the only format available is `event_id_only`.
+            **TI-M:** Currently the only format available is `event_id_only`.
 
             **Others:** This property is not used and should be omitted unless
             specified explicitly by the service implementing this specification.

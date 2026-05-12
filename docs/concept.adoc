@@ -38,7 +38,7 @@ Durch die Implementierung eines zentralen Push Gateways pro Frontend wird eine e
 .Veschlüsselter Kanal zwischen Fachdienst und FdV
 image::secret_channel.drawio.svg[width=100%]
 
-Um zusätzliche Sicherheit zu gewährleisten kann eine Push-Nachricht zwischen dem Fachdienst und dem FdV verschlüsselt werden. Weder Push Gateway noch Push Provider besitzen die Information um eine Entschlüsselung vorzunehmen. Die Entscheidung ob eine Push-Nachricht verschlüsselt werden muss oder unverschlüsselt bleiben kann wird durch die Spezifikation des jeweiligen Fachdienstes vorgenommen. Bisher wird davon ausgegangen, dass eine Verschlüsselung für ePA und E-Rezept notwending sein wird, diese jedoch bei TIM optional ist.
+Um zusätzliche Sicherheit zu gewährleisten kann eine Push-Nachricht zwischen dem Fachdienst und dem FdV verschlüsselt werden. Weder Push Gateway noch Push Provider besitzen die Information um eine Entschlüsselung vorzunehmen. Die Entscheidung ob eine Push-Nachricht verschlüsselt werden muss oder unverschlüsselt bleiben kann wird durch die Spezifikation des jeweiligen Fachdienstes vorgenommen. Bisher wird davon ausgegangen, dass eine Verschlüsselung für ePA und E-Rezept notwending sein wird, diese jedoch bei TI-M optional ist.
 
 ==== Fachdienst
 
