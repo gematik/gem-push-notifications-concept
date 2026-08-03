@@ -218,6 +218,40 @@ Die Priorität einer Push-Benachrichtigung wird durch den Wert des Feldes `prior
 // | attributes
 // |===
 
+=== Nachverfolgung von Anfragen mittels `x-request-id`
+
+Zur Unterstützung des Betriebs (z.B. Fehleranalyse, Support-Anfragen von Versicherten oder Monitoring) kann jede Anfrage an das Push Gateway mit einem HTTP-Header `x-request-id` versehen werden. Dieses Feature ist für *alle* beteiligten Komponenten vollständig optional: Kein Fachdienst ist verpflichtet, den Header zu setzen, und kein Push Gateway ist verpflichtet, ihn auszuwerten, zu loggen oder in der Antwort zurückzugeben. Der Header ist rein für operative Zwecke gedacht und hat in jedem Fall keinerlei Einfluss auf die fachliche Verarbeitung der Push-Benachrichtigung.
+
+Wird der Header verwendet, so wird sein Wert vom aufrufenden System (z.B. dem Fachdienst) erzeugt und identifiziert genau eine einzelne HTTP-Anfrage. Es wird empfohlen, hierfür eine zufällige, eindeutige Kennung (z.B. eine UUIDv4) zu verwenden. Der Wert darf keine fachlichen oder personenbezogenen Daten enthalten und darf nicht dazu verwendet werden, mehrere Anfragen (z.B. alle Nachrichten eines Batches oder einer Nutzer-Sitzung) miteinander zu verknüpfen -- dafür stehen andere, fachdienstspezifische Kennungen (z.B. `identifier` einer Notification) zur Verfügung.
+
+Setzt ein Fachdienst den Header in einer Anfrage an das Push Gateway, so kann (muss aber nicht) ein Push Gateway, das dieses Feature unterstützt, wie folgt reagieren:
+
+1. Das Push Gateway übernimmt den Wert in seine Log-Einträge, die im Rahmen der Verarbeitung dieser Anfrage erzeugt werden.
+2. Das Push Gateway gibt denselben Wert im `x-request-id`-Antwort-Header zurück, sodass die Antwort eindeutig der ursprünglichen Anfrage zugeordnet werden kann.
+
+Ist der Header nicht gesetzt, oder unterstützt ein Push Gateway dieses Feature nicht, so verarbeitet das Push Gateway die Anfrage unverändert; es entstehen in keinem Fall Fehler, und es wird keine Kennung generiert, geloggt oder zurückgegeben. Fachdienste dürfen sich also nicht darauf verlassen, dass ein gesetzter `x-request-id`-Header tatsächlich geloggt oder in der Antwort gespiegelt wird.
+
+Unterstützen sowohl Fachdienst als auch Push Gateway (und ggf. weitere Komponenten wie ein interner Dienst nach <<indirect_push_key,Indirekte `pushkey`s>>) dieses optionale Feature, können Betriebsteams bei Bedarf (z.B. anhand eines Tickets oder einer Fehlermeldung) eine konkrete Anfrage über Systemgrenzen hinweg in den jeweiligen Logs wiederfinden, ohne dass fachliche Inhalte der Push-Benachrichtigung ausgetauscht werden müssen.
+
+[#request_id_example]
+.Beispiel für die Verwendung des `x-request-id`-Headers
+----
+POST /push/v1/notify HTTP/1.1
+Host: push-gateway.location.here
+x-request-id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{ ... }
+----
+
+----
+HTTP/1.1 200 OK
+x-request-id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{ "rejected": [] }
+----
+
 === Themen für fachdienstspezifische Implementierungen
 
 Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der fachdienstspezifischen Implementierung abhängen:

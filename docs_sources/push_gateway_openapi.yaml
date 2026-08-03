@@ -43,6 +43,8 @@ paths:
         notification object.
         
         *This mimics the Matrix Push Gateway API in version 1.0.0.*
+      parameters:
+        - $ref: '#/components/parameters/XRequestId'
       requestBody:
         required: true
         content:
@@ -88,6 +90,9 @@ paths:
       responses:
         "200":
           description: A list of rejected push keys.
+          headers:
+            x-request-id:
+              $ref: '#/components/headers/XRequestId'
           content:
             application/json:
               schema:
@@ -180,6 +185,8 @@ paths:
         Submit multiple plain push notifications in a single batch request. This endpoint
         is optimized for high-throughput scenarios where multiple plain notifications
         need to be sent efficiently. The batch can contain up to a maximum of 100 notifications per request.
+      parameters:
+        - $ref: '#/components/parameters/XRequestId'
       requestBody:
         required: true
         content:
@@ -237,6 +244,9 @@ paths:
       responses:
         "200":
           description: Batch processing results with per-item status and summary. If the Push Gateway is unable to complete processing for some notifications, those will be marked as failed in the results.
+          headers:
+            x-request-id:
+              $ref: '#/components/headers/XRequestId'
           content:
             application/json:
               schema:
@@ -392,6 +402,8 @@ paths:
         Submit multiple encrypted push notifications in a single batch request. This endpoint
         is optimized for high-throughput scenarios where multiple encrypted notifications
         need to be sent efficiently. The batch can contain up to a maximum of 100 notifications per request.
+      parameters:
+        - $ref: '#/components/parameters/XRequestId'
       requestBody:
         required: true
         content:
@@ -439,6 +451,9 @@ paths:
       responses:
         "200":
           description: Batch processing results with per-item status and summary. If the Push Gateway is unable to complete processing for some notifications, those will be marked as failed in the results.
+          headers:
+            x-request-id:
+              $ref: '#/components/headers/XRequestId'
           content:
             application/json:
               schema:
@@ -592,6 +607,49 @@ components:
         Mutual TLS authentication. The server will verify the client's certificate and reject the
         connection if it is invalid.
       type: mutualTLS
+  parameters:
+    XRequestId:
+      name: x-request-id
+      in: header
+      required: false
+      description: |-
+        Client-generated identifier for this individual HTTP request, used purely for operational
+        purposes (e.g. log correlation and support requests). It has no effect on the processing of the
+        notification.
+
+        Support for this header is entirely OPTIONAL for every party involved. Clients (e.g. a Fachdienst)
+        are not required to send this header, and a Push Gateway is not required to evaluate, log or
+        return it, even if it is present on the request. Implementations MUST NOT fail or reject a
+        request solely because this header is missing, unknown or unsupported.
+
+        If a client chooses to send this header, and the receiving Push Gateway chooses to support this
+        feature, the Push Gateway SHOULD include the value in its log entries related to processing this
+        request and SHOULD return the same value in the `x-request-id` response header, so that a single
+        request can optionally be traced across the Fachdienst, Push Gateway and, where technically
+        possible, the Push Provider. Clients MUST NOT rely on the value being logged or echoed back, as
+        this is a best-effort, opt-in capability rather than a guaranteed contract.
+
+        Clients that make use of this header SHOULD generate a new, unique value (e.g. a UUIDv4) for every
+        request. This identifier carries no semantic meaning, MUST NOT be used to correlate multiple
+        requests (e.g. all requests of one batch or session) and MUST NOT contain personal or otherwise
+        sensitive data.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  headers:
+    XRequestId:
+      description: |-
+        Best-effort echo of the `x-request-id` value supplied in the request, if any. Support for this
+        header is entirely OPTIONAL: a Push Gateway is not required to implement it, and its absence in
+        the response does not indicate an error. Where implemented, it allows the caller to correlate
+        this response with the originating request for operational troubleshooting.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 128
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
   schemas:
     EncryptedNotification:
       type: object
