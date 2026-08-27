@@ -257,6 +257,8 @@ Dieser Health Check prüft,
 
 Wenn der Fachdienst eine HTTP-Response erhält, gilt der Health Check als erfolgreich.
 
+NOTE: Ein dedizierter Endpunkt für den Health Check des Push Gateways könnte in zukünftigen Versionen hinzukommen. Bis dahin ist die beschriebene Vorgehensweise eine mögliche Lösung, um die Erreichbarkeit des Push Gateways zu überprüfen.
+
 == Beispiele
 
 === Device Registrierung
