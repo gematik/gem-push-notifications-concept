@@ -278,6 +278,20 @@ image::diagrams/registration_complex.svg[width=100%]
 
 Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen Push Token von z.B. Apple oder Google am internen Dienst neu zu hinterlegen. Es ist keine Aktualisierung der Registrierung am FD notwendig.
 
+=== Health Check der Push Gateways durch den Fachdienst
+Da das Push Gateway keinen Health-Check-Endpunkt bereitstellt, kann der Fachdienst selbst prüfen, ob das Push Gateway erreichbar ist. Der nachfolgend beschriebene Ablauf stellt eine mögliche Umsetzung dieses Checks dar.
+
+Beim Start des Dienstes, unabhängig davon, ob es sich um den Fachdienst selbst oder einen Exporter-Dienst handelt, ruft dieser alle im Dienst konfigurierten Push-Gateways jeweils mit einem GET /-Request auf.
+
+Dieser Health Check prüft,
+
+1. ob das jeweilige Push Gateway erreichbar ist und
+2. ob der TLS-Handshake inklusive mTLS erfolgreich durchläuft.
+
+Wenn der Fachdienst eine HTTP-Response erhält, gilt der Health Check als erfolgreich.
+
+NOTE: Ein dedizierter Endpunkt für den Health Check des Push Gateways könnte in zukünftigen Versionen hinzukommen. Bis dahin ist die beschriebene Vorgehensweise eine mögliche Lösung, um die Erreichbarkeit des Push Gateways zu überprüfen.
+
 == Beispiele
 
 === Device Registrierung
