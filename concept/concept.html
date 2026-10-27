@@ -475,8 +475,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_versenden_aus_push_gateway_sicht">Versenden aus Push Gateway Sicht</a></li>
 </ul>
 </li>
+<li><a href="#_nachverfolgung_von_anfragen_mittels_x_request_id">Nachverfolgung von Anfragen mittels <code>x-request-id</code></a></li>
 <li><a href="#_themen_für_fachdienstspezifische_implementierungen">Themen für fachdienstspezifische Implementierungen</a></li>
 <li><a href="#_indirekte_pushkeys">Indirekte `pushkey`s</a></li>
+<li><a href="#_health_check_der_push_gateways_durch_den_fachdienst">Health Check der Push Gateways durch den Fachdienst</a></li>
 </ul>
 </li>
 <li><a href="#_beispiele">Beispiele</a>
@@ -900,6 +902,54 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 </div>
 </div>
 <div class="sect2">
+<h3 id="_nachverfolgung_von_anfragen_mittels_x_request_id">Nachverfolgung von Anfragen mittels <code>x-request-id</code></h3>
+<div class="paragraph">
+<p>Zur Unterstützung des Betriebs (z.B. Fehleranalyse, Support-Anfragen von Versicherten oder Monitoring) kann jede Anfrage an das Push Gateway mit einem HTTP-Header <code>x-request-id</code> versehen werden. Dieses Feature ist für <strong>alle</strong> beteiligten Komponenten vollständig optional: Kein Fachdienst ist verpflichtet, den Header zu setzen, und kein Push Gateway ist verpflichtet, ihn auszuwerten, zu loggen oder in der Antwort zurückzugeben. Der Header ist rein für operative Zwecke gedacht und hat in jedem Fall keinerlei Einfluss auf die fachliche Verarbeitung der Push-Benachrichtigung.</p>
+</div>
+<div class="paragraph">
+<p>Wird der Header verwendet, so wird sein Wert vom aufrufenden System (z.B. dem Fachdienst) erzeugt und identifiziert genau eine einzelne HTTP-Anfrage. Es wird empfohlen, hierfür eine zufällige, eindeutige Kennung (z.B. eine UUIDv4) zu verwenden. Der Wert darf keine fachlichen oder personenbezogenen Daten enthalten und darf nicht dazu verwendet werden, mehrere Anfragen (z.B. alle Nachrichten eines Batches oder einer Nutzer-Sitzung) miteinander zu verknüpfen&#8201;&#8212;&#8201;dafür stehen andere, fachdienstspezifische Kennungen (z.B. <code>identifier</code> einer Notification) zur Verfügung.</p>
+</div>
+<div class="paragraph">
+<p>Setzt ein Fachdienst den Header in einer Anfrage an das Push Gateway, so kann (muss aber nicht) ein Push Gateway, das dieses Feature unterstützt, wie folgt reagieren:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Das Push Gateway übernimmt den Wert in seine Log-Einträge, die im Rahmen der Verarbeitung dieser Anfrage erzeugt werden.</p>
+</li>
+<li>
+<p>Das Push Gateway gibt denselben Wert im <code>x-request-id</code>-Antwort-Header zurück, sodass die Antwort eindeutig der ursprünglichen Anfrage zugeordnet werden kann.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Ist der Header nicht gesetzt, oder unterstützt ein Push Gateway dieses Feature nicht, so verarbeitet das Push Gateway die Anfrage unverändert; es entstehen in keinem Fall Fehler, und es wird keine Kennung generiert, geloggt oder zurückgegeben. Fachdienste dürfen sich also nicht darauf verlassen, dass ein gesetzter <code>x-request-id</code>-Header tatsächlich geloggt oder in der Antwort gespiegelt wird.</p>
+</div>
+<div class="paragraph">
+<p>Unterstützen sowohl Fachdienst als auch Push Gateway (und ggf. weitere Komponenten wie ein interner Dienst nach <a href="#indirect_push_key">Indirekte `pushkey`s</a>) dieses optionale Feature, können Betriebsteams bei Bedarf (z.B. anhand eines Tickets oder einer Fehlermeldung) eine konkrete Anfrage über Systemgrenzen hinweg in den jeweiligen Logs wiederfinden, ohne dass fachliche Inhalte der Push-Benachrichtigung ausgetauscht werden müssen.</p>
+</div>
+<div id="request_id_example" class="listingblock">
+<div class="title">Beispiel für die Verwendung des <code>x-request-id</code>-Headers</div>
+<div class="content">
+<pre>POST /push/v1/notify HTTP/1.1
+Host: push-gateway.location.here
+x-request-id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{ ... }</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP/1.1 200 OK
+x-request-id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{ "rejected": [] }</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_themen_für_fachdienstspezifische_implementierungen">Themen für fachdienstspezifische Implementierungen</h3>
 <div class="paragraph">
 <p>Die folgenden Themen sind in diesem Dokument nicht enthalten, da sie zu stark von der fachdienstspezifischen Implementierung abhängen:</p>
@@ -953,6 +1003,43 @@ Die genauen Felder und Erklärungen dazu sind in der <a href="../fd_openapi.html
 </div>
 <div class="paragraph">
 <p>Durch die extra Schritte ist es später möglich, einen eventuell neu vergebenen Push Token von z.B. Apple oder Google am internen Dienst neu zu hinterlegen. Es ist keine Aktualisierung der Registrierung am FD notwendig.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_health_check_der_push_gateways_durch_den_fachdienst">Health Check der Push Gateways durch den Fachdienst</h3>
+<div class="paragraph">
+<p>Da das Push Gateway keinen Health-Check-Endpunkt bereitstellt, kann der Fachdienst selbst prüfen, ob das Push Gateway erreichbar ist. Der nachfolgend beschriebene Ablauf stellt eine mögliche Umsetzung dieses Checks dar.</p>
+</div>
+<div class="paragraph">
+<p>Beim Start des Dienstes, unabhängig davon, ob es sich um den Fachdienst selbst oder einen Exporter-Dienst handelt, ruft dieser alle im Dienst konfigurierten Push-Gateways jeweils mit einem GET /-Request auf.</p>
+</div>
+<div class="paragraph">
+<p>Dieser Health Check prüft,</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>ob das jeweilige Push Gateway erreichbar ist und</p>
+</li>
+<li>
+<p>ob der TLS-Handshake inklusive mTLS erfolgreich durchläuft.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Wenn der Fachdienst eine HTTP-Response erhält, gilt der Health Check als erfolgreich.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">:information_source:</div>
+</td>
+<td class="content">
+Ein dedizierter Endpunkt für den Health Check des Push Gateways könnte in zukünftigen Versionen hinzukommen. Bis dahin ist die beschriebene Vorgehensweise eine mögliche Lösung, um die Erreichbarkeit des Push Gateways zu überprüfen.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1349,7 +1436,7 @@ fun showNotification(title: String?, body: String?) {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-27 13:14:39 +0100
+Last updated 2026-10-27 13:16:49 +0100
 </div>
 </div>
 </body>
